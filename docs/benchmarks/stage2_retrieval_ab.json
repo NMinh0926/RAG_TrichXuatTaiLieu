@@ -1,0 +1,1222 @@
+{
+  "questions": 35,
+  "results": [
+    {
+      "config": {
+        "name": "minilm_126_top4",
+        "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        "chunk_size": 700,
+        "chunk_overlap": 120,
+        "context_k": 4,
+        "candidates": 4,
+        "reranker": null
+      },
+      "overall": {
+        "n": 35,
+        "hit@1": 0.771,
+        "hit@3": 0.886,
+        "hit@context": 0.886,
+        "mrr": 0.824
+      },
+      "by_dataset": {
+        "benchmark36p": {
+          "n": 4,
+          "hit@1": 0.0,
+          "hit@3": 0.5,
+          "hit@4": 0.5,
+          "mrr": 0.208,
+          "misses": [
+            "bench-4",
+            "bench-18"
+          ]
+        },
+        "evaluation25": {
+          "n": 21,
+          "hit@1": 0.952,
+          "hit@3": 1.0,
+          "hit@4": 1.0,
+          "mrr": 0.976,
+          "misses": []
+        },
+        "extra": {
+          "n": 10,
+          "hit@1": 0.7,
+          "hit@3": 0.8,
+          "hit@4": 0.8,
+          "mrr": 0.75,
+          "misses": [
+            "extra-1",
+            "extra-2"
+          ]
+        }
+      },
+      "model_load_seconds": 12.6,
+      "embedding_seconds": 6.9,
+      "chunks": 187,
+      "chunk_tokens_median": 126,
+      "query_latency_ms": {
+        "median": 28,
+        "max": 70
+      },
+      "avg_context_characters": 1531,
+      "peak_rss_mb_so_far": 4249,
+      "rows": [
+        {
+          "id": 1,
+          "dataset": "evaluation25",
+          "question": "What is the Orion hotel allowance per night?",
+          "rank": 1,
+          "context_characters": 838
+        },
+        {
+          "id": 2,
+          "dataset": "evaluation25",
+          "question": "What is the daily Orion meal reimbursement limit?",
+          "rank": 1,
+          "context_characters": 1388
+        },
+        {
+          "id": 3,
+          "dataset": "evaluation25",
+          "question": "Within how many days must Orion travel receipts be submitted?",
+          "rank": 2,
+          "context_characters": 1397
+        },
+        {
+          "id": 4,
+          "dataset": "evaluation25",
+          "question": "What is the Orion mileage reimbursement per kilometer?",
+          "rank": 1,
+          "context_characters": 1162
+        },
+        {
+          "id": 5,
+          "dataset": "evaluation25",
+          "question": "What is the Orion travel approval code?",
+          "rank": 1,
+          "context_characters": 1397
+        },
+        {
+          "id": 6,
+          "dataset": "evaluation25",
+          "question": "Một năm người lao động có bao nhiêu ngày phép?",
+          "rank": 1,
+          "context_characters": 1835
+        },
+        {
+          "id": 7,
+          "dataset": "evaluation25",
+          "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 1855
+        },
+        {
+          "id": 8,
+          "dataset": "evaluation25",
+          "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+          "rank": 1,
+          "context_characters": 1590
+        },
+        {
+          "id": 9,
+          "dataset": "evaluation25",
+          "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+          "rank": 1,
+          "context_characters": 1857
+        },
+        {
+          "id": 10,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Atlas Laptop?",
+          "rank": 1,
+          "context_characters": 954
+        },
+        {
+          "id": 11,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Nova Phone?",
+          "rank": 1,
+          "context_characters": 1055
+        },
+        {
+          "id": 12,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Silver support plan allow?",
+          "rank": 1,
+          "context_characters": 1699
+        },
+        {
+          "id": 13,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Gold support plan allow?",
+          "rank": 1,
+          "context_characters": 1700
+        },
+        {
+          "id": 14,
+          "dataset": "evaluation25",
+          "question": "What time does the Lyra workshop start?",
+          "rank": 1,
+          "context_characters": 1809
+        },
+        {
+          "id": 15,
+          "dataset": "evaluation25",
+          "question": "Which room hosts the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 1197
+        },
+        {
+          "id": 16,
+          "dataset": "evaluation25",
+          "question": "How many people can attend the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 1164
+        },
+        {
+          "id": 17,
+          "dataset": "evaluation25",
+          "question": "When is the Lyra workshop registration deadline?",
+          "rank": 1,
+          "context_characters": 1811
+        },
+        {
+          "id": 18,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse open?",
+          "rank": 1,
+          "context_characters": 1444
+        },
+        {
+          "id": 19,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse close?",
+          "rank": 1,
+          "context_characters": 1495
+        },
+        {
+          "id": 20,
+          "dataset": "evaluation25",
+          "question": "What color safety helmet is required at Vega?",
+          "rank": 1,
+          "context_characters": 1031
+        },
+        {
+          "id": 21,
+          "dataset": "evaluation25",
+          "question": "What is the Vega emergency extension?",
+          "rank": 1,
+          "context_characters": 1031
+        },
+        {
+          "id": "extra-1",
+          "dataset": "extra",
+          "question": "bài toán 1 là gì",
+          "rank": null,
+          "context_characters": 1829
+        },
+        {
+          "id": "extra-2",
+          "dataset": "extra",
+          "question": "bài toán 2 là gì",
+          "rank": null,
+          "context_characters": 1249
+        },
+        {
+          "id": "extra-3",
+          "dataset": "extra",
+          "question": "Hệ thống RAG phải đọc được những loại file nào?",
+          "rank": 1,
+          "context_characters": 1178
+        },
+        {
+          "id": "extra-4",
+          "dataset": "extra",
+          "question": "Công nghệ nào được dùng để nhận diện chữ trong file scan?",
+          "rank": 1,
+          "context_characters": 1461
+        },
+        {
+          "id": "extra-5",
+          "dataset": "extra",
+          "question": "Pipeline phân tích cuộc họp cần dự đoán những đặc điểm gì của người nói?",
+          "rank": 1,
+          "context_characters": 1930
+        },
+        {
+          "id": "extra-6",
+          "dataset": "extra",
+          "question": "Kết quả phân tích âm thanh có thể trả về dưới định dạng nào?",
+          "rank": 2,
+          "context_characters": 1850
+        },
+        {
+          "id": "extra-7",
+          "dataset": "extra",
+          "question": "Nộp source code lên nền tảng nào?",
+          "rank": 1,
+          "context_characters": 1868
+        },
+        {
+          "id": "extra-8",
+          "dataset": "extra",
+          "question": "Gửi email kết quả cho địa chỉ nào?",
+          "rank": 1,
+          "context_characters": 1651
+        },
+        {
+          "id": "extra-9",
+          "dataset": "extra",
+          "question": "Tiêu đề email nộp bài ghi thế nào?",
+          "rank": 1,
+          "context_characters": 1344
+        },
+        {
+          "id": "extra-10",
+          "dataset": "extra",
+          "question": "Tính năng tách người nói trong đoạn ghi âm cần làm được gì?",
+          "rank": 1,
+          "context_characters": 1671
+        },
+        {
+          "id": "bench-4",
+          "dataset": "benchmark36p",
+          "question": "Thời gian thử việc đối với vị trí kỹ sư là bao lâu?",
+          "rank": null,
+          "context_characters": 1950
+        },
+        {
+          "id": "bench-10",
+          "dataset": "benchmark36p",
+          "question": "Nhân viên chính thức được nghỉ phép năm bao nhiêu ngày?",
+          "rank": 2,
+          "context_characters": 1653
+        },
+        {
+          "id": "bench-18",
+          "dataset": "benchmark36p",
+          "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+          "rank": null,
+          "context_characters": 2142
+        },
+        {
+          "id": "bench-25",
+          "dataset": "benchmark36p",
+          "question": "Mã quy trình phê duyệt công tác phí là gì?",
+          "rank": 3,
+          "context_characters": 2112
+        }
+      ]
+    },
+    {
+      "config": {
+        "name": "minilm_126_top20_rerank6",
+        "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        "chunk_size": 700,
+        "chunk_overlap": 120,
+        "context_k": 6,
+        "candidates": 20,
+        "reranker": "BAAI/bge-reranker-v2-m3"
+      },
+      "overall": {
+        "n": 35,
+        "hit@1": 0.914,
+        "hit@3": 0.971,
+        "hit@context": 0.971,
+        "mrr": 0.943
+      },
+      "by_dataset": {
+        "benchmark36p": {
+          "n": 4,
+          "hit@1": 0.75,
+          "hit@3": 0.75,
+          "hit@6": 0.75,
+          "mrr": 0.75,
+          "misses": [
+            "bench-18"
+          ]
+        },
+        "evaluation25": {
+          "n": 21,
+          "hit@1": 0.952,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 0.976,
+          "misses": []
+        },
+        "extra": {
+          "n": 10,
+          "hit@1": 0.9,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 0.95,
+          "misses": []
+        }
+      },
+      "model_load_seconds": 77.5,
+      "embedding_seconds": 5.5,
+      "chunks": 187,
+      "chunk_tokens_median": 126,
+      "query_latency_ms": {
+        "median": 7005,
+        "max": 11522
+      },
+      "avg_context_characters": 2528,
+      "peak_rss_mb_so_far": 4249,
+      "rows": [
+        {
+          "id": 1,
+          "dataset": "evaluation25",
+          "question": "What is the Orion hotel allowance per night?",
+          "rank": 1,
+          "context_characters": 1921
+        },
+        {
+          "id": 2,
+          "dataset": "evaluation25",
+          "question": "What is the daily Orion meal reimbursement limit?",
+          "rank": 1,
+          "context_characters": 2029
+        },
+        {
+          "id": 3,
+          "dataset": "evaluation25",
+          "question": "Within how many days must Orion travel receipts be submitted?",
+          "rank": 1,
+          "context_characters": 2466
+        },
+        {
+          "id": 4,
+          "dataset": "evaluation25",
+          "question": "What is the Orion mileage reimbursement per kilometer?",
+          "rank": 1,
+          "context_characters": 1894
+        },
+        {
+          "id": 5,
+          "dataset": "evaluation25",
+          "question": "What is the Orion travel approval code?",
+          "rank": 1,
+          "context_characters": 2456
+        },
+        {
+          "id": 6,
+          "dataset": "evaluation25",
+          "question": "Một năm người lao động có bao nhiêu ngày phép?",
+          "rank": 2,
+          "context_characters": 2726
+        },
+        {
+          "id": 7,
+          "dataset": "evaluation25",
+          "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 2776
+        },
+        {
+          "id": 8,
+          "dataset": "evaluation25",
+          "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+          "rank": 1,
+          "context_characters": 2213
+        },
+        {
+          "id": 9,
+          "dataset": "evaluation25",
+          "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+          "rank": 1,
+          "context_characters": 2863
+        },
+        {
+          "id": 10,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Atlas Laptop?",
+          "rank": 1,
+          "context_characters": 2648
+        },
+        {
+          "id": 11,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Nova Phone?",
+          "rank": 1,
+          "context_characters": 2363
+        },
+        {
+          "id": 12,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Silver support plan allow?",
+          "rank": 1,
+          "context_characters": 2765
+        },
+        {
+          "id": 13,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Gold support plan allow?",
+          "rank": 1,
+          "context_characters": 2769
+        },
+        {
+          "id": 14,
+          "dataset": "evaluation25",
+          "question": "What time does the Lyra workshop start?",
+          "rank": 1,
+          "context_characters": 2505
+        },
+        {
+          "id": 15,
+          "dataset": "evaluation25",
+          "question": "Which room hosts the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 2089
+        },
+        {
+          "id": 16,
+          "dataset": "evaluation25",
+          "question": "How many people can attend the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 2597
+        },
+        {
+          "id": 17,
+          "dataset": "evaluation25",
+          "question": "When is the Lyra workshop registration deadline?",
+          "rank": 1,
+          "context_characters": 2913
+        },
+        {
+          "id": 18,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse open?",
+          "rank": 1,
+          "context_characters": 2499
+        },
+        {
+          "id": 19,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse close?",
+          "rank": 1,
+          "context_characters": 2228
+        },
+        {
+          "id": 20,
+          "dataset": "evaluation25",
+          "question": "What color safety helmet is required at Vega?",
+          "rank": 1,
+          "context_characters": 2000
+        },
+        {
+          "id": 21,
+          "dataset": "evaluation25",
+          "question": "What is the Vega emergency extension?",
+          "rank": 1,
+          "context_characters": 2143
+        },
+        {
+          "id": "extra-1",
+          "dataset": "extra",
+          "question": "bài toán 1 là gì",
+          "rank": 1,
+          "context_characters": 2335
+        },
+        {
+          "id": "extra-2",
+          "dataset": "extra",
+          "question": "bài toán 2 là gì",
+          "rank": 1,
+          "context_characters": 2434
+        },
+        {
+          "id": "extra-3",
+          "dataset": "extra",
+          "question": "Hệ thống RAG phải đọc được những loại file nào?",
+          "rank": 1,
+          "context_characters": 2551
+        },
+        {
+          "id": "extra-4",
+          "dataset": "extra",
+          "question": "Công nghệ nào được dùng để nhận diện chữ trong file scan?",
+          "rank": 1,
+          "context_characters": 2270
+        },
+        {
+          "id": "extra-5",
+          "dataset": "extra",
+          "question": "Pipeline phân tích cuộc họp cần dự đoán những đặc điểm gì của người nói?",
+          "rank": 1,
+          "context_characters": 2996
+        },
+        {
+          "id": "extra-6",
+          "dataset": "extra",
+          "question": "Kết quả phân tích âm thanh có thể trả về dưới định dạng nào?",
+          "rank": 2,
+          "context_characters": 2912
+        },
+        {
+          "id": "extra-7",
+          "dataset": "extra",
+          "question": "Nộp source code lên nền tảng nào?",
+          "rank": 1,
+          "context_characters": 2729
+        },
+        {
+          "id": "extra-8",
+          "dataset": "extra",
+          "question": "Gửi email kết quả cho địa chỉ nào?",
+          "rank": 1,
+          "context_characters": 2600
+        },
+        {
+          "id": "extra-9",
+          "dataset": "extra",
+          "question": "Tiêu đề email nộp bài ghi thế nào?",
+          "rank": 1,
+          "context_characters": 2710
+        },
+        {
+          "id": "extra-10",
+          "dataset": "extra",
+          "question": "Tính năng tách người nói trong đoạn ghi âm cần làm được gì?",
+          "rank": 1,
+          "context_characters": 2225
+        },
+        {
+          "id": "bench-4",
+          "dataset": "benchmark36p",
+          "question": "Thời gian thử việc đối với vị trí kỹ sư là bao lâu?",
+          "rank": 1,
+          "context_characters": 3032
+        },
+        {
+          "id": "bench-10",
+          "dataset": "benchmark36p",
+          "question": "Nhân viên chính thức được nghỉ phép năm bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 2784
+        },
+        {
+          "id": "bench-18",
+          "dataset": "benchmark36p",
+          "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+          "rank": null,
+          "context_characters": 3163
+        },
+        {
+          "id": "bench-25",
+          "dataset": "benchmark36p",
+          "question": "Mã quy trình phê duyệt công tác phí là gì?",
+          "rank": 1,
+          "context_characters": 2863
+        }
+      ]
+    },
+    {
+      "config": {
+        "name": "bgem3_512_top6",
+        "model": "BAAI/bge-m3",
+        "chunk_size": 512,
+        "chunk_overlap": 64,
+        "context_k": 6,
+        "candidates": 6,
+        "reranker": null
+      },
+      "overall": {
+        "n": 35,
+        "hit@1": 0.914,
+        "hit@3": 0.943,
+        "hit@context": 0.943,
+        "mrr": 0.929
+      },
+      "by_dataset": {
+        "benchmark36p": {
+          "n": 4,
+          "hit@1": 0.5,
+          "hit@3": 0.5,
+          "hit@6": 0.5,
+          "mrr": 0.5,
+          "misses": [
+            "bench-18",
+            "bench-25"
+          ]
+        },
+        "evaluation25": {
+          "n": 21,
+          "hit@1": 0.952,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 0.976,
+          "misses": []
+        },
+        "extra": {
+          "n": 10,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 1.0,
+          "misses": []
+        }
+      },
+      "model_load_seconds": 15.7,
+      "embedding_seconds": 129.7,
+      "chunks": 58,
+      "chunk_tokens_median": 494.0,
+      "query_latency_ms": {
+        "median": 124,
+        "max": 236
+      },
+      "avg_context_characters": 9015,
+      "peak_rss_mb_so_far": 4409,
+      "rows": [
+        {
+          "id": 1,
+          "dataset": "evaluation25",
+          "question": "What is the Orion hotel allowance per night?",
+          "rank": 1,
+          "context_characters": 4779
+        },
+        {
+          "id": 2,
+          "dataset": "evaluation25",
+          "question": "What is the daily Orion meal reimbursement limit?",
+          "rank": 1,
+          "context_characters": 5834
+        },
+        {
+          "id": 3,
+          "dataset": "evaluation25",
+          "question": "Within how many days must Orion travel receipts be submitted?",
+          "rank": 1,
+          "context_characters": 7152
+        },
+        {
+          "id": 4,
+          "dataset": "evaluation25",
+          "question": "What is the Orion mileage reimbursement per kilometer?",
+          "rank": 1,
+          "context_characters": 3668
+        },
+        {
+          "id": 5,
+          "dataset": "evaluation25",
+          "question": "What is the Orion travel approval code?",
+          "rank": 1,
+          "context_characters": 4749
+        },
+        {
+          "id": 6,
+          "dataset": "evaluation25",
+          "question": "Một năm người lao động có bao nhiêu ngày phép?",
+          "rank": 2,
+          "context_characters": 11003
+        },
+        {
+          "id": 7,
+          "dataset": "evaluation25",
+          "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 9190
+        },
+        {
+          "id": 8,
+          "dataset": "evaluation25",
+          "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+          "rank": 1,
+          "context_characters": 11114
+        },
+        {
+          "id": 9,
+          "dataset": "evaluation25",
+          "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+          "rank": 1,
+          "context_characters": 10003
+        },
+        {
+          "id": 10,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Atlas Laptop?",
+          "rank": 1,
+          "context_characters": 10526
+        },
+        {
+          "id": 11,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Nova Phone?",
+          "rank": 1,
+          "context_characters": 6601
+        },
+        {
+          "id": 12,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Silver support plan allow?",
+          "rank": 1,
+          "context_characters": 5831
+        },
+        {
+          "id": 13,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Gold support plan allow?",
+          "rank": 1,
+          "context_characters": 8849
+        },
+        {
+          "id": 14,
+          "dataset": "evaluation25",
+          "question": "What time does the Lyra workshop start?",
+          "rank": 1,
+          "context_characters": 10972
+        },
+        {
+          "id": 15,
+          "dataset": "evaluation25",
+          "question": "Which room hosts the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 10951
+        },
+        {
+          "id": 16,
+          "dataset": "evaluation25",
+          "question": "How many people can attend the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 10968
+        },
+        {
+          "id": 17,
+          "dataset": "evaluation25",
+          "question": "When is the Lyra workshop registration deadline?",
+          "rank": 1,
+          "context_characters": 10889
+        },
+        {
+          "id": 18,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse open?",
+          "rank": 1,
+          "context_characters": 5225
+        },
+        {
+          "id": 19,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse close?",
+          "rank": 1,
+          "context_characters": 5919
+        },
+        {
+          "id": 20,
+          "dataset": "evaluation25",
+          "question": "What color safety helmet is required at Vega?",
+          "rank": 1,
+          "context_characters": 5806
+        },
+        {
+          "id": 21,
+          "dataset": "evaluation25",
+          "question": "What is the Vega emergency extension?",
+          "rank": 1,
+          "context_characters": 6674
+        },
+        {
+          "id": "extra-1",
+          "dataset": "extra",
+          "question": "bài toán 1 là gì",
+          "rank": 1,
+          "context_characters": 12541
+        },
+        {
+          "id": "extra-2",
+          "dataset": "extra",
+          "question": "bài toán 2 là gì",
+          "rank": 1,
+          "context_characters": 12560
+        },
+        {
+          "id": "extra-3",
+          "dataset": "extra",
+          "question": "Hệ thống RAG phải đọc được những loại file nào?",
+          "rank": 1,
+          "context_characters": 8881
+        },
+        {
+          "id": "extra-4",
+          "dataset": "extra",
+          "question": "Công nghệ nào được dùng để nhận diện chữ trong file scan?",
+          "rank": 1,
+          "context_characters": 6551
+        },
+        {
+          "id": "extra-5",
+          "dataset": "extra",
+          "question": "Pipeline phân tích cuộc họp cần dự đoán những đặc điểm gì của người nói?",
+          "rank": 1,
+          "context_characters": 11474
+        },
+        {
+          "id": "extra-6",
+          "dataset": "extra",
+          "question": "Kết quả phân tích âm thanh có thể trả về dưới định dạng nào?",
+          "rank": 1,
+          "context_characters": 10744
+        },
+        {
+          "id": "extra-7",
+          "dataset": "extra",
+          "question": "Nộp source code lên nền tảng nào?",
+          "rank": 1,
+          "context_characters": 10861
+        },
+        {
+          "id": "extra-8",
+          "dataset": "extra",
+          "question": "Gửi email kết quả cho địa chỉ nào?",
+          "rank": 1,
+          "context_characters": 11177
+        },
+        {
+          "id": "extra-9",
+          "dataset": "extra",
+          "question": "Tiêu đề email nộp bài ghi thế nào?",
+          "rank": 1,
+          "context_characters": 11172
+        },
+        {
+          "id": "extra-10",
+          "dataset": "extra",
+          "question": "Tính năng tách người nói trong đoạn ghi âm cần làm được gì?",
+          "rank": 1,
+          "context_characters": 12560
+        },
+        {
+          "id": "bench-4",
+          "dataset": "benchmark36p",
+          "question": "Thời gian thử việc đối với vị trí kỹ sư là bao lâu?",
+          "rank": 1,
+          "context_characters": 9154
+        },
+        {
+          "id": "bench-10",
+          "dataset": "benchmark36p",
+          "question": "Nhân viên chính thức được nghỉ phép năm bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 9168
+        },
+        {
+          "id": "bench-18",
+          "dataset": "benchmark36p",
+          "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+          "rank": null,
+          "context_characters": 9110
+        },
+        {
+          "id": "bench-25",
+          "dataset": "benchmark36p",
+          "question": "Mã quy trình phê duyệt công tác phí là gì?",
+          "rank": null,
+          "context_characters": 12877
+        }
+      ]
+    },
+    {
+      "config": {
+        "name": "bgem3_512_top20_rerank6",
+        "model": "BAAI/bge-m3",
+        "chunk_size": 512,
+        "chunk_overlap": 64,
+        "context_k": 6,
+        "candidates": 20,
+        "reranker": "BAAI/bge-reranker-v2-m3"
+      },
+      "overall": {
+        "n": 35,
+        "hit@1": 0.943,
+        "hit@3": 0.971,
+        "hit@context": 0.971,
+        "mrr": 0.957
+      },
+      "by_dataset": {
+        "benchmark36p": {
+          "n": 4,
+          "hit@1": 0.75,
+          "hit@3": 0.75,
+          "hit@6": 0.75,
+          "mrr": 0.75,
+          "misses": [
+            "bench-18"
+          ]
+        },
+        "evaluation25": {
+          "n": 21,
+          "hit@1": 0.952,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 0.976,
+          "misses": []
+        },
+        "extra": {
+          "n": 10,
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "hit@6": 1.0,
+          "mrr": 1.0,
+          "misses": []
+        }
+      },
+      "model_load_seconds": 22.5,
+      "embedding_seconds": 85.5,
+      "chunks": 58,
+      "chunk_tokens_median": 494.0,
+      "query_latency_ms": {
+        "median": 30286,
+        "max": 45906
+      },
+      "avg_context_characters": 8830,
+      "peak_rss_mb_so_far": 4699,
+      "rows": [
+        {
+          "id": 1,
+          "dataset": "evaluation25",
+          "question": "What is the Orion hotel allowance per night?",
+          "rank": 1,
+          "context_characters": 6888
+        },
+        {
+          "id": 2,
+          "dataset": "evaluation25",
+          "question": "What is the daily Orion meal reimbursement limit?",
+          "rank": 1,
+          "context_characters": 4785
+        },
+        {
+          "id": 3,
+          "dataset": "evaluation25",
+          "question": "Within how many days must Orion travel receipts be submitted?",
+          "rank": 1,
+          "context_characters": 5267
+        },
+        {
+          "id": 4,
+          "dataset": "evaluation25",
+          "question": "What is the Orion mileage reimbursement per kilometer?",
+          "rank": 1,
+          "context_characters": 3668
+        },
+        {
+          "id": 5,
+          "dataset": "evaluation25",
+          "question": "What is the Orion travel approval code?",
+          "rank": 1,
+          "context_characters": 4913
+        },
+        {
+          "id": 6,
+          "dataset": "evaluation25",
+          "question": "Một năm người lao động có bao nhiêu ngày phép?",
+          "rank": 2,
+          "context_characters": 11021
+        },
+        {
+          "id": 7,
+          "dataset": "evaluation25",
+          "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 7396
+        },
+        {
+          "id": 8,
+          "dataset": "evaluation25",
+          "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+          "rank": 1,
+          "context_characters": 11001
+        },
+        {
+          "id": 9,
+          "dataset": "evaluation25",
+          "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+          "rank": 1,
+          "context_characters": 11013
+        },
+        {
+          "id": 10,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Atlas Laptop?",
+          "rank": 1,
+          "context_characters": 10558
+        },
+        {
+          "id": 11,
+          "dataset": "evaluation25",
+          "question": "What is the revenue for Nova Phone?",
+          "rank": 1,
+          "context_characters": 8339
+        },
+        {
+          "id": 12,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Silver support plan allow?",
+          "rank": 1,
+          "context_characters": 3958
+        },
+        {
+          "id": 13,
+          "dataset": "evaluation25",
+          "question": "How many response hours does the Gold support plan allow?",
+          "rank": 1,
+          "context_characters": 5030
+        },
+        {
+          "id": 14,
+          "dataset": "evaluation25",
+          "question": "What time does the Lyra workshop start?",
+          "rank": 1,
+          "context_characters": 8978
+        },
+        {
+          "id": 15,
+          "dataset": "evaluation25",
+          "question": "Which room hosts the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 10926
+        },
+        {
+          "id": 16,
+          "dataset": "evaluation25",
+          "question": "How many people can attend the Lyra workshop?",
+          "rank": 1,
+          "context_characters": 10558
+        },
+        {
+          "id": 17,
+          "dataset": "evaluation25",
+          "question": "When is the Lyra workshop registration deadline?",
+          "rank": 1,
+          "context_characters": 10861
+        },
+        {
+          "id": 18,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse open?",
+          "rank": 1,
+          "context_characters": 5843
+        },
+        {
+          "id": 19,
+          "dataset": "evaluation25",
+          "question": "What time does the Vega warehouse close?",
+          "rank": 1,
+          "context_characters": 3974
+        },
+        {
+          "id": 20,
+          "dataset": "evaluation25",
+          "question": "What color safety helmet is required at Vega?",
+          "rank": 1,
+          "context_characters": 7785
+        },
+        {
+          "id": 21,
+          "dataset": "evaluation25",
+          "question": "What is the Vega emergency extension?",
+          "rank": 1,
+          "context_characters": 8468
+        },
+        {
+          "id": "extra-1",
+          "dataset": "extra",
+          "question": "bài toán 1 là gì",
+          "rank": 1,
+          "context_characters": 11507
+        },
+        {
+          "id": "extra-2",
+          "dataset": "extra",
+          "question": "bài toán 2 là gì",
+          "rank": 1,
+          "context_characters": 11512
+        },
+        {
+          "id": "extra-3",
+          "dataset": "extra",
+          "question": "Hệ thống RAG phải đọc được những loại file nào?",
+          "rank": 1,
+          "context_characters": 8927
+        },
+        {
+          "id": "extra-4",
+          "dataset": "extra",
+          "question": "Công nghệ nào được dùng để nhận diện chữ trong file scan?",
+          "rank": 1,
+          "context_characters": 10760
+        },
+        {
+          "id": "extra-5",
+          "dataset": "extra",
+          "question": "Pipeline phân tích cuộc họp cần dự đoán những đặc điểm gì của người nói?",
+          "rank": 1,
+          "context_characters": 6443
+        },
+        {
+          "id": "extra-6",
+          "dataset": "extra",
+          "question": "Kết quả phân tích âm thanh có thể trả về dưới định dạng nào?",
+          "rank": 1,
+          "context_characters": 10762
+        },
+        {
+          "id": "extra-7",
+          "dataset": "extra",
+          "question": "Nộp source code lên nền tảng nào?",
+          "rank": 1,
+          "context_characters": 10858
+        },
+        {
+          "id": "extra-8",
+          "dataset": "extra",
+          "question": "Gửi email kết quả cho địa chỉ nào?",
+          "rank": 1,
+          "context_characters": 11216
+        },
+        {
+          "id": "extra-9",
+          "dataset": "extra",
+          "question": "Tiêu đề email nộp bài ghi thế nào?",
+          "rank": 1,
+          "context_characters": 10148
+        },
+        {
+          "id": "extra-10",
+          "dataset": "extra",
+          "question": "Tính năng tách người nói trong đoạn ghi âm cần làm được gì?",
+          "rank": 1,
+          "context_characters": 11460
+        },
+        {
+          "id": "bench-4",
+          "dataset": "benchmark36p",
+          "question": "Thời gian thử việc đối với vị trí kỹ sư là bao lâu?",
+          "rank": 1,
+          "context_characters": 9140
+        },
+        {
+          "id": "bench-10",
+          "dataset": "benchmark36p",
+          "question": "Nhân viên chính thức được nghỉ phép năm bao nhiêu ngày?",
+          "rank": 1,
+          "context_characters": 11027
+        },
+        {
+          "id": "bench-18",
+          "dataset": "benchmark36p",
+          "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+          "rank": null,
+          "context_characters": 12974
+        },
+        {
+          "id": "bench-25",
+          "dataset": "benchmark36p",
+          "question": "Mã quy trình phê duyệt công tác phí là gì?",
+          "rank": 1,
+          "context_characters": 11069
+        }
+      ]
+    }
+  ]
+}

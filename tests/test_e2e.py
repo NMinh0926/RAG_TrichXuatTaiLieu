@@ -11,11 +11,14 @@ from app.main import app
 from app.api import questions
 from app.core.config import Settings
 from app.core.dependencies import get_document_service, get_generation
+from sqlalchemy.orm import sessionmaker
+
 from app.services.documents import DocumentService
 from app.services.ingestion import IngestionService
+from app.services.jobs import IngestRunner, InlineJobQueue
 from app.services.retrieval import RetrievalService
 from app.services.vector_store import VectorStore
-from app.services.prompts import INSUFFICIENT_ANSWER
+from app.llm.prompts import INSUFFICIENT_ANSWER
 from tests.test_generation import grounded_reply, service_with_reply
 
 pytestmark = pytest.mark.integration
@@ -28,14 +31,15 @@ pytestmark = pytest.mark.integration
     ('sample.jpg', 'How many days of annual leave do employees receive?', '12', {}),
     ('sample_scan.pdf', 'How many days of annual leave do employees receive?', '12', {'page': 1}),
 ])
-def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch, db_session, memory_storage,
-                         filename, question, keyword, source):
+def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch, db_session, db_engine,
+                         memory_storage, filename, question, keyword, source):
     settings = Settings(chroma_path=tmp_path / 'chroma', chroma_host='', _env_file=None)
     store = VectorStore(settings.chroma_path, settings.embedding_model, settings.chunk_size, settings.chunk_overlap)
     services = (IngestionService(settings, real_ocr, real_embedding, store),
                 RetrievalService(settings, real_embedding, store))
-    app.dependency_overrides[get_document_service] = lambda: DocumentService(db_session, memory_storage,
-                                                                             services[0], store)
+    runner = IngestRunner(sessionmaker(bind=db_engine, expire_on_commit=False), memory_storage, services[0])
+    app.dependency_overrides[get_document_service] = lambda: DocumentService(db_session, memory_storage, store,
+                                                                             InlineJobQueue(runner))
     monkeypatch.setattr(questions, 'get_services', lambda: services)
     # Raw Top-K reaches the model; the fake model cites the chunk containing the keyword.
     generation, fake = service_with_reply(grounded_reply(question, keyword))
@@ -83,10 +87,13 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.core.dependencies import get_generation
 from tests.test_generation import service_with_reply, user_message
-service, fake = service_with_reply('12 days [Nguồn: sample.pdf, trang 1]')
+service, fake = service_with_reply('12 days [1]')
 app.dependency_overrides[get_generation] = lambda: service
 with TestClient(app) as client:
     if sys.argv[1] == 'upload':
+        # The scratch database outlives test runs: start from an empty library.
+        for item in client.get('/api/documents', params={'page_size': 100}).json()['items']:
+            client.delete(f"/api/documents/{item['id']}")
         with open(sys.argv[3], 'rb') as file:
             response = client.post('/api/documents/upload', files={'file': ('sample.pdf', file)})
     else:
@@ -103,5 +110,5 @@ with TestClient(app) as client:
         return json.loads(done.stdout.strip().splitlines()[-1])
     uploaded = run('upload', str(tmp_path), str(samples / 'sample.pdf'))
     response = run('ask', str(tmp_path), uploaded['document_id'])
-    assert response['answer'] == '12 days [Nguồn: sample.pdf, trang 1]'
+    assert response['answer'] == '12 days [1]'
     assert response['sources'] == [{'filename': 'sample.pdf', 'page': 1}]

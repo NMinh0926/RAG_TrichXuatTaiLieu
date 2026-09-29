@@ -3,13 +3,12 @@ FROM python:3.11-slim-bookworm
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    HF_HOME=/app/.cache/huggingface \
-    PADDLE_PDX_CACHE_HOME=/app/.cache/paddlex \
-    PADDLE_HOME=/app/.cache/paddle
+    HF_HOME=/app/.cache/huggingface
 
 WORKDIR /app
+# Tesseract OCR with the Vietnamese and English LSTM models (pages run in parallel processes).
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgomp1 libgl1 libglib2.0-0 fonts-dejavu-core \
+    libgomp1 fonts-dejavu-core tesseract-ocr tesseract-ocr-vie tesseract-ocr-eng \
     && rm -rf /var/lib/apt/lists/*
 
 # Separate layer: changing requirements.lock.txt must not re-download torch.

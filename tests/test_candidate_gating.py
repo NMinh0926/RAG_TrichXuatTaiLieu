@@ -13,7 +13,7 @@ from app.core.config import Settings
 from app.core.dependencies import get_generation
 from app.main import app
 from app.models.schemas import SearchHit
-from app.services.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER
+from app.llm.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER
 from app.services.retrieval import RetrievalService
 from tests.conftest import FakeEmbedding
 from tests.test_generation import service_with_reply, user_message
@@ -38,7 +38,7 @@ class FixedStore:
     def __init__(self, hits):
         self.hits = hits
 
-    def search(self, embedding, top_k):
+    def search(self, embedding, top_k, document_ids=None):
         return self.hits[:top_k]
 
 
@@ -56,12 +56,12 @@ def ask(monkeypatch):
 def test_a_no_chunk_above_threshold_still_reaches_llm(ask):
     """No candidate passes RETRIEVAL_THRESHOLD, yet the relevant one is verified by the LLM."""
     hits = [candidate(ORION, 0.31), candidate('Unrelated travel policy.', 0.22, 'travel.pdf')]
-    generation, fake = service_with_reply('Mã là ZXQ-91827 [Nguồn: orion.pdf, trang 1]')
+    generation, fake = service_with_reply('Mã là ZXQ-91827 [1]')
     client, retrieval = ask(hits, generation)
     assert retrieval.retrieve('Project Orion code?') == []  # the old gate would have dropped everything
     response = client.post('/api/questions/ask', json={'question': 'What is the Project Orion code?'})
     assert response.status_code == 200
-    assert response.json() == {'answer': 'Mã là ZXQ-91827 [Nguồn: orion.pdf, trang 1]',
+    assert response.json() == {'answer': 'Mã là ZXQ-91827 [1]',
                                'sources': [{'filename': 'orion.pdf', 'page': 1}]}
     message = user_message(fake.chats[0])
     assert ORION in message and 'Unrelated travel policy.' in message
@@ -69,7 +69,7 @@ def test_a_no_chunk_above_threshold_still_reaches_llm(ask):
 
 def test_b_supported_answer_cites_only_supporting_context(ask):
     hits = [candidate('Unrelated travel policy.', 0.40, 'travel.pdf'), candidate(ORION, 0.35)]
-    generation, _ = service_with_reply('ZXQ-91827 [Nguồn: orion.pdf, trang 1]')
+    generation, _ = service_with_reply('ZXQ-91827 [2]')
     client, _ = ask(hits, generation)
     response = client.post('/api/questions/ask', json={'question': 'Project Orion code?'})
     assert response.json()['sources'] == [{'filename': 'orion.pdf', 'page': 1}]
@@ -94,9 +94,9 @@ def test_no_candidates_return_no_answer_without_llm(ask):
 
 
 @pytest.mark.parametrize('kwargs,code,status', [
-    ({'error': httpx.ConnectError('refused')}, 'ollama_unavailable', 503),
-    ({'status': 404}, 'ollama_model_missing', 503),
-    ({'error': httpx.ReadTimeout('slow')}, 'ollama_timeout', 504),
+    ({'error': httpx.ConnectError('refused')}, 'llm_unavailable', 503),
+    ({'status': 404}, 'llm_model_missing', 503),
+    ({'error': httpx.ReadTimeout('slow')}, 'llm_timeout', 504),
 ])
 def test_d_llm_failure_is_service_error_not_no_answer(ask, kwargs, code, status):
     generation, _ = service_with_reply(**kwargs)

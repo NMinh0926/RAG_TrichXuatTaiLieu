@@ -88,14 +88,15 @@ def test_blank_docx(tmp_path, fake_ocr):
     assert error.value.code == 'no_usable_text'
 
 
-def test_ocr_failure_is_typed(samples):
+def test_ocr_failure_is_typed(samples, monkeypatch):
     from app.services.ocr_service import OCRService
     from app.services.image_loader import load_image
-    class BrokenEngine:
-        def predict(self, image):
-            raise RuntimeError('inference failed')
+    import subprocess
+
+    def broken(*args, **kwargs):
+        raise subprocess.CalledProcessError(1, 'tesseract')
+    monkeypatch.setattr(subprocess, 'run', broken)
     ocr = OCRService()
-    ocr._engine = BrokenEngine()
     with pytest.raises(PipelineError) as error:
         load_image((samples / 'sample.jpg').read_bytes(), 'sample.jpg', ocr)
     assert error.value.code == 'ocr_failure'

@@ -1,4 +1,4 @@
-"""Real retrieval and optional real Ollama evaluation. Never substitutes a fake LLM.
+"""Real retrieval and optional real LLM evaluation. Never substitutes a fake LLM.
 
 Ranking is measured on the raw Top-K (before any threshold); answering uses the same
 candidate -> LLM verification flow as /api/questions/ask.
@@ -16,7 +16,7 @@ from app.core.errors import PipelineError
 from app.core.logging import configure_logging
 from app.services.embedding import EmbeddingService
 from app.services.generation import GenerationService
-from app.services.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER
+from app.llm.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER
 from app.services.ingestion import IngestionService
 from app.services.ocr_service import OCRService
 from app.services.retrieval import RetrievalService
@@ -98,7 +98,7 @@ def evaluate(root: Path, output: Path, retrieval_only=False, extra: Path | None 
     settings = Settings()
     generation = GenerationService(settings)
     if not retrieval_only:
-        generation.client.health()  # fail before downloads/ingestion if Ollama/model is missing
+        generation.client.health()  # fail before downloads/ingestion if LLM/model is missing
     cases, documents = load_cases(root, extra)
     # Separate database for every run, never touches the application's uploaded documents.
     store = VectorStore(Path('.cache/evaluation') / uuid4().hex, settings.embedding_model,
@@ -157,9 +157,9 @@ def evaluate(root: Path, output: Path, retrieval_only=False, extra: Path | None 
     abstentions = sum(row['no_answer_correct'] is True for row in rows) if not retrieval_only else None
     errors = [row['error'] for row in rows if 'error' in row]
     result = {
-        'mode': 'retrieval_only' if retrieval_only else 'real_ollama',
+        'mode': 'retrieval_only' if retrieval_only else 'real_llm',
         'created_at': datetime.now(timezone.utc).isoformat(),
-        'embedding_model': settings.embedding_model, 'ollama_model': settings.ollama_model if not retrieval_only else None,
+        'embedding_model': settings.embedding_model, 'llm_model': settings.llm_model if not retrieval_only else None,
         'top_k': settings.top_k, 'threshold': settings.retrieval_threshold,
         'candidate_min_relevance': settings.candidate_min_relevance,
         'retrieval_ranking': ranking_metrics(rows, settings.top_k, settings.retrieval_threshold),
@@ -184,13 +184,13 @@ def evaluate(root: Path, output: Path, retrieval_only=False, extra: Path | None 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--retrieval-only', action='store_true', help='Do not call Ollama; answer metrics remain null')
+    parser.add_argument('--retrieval-only', action='store_true', help='Do not call LLM; answer metrics remain null')
     parser.add_argument('--dataset', type=Path, default=Path('evaluation'))
     parser.add_argument('--extra-cases', type=Path, default=None,
                         help='Optional local JSON with extra documents/cases (e.g. a user-approved PDF)')
     parser.add_argument('--output', type=Path, default=None)
     args = parser.parse_args()
-    output = args.output or Path('evaluation') / ('results_retrieval.json' if args.retrieval_only else 'results_ollama.json')
+    output = args.output or Path('evaluation') / ('results_retrieval.json' if args.retrieval_only else 'results_llm.json')
     configure_logging()
     try:
         result = evaluate(args.dataset, output, args.retrieval_only, args.extra_cases)

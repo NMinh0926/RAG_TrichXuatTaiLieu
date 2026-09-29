@@ -6,90 +6,136 @@ import pytest
 
 from app.core.config import Settings
 from app.core.errors import PipelineError
+from app.llm.client import LLMClient
+from app.llm.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER, RAG_SYSTEM, rag_messages
 from app.models.schemas import SearchHit
 from app.services.answering import answer_from_contexts
-from app.services.generation import GenerationService, cited_indexes
-from app.services.ollama_client import OllamaClient
-from app.services.prompts import INSUFFICIENT_ANSWER, NO_CONTEXT_ANSWER, SYSTEM_PROMPT, build_user_message
+from app.services.generation import GenerationService, cited_numbers, is_insufficient
 
-BASE_URL = 'http://ollama.test:11434'
+BASE_URL = 'http://llm.test:11434/v1'
 MODEL = 'qwen2.5:7b'
 
 
 def hit(text='Nhân viên được nghỉ phép 12 ngày mỗi năm.', **metadata):
-    return SearchHit(content=text, metadata={'filename': 'policy.pdf', 'page': 1, **metadata},
-                     relevance=0.9, distance=0.1)
+    return SearchHit(id=metadata.pop('id', 'chunk-1'), content=text,
+                     metadata={'filename': 'policy.pdf', 'page': 1, **metadata}, relevance=0.9, distance=0.1)
 
 
-class FakeOllama:
-    """httpx transport double for Ollama. `reply` is a string or a function of the chat request body."""
+class FakeLLM:
+    """httpx transport double for an OpenAI-compatible server.
 
-    def __init__(self, reply=None, status=200, error=None, tags=(MODEL,)):
-        self.reply, self.status, self.error, self.tags = reply, status, error, tags
+    `reply` is a string or a function of the chat request body; streamed replies are split into deltas.
+    """
+
+    def __init__(self, reply=None, status=200, error=None, models=(MODEL,)):
+        self.reply, self.status, self.error, self.models = reply, status, error, models
         self.requests = []
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
         if self.error is not None:
             raise self.error
         body = json.loads(request.content) if request.content else None
-        self.requests.append({'method': request.method, 'url': str(request.url), 'body': body})
-        if request.url.path == '/api/tags':
-            return httpx.Response(200, json={'models': [{'name': name} for name in self.tags]})
+        self.requests.append({'method': request.method, 'url': str(request.url), 'body': body,
+                              'auth': request.headers.get('authorization')})
+        if request.url.path.endswith('/models'):
+            return httpx.Response(200, json={'object': 'list', 'data': [{'id': name} for name in self.models]})
         if self.status != 200:
-            return httpx.Response(self.status, json={'error': f'model "{MODEL}" not found, try pulling it first'})
+            return httpx.Response(self.status, json={'error': {'message': f'model "{MODEL}" not found'}})
         text = self.reply(body) if callable(self.reply) else self.reply
-        return httpx.Response(200, json={'model': MODEL, 'message': {'role': 'assistant', 'content': text},
-                                         'done': True})
+        if body.get('stream'):
+            deltas = [text[i:i + 7] for i in range(0, len(text), 7)]
+            lines = [f"data: {json.dumps({'choices': [{'delta': {'content': d}}]})}\n\n" for d in deltas]
+            return httpx.Response(200, content=''.join(lines) + 'data: [DONE]\n\n',
+                                  headers={'content-type': 'text/event-stream'})
+        return httpx.Response(200, json={'choices': [{'message': {'role': 'assistant', 'content': text}}]})
 
     @property
     def chats(self) -> list[dict]:
-        return [r['body'] for r in self.requests if r['url'].endswith('/api/chat')]
+        return [r['body'] for r in self.requests if r['url'].endswith('/chat/completions')]
 
 
-def service_with_reply(reply=None, *, status=200, error=None, tags=(MODEL,), **settings):
-    fake = FakeOllama(reply, status, error, tags)
-    config = Settings(_env_file=None, ollama_base_url=BASE_URL, ollama_model=MODEL, **settings)
-    return GenerationService(config, OllamaClient(config, transport=httpx.MockTransport(fake))), fake
+def service_with_reply(reply=None, *, status=200, error=None, models=(MODEL,), **settings):
+    fake = FakeLLM(reply, status, error, models)
+    config = Settings(_env_file=None, llm_base_url=BASE_URL, llm_model=MODEL, **settings)
+    return GenerationService(config, LLMClient(config, transport=httpx.MockTransport(fake))), fake
 
 
 def user_message(body: dict) -> str:
-    return body['messages'][1]['content']
+    return body['messages'][-1]['content']
 
 
 def question_of(body: dict) -> str:
     return user_message(body).rsplit('CÂU HỎI: ', 1)[1]
 
 
+def grounded_reply(question: str, keyword: str, outside: str = 'CEO của Microsoft là ai?'):
+    """Fake grounded model: cites the numbered context containing `keyword`; refuses for `outside`."""
+    def reply(body: dict) -> str:
+        if question_of(body) == outside:
+            return INSUFFICIENT_ANSWER
+        assert question_of(body) == question
+        context = user_message(body).removeprefix('NGỮ CẢNH:\n').rsplit('\n\nCÂU HỎI: ', 1)[0]
+        blocks = re.split(r'\n\n(?=\[\d+\] \()', context)
+        number = next(int(block[1:block.index(']')]) for block in blocks if keyword in block)
+        return f'{keyword} [{number}]'
+    return reply
+
+
 def test_chat_request_format():
-    service, fake = service_with_reply('12 ngày [Nguồn: policy.pdf, trang 1]')
+    service, fake = service_with_reply('12 ngày [1]', llm_api_key='secret-token', llm_max_tokens=900)
     context = hit(document_id='private-id')
     service.answer('Nghỉ bao nhiêu ngày?', [context])
     request = fake.requests[0]
-    assert request['method'] == 'POST' and request['url'] == f'{BASE_URL}/api/chat'
+    assert request['method'] == 'POST' and request['url'] == f'{BASE_URL}/chat/completions'
+    assert request['auth'] == 'Bearer secret-token'
     body = request['body']
     assert body['model'] == MODEL and body['stream'] is False
-    assert body['options'] == {'temperature': 0.2, 'num_ctx': 8192}
-    assert body['messages'][0] == {'role': 'system', 'content': SYSTEM_PROMPT}
-    assert user_message(body) == ('NGỮ CẢNH:\n[1] (policy.pdf, trang 1) Nhân viên được nghỉ phép 12 ngày mỗi năm.\n'
-                                  'CÂU HỎI: Nghỉ bao nhiêu ngày?')
+    assert body['temperature'] == 0.2 and body['max_tokens'] == 900
+    assert body['messages'][0] == {'role': 'system', 'content': RAG_SYSTEM}
+    assert user_message(body) == ('NGỮ CẢNH:\n[1] (policy.pdf, trang 1)\nNhân viên được nghỉ phép 12 ngày mỗi năm.'
+                                  '\n\nCÂU HỎI: Nghỉ bao nhiêu ngày?')
     assert 'private-id' not in json.dumps(body, ensure_ascii=False)
 
 
-def test_user_message_location_without_page():
-    message = build_user_message('q', [hit('a', page=None, sheet='Sales', filename='data.xlsx'),
-                                       hit('b', page=None, filename='hr.docx')])
-    assert '[1] (data.xlsx, sheet Sales) a' in message and '[2] (hr.docx) b' in message
+def test_no_api_key_sends_no_authorization_header():
+    service, fake = service_with_reply('x [1]')
+    service.answer('q', [hit()])
+    assert fake.requests[0]['auth'] is None
 
 
-def test_success_returns_answer_with_cited_sources():
-    service, _ = service_with_reply('Nhân viên được nghỉ 12 ngày [Nguồn: policy.pdf, trang 1].')
-    result = answer_from_contexts('q', [hit(), hit('Khác', filename='other.pdf', page=3)], service)
-    assert result.answer == 'Nhân viên được nghỉ 12 ngày [Nguồn: policy.pdf, trang 1].'
-    assert [s.model_dump(exclude_none=True) for s in result.sources] == [{'filename': 'policy.pdf', 'page': 1}]
+def test_context_locations_without_page():
+    message = rag_messages('q', [hit('a', page=None, sheet='Sales', filename='data.xlsx'),
+                                 hit('b', page=None, filename='hr.docx')])[1]['content']
+    assert '[1] (data.xlsx, sheet Sales)\na' in message and '[2] (hr.docx)\nb' in message
 
 
-def test_insufficient_context_discards_sources():
-    service, fake = service_with_reply(INSUFFICIENT_ANSWER)
+def test_success_cites_only_referenced_contexts():
+    service, _ = service_with_reply('Nghỉ 12 ngày [2]. Đơn vị: ngày [2][1].')
+    result = answer_from_contexts('q', [hit('Khác', filename='other.pdf', page=3), hit()], service)
+    assert result.answer == 'Nghỉ 12 ngày [2]. Đơn vị: ngày [2][1].'
+    assert [s.model_dump(exclude_none=True) for s in result.sources] == [
+        {'filename': 'policy.pdf', 'page': 1}, {'filename': 'other.pdf', 'page': 3}]
+
+
+@pytest.mark.parametrize('answer,expected', [
+    ('A [1]. B [3].', [1, 3]), ('A [2][1] [2]', [2, 1]), ('A [1, 3]', [1, 3]), ('A [1-3]', [1, 2, 3]),
+    ('A [1–2]', [1, 2]), ('A [9]', []), ('A [0]', []), ('Năm [2024] tăng', []), ('Không có trích dẫn', []),
+])
+def test_cited_numbers(answer, expected):
+    assert cited_numbers(answer, 3) == expected
+
+
+@pytest.mark.parametrize('text,refusal', [
+    (INSUFFICIENT_ANSWER, True), (f'"{INSUFFICIENT_ANSWER.rstrip(".")}"', True), (f'{INSUFFICIENT_ANSWER} [1]', True),
+    (f'Xin lỗi, {INSUFFICIENT_ANSWER.lower()}', True),
+    (f'Nghỉ 12 ngày [1]. {INSUFFICIENT_ANSWER} về phụ cấp.', False), ('Nghỉ 12 ngày [1].', False),
+])
+def test_refusal_detection(text, refusal):
+    assert is_insufficient(text) is refusal
+
+
+def test_insufficient_context_has_no_sources():
+    service, fake = service_with_reply(f'{INSUFFICIENT_ANSWER} [1]')
     result = answer_from_contexts('CEO của Microsoft là ai?', [hit()], service)
     assert result.answer == INSUFFICIENT_ANSWER and result.sources == []
     assert len(fake.chats) == 1
@@ -101,168 +147,80 @@ def test_empty_context_never_calls_llm():
     assert fake.requests == []
 
 
-def test_cited_indexes_matching():
-    contexts = [hit(), hit(page=2), hit(filename='data.xlsx', page=None, sheet='Sales'), hit(filename='hr.docx', page=None)]
-    answer = ('A [Nguồn: policy.pdf, trang 2]. B [Nguồn: data.xlsx, sheet Sales]. C [nguồn: hr]. '
-              'D [Nguồn: unknown.pdf, trang 1]. E [Nguồn: policy.pdf, trang 9].')
-    assert cited_indexes(answer, contexts) == [1, 2, 3]
+def test_stream_yields_deltas_that_finalize_to_the_answer():
+    service, fake = service_with_reply('Nhân viên được nghỉ 12 ngày mỗi năm [1].')
+    deltas = list(service.stream('q', [hit()]))
+    assert len(deltas) > 1 and fake.chats[0]['stream'] is True
+    verdict = service.finalize(''.join(deltas), [hit()])
+    assert verdict.supported and verdict.answer == 'Nhân viên được nghỉ 12 ngày mỗi năm [1].'
+    assert verdict.context_indexes == [0]
 
 
-def test_supported_without_valid_citation_has_no_sources():
-    service, _ = service_with_reply('12 ngày.')
-    result = answer_from_contexts('q', [hit(), hit(filename='other.pdf')], service)
-    assert result.answer == '12 ngày.' and result.sources == []
-
-
-def test_sources_are_deduplicated_retrieval_metadata():
-    service, _ = service_with_reply('x [Nguồn: policy.pdf, trang 1] y [Nguồn: policy.pdf, trang 2]')
-    result = answer_from_contexts('q', [hit(), hit(), hit(page=2)], service)
-    assert [s.model_dump(exclude_none=True) for s in result.sources] == [
-        {'filename': 'policy.pdf', 'page': 1}, {'filename': 'policy.pdf', 'page': 2}]
-
-
-def test_ollama_not_running():
+def test_llm_not_running():
     service, _ = service_with_reply(error=httpx.ConnectError('connection refused'))
     with pytest.raises(PipelineError) as caught:
         service.answer('q', [hit()])
-    assert caught.value.code == 'ollama_unavailable' and caught.value.status_code == 503
-    assert str(caught.value) == f'Không kết nối được Ollama tại {BASE_URL}. Hãy kiểm tra Ollama đang chạy.'
+    assert caught.value.code == 'llm_unavailable' and caught.value.status_code == 503
+    assert BASE_URL in str(caught.value)
 
 
-def test_model_not_pulled():
+@pytest.mark.parametrize('call', ['answer', 'stream'])
+def test_model_not_pulled(call):
     service, _ = service_with_reply(status=404)
     with pytest.raises(PipelineError) as caught:
-        service.answer('q', [hit()])
-    assert caught.value.code == 'ollama_model_missing' and caught.value.status_code == 503
+        list(getattr(service, call)('q', [hit()])) if call == 'stream' else service.answer('q', [hit()])
+    assert caught.value.code == 'llm_model_missing' and caught.value.status_code == 503
     assert str(caught.value) == f'Model {MODEL} chưa được tải. Chạy: ollama pull {MODEL}'
 
 
-def test_timeout():
-    service, _ = service_with_reply(error=httpx.ReadTimeout('slow'))
+def test_timeout_and_connect_timeout_are_distinguished():
+    slow, _ = service_with_reply(error=httpx.ReadTimeout('slow'))
+    with pytest.raises(PipelineError) as caught:
+        slow.answer('q', [hit()])
+    assert caught.value.code == 'llm_timeout' and caught.value.status_code == 504
+    assert 'LLM_TIMEOUT_SECONDS' in str(caught.value)
+    unreachable, _ = service_with_reply(error=httpx.ConnectTimeout('no route'))
+    with pytest.raises(PipelineError) as caught:
+        unreachable.answer('q', [hit()])
+    assert caught.value.code == 'llm_unavailable'
+
+
+@pytest.mark.parametrize('status,code', [(401, 'llm_auth_error'), (429, 'llm_rate_limited'), (500, 'llm_error')])
+def test_http_errors(status, code):
+    service, _ = service_with_reply(status=status)
     with pytest.raises(PipelineError) as caught:
         service.answer('q', [hit()])
-    assert caught.value.code == 'ollama_timeout' and caught.value.status_code == 504
-    assert 'OLLAMA_TIMEOUT_SECONDS' in str(caught.value) and '120' in str(caught.value)
+    assert caught.value.code == code
 
 
-@pytest.mark.parametrize('reply,status,code', [('x', 500, 'ollama_error'), ('  ', 200, 'ollama_empty_response')])
-def test_other_failures(reply, status, code):
-    service, _ = service_with_reply(reply, status=status)
+@pytest.mark.parametrize('payload,code', [({'choices': []}, 'llm_invalid_response'), ({'x': 1}, 'llm_invalid_response'),
+                                          ({'choices': [{'message': {'content': '  '}}]}, 'llm_empty_response')])
+def test_bad_response_shapes(payload, code):
+    config = Settings(_env_file=None, llm_base_url=BASE_URL, llm_model=MODEL)
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=payload))
     with pytest.raises(PipelineError) as caught:
-        service.answer('q', [hit()])
-    assert caught.value.code == code and caught.value.status_code == 502
+        GenerationService(config, LLMClient(config, transport=transport)).answer('q', [hit()])
+    assert caught.value.code == code
 
 
-def test_invalid_json_response():
-    config = Settings(_env_file=None, ollama_base_url=BASE_URL, ollama_model=MODEL)
-    transport = httpx.MockTransport(lambda request: httpx.Response(200, text='not json'))
+def test_empty_stream_is_an_error():
+    config = Settings(_env_file=None, llm_base_url=BASE_URL, llm_model=MODEL)
+    transport = httpx.MockTransport(lambda request: httpx.Response(200, content='data: [DONE]\n\n'))
     with pytest.raises(PipelineError) as caught:
-        GenerationService(config, OllamaClient(config, transport=transport)).answer('q', [hit()])
-    assert caught.value.code == 'ollama_invalid_response'
+        list(LLMClient(config, transport=transport).stream([{'role': 'user', 'content': 'q'}]))
+    assert caught.value.code == 'llm_empty_response'
 
 
-def test_timeout_and_base_url_from_settings():
-    config = Settings(_env_file=None, ollama_base_url=BASE_URL + '/', ollama_timeout_seconds=45)
-    client = OllamaClient(config)._client()
-    assert str(client.base_url).rstrip('/') == BASE_URL and client.timeout.read == 45
-
-
-@pytest.mark.parametrize('model,tags', [(MODEL, (MODEL, 'llama3:8b')), ('qwen2.5', ('qwen2.5:latest',))])
-def test_health_model_available(model, tags):
-    service, fake = service_with_reply(tags=tags)
+@pytest.mark.parametrize('model,models', [(MODEL, (MODEL, 'llama3:8b')), ('qwen2.5', ('qwen2.5:latest',))])
+def test_health_model_available(model, models):
+    service, fake = service_with_reply(models=models)
     service.client.model = model
-    result = service.client.health()
-    assert result['status'] == 'ok' and result['model_available'] is True
-    assert fake.requests[0]['method'] == 'GET' and fake.requests[0]['url'] == f'{BASE_URL}/api/tags'
+    assert service.client.health()['model_available'] is True
+    assert fake.requests[0]['method'] == 'GET' and fake.requests[0]['url'] == f'{BASE_URL}/models'
 
 
-def test_health_model_not_pulled():
-    service, _ = service_with_reply(tags=('llama3:8b',))
+def test_health_model_missing():
+    service, _ = service_with_reply(models=('llama3:8b',))
     with pytest.raises(PipelineError) as caught:
         service.client.health()
-    assert caught.value.code == 'ollama_model_missing'
-
-
-def grounded_reply(question: str, keyword: str, outside: str = 'CEO của Microsoft là ai?'):
-    """Fake grounded model: cites the context block containing `keyword`; insufficient for `outside`."""
-    def reply(body: dict) -> str:
-        if question_of(body) == outside:
-            return INSUFFICIENT_ANSWER
-        assert question_of(body) == question
-        context = user_message(body).removeprefix('NGỮ CẢNH:\n').rsplit('\nCÂU HỎI: ', 1)[0]
-        blocks = re.split(r'\n(?=\[\d+\] \()', context)
-        block = next(block for block in blocks if keyword in block)
-        return f"{keyword} [Nguồn: {block.split('(', 1)[1].split(') ', 1)[0]}]"
-    return reply
-
-
-@pytest.mark.parametrize('answer,expected', [
-    ('A [Nguồn: quy_che.pdf, trang 1, 2]', [0, 1]),
-    ('A [Nguồn: quy_che.pdf, trang 1-2]', [0, 1]),
-    ('A [Nguồn: quy_che.pdf, trang 1 và 2]', [0, 1]),
-    ('A [Nguồn: quy_che.pdf, trang 1; quy_che.pdf, trang 2]', [0, 1]),
-    ('A (Nguồn: quy_che.pdf, trang 2).', [1]),
-    ('A [Nguồn: quy_che.pdf trang 2]', [1]),
-    ('A [Nguồn: "quy_che.pdf", trang: 2]', [1]),
-    ('A [2]', [1]),
-    ('A [Nguồn: Báo cáo [2024].pdf, trang 3]. B', [2]),
-    ('A [Nguồn: quy_che.pdf, trang 2]. Xem thêm data.xlsx.', [1]),
-    ('Theo data.xlsx, doanh thu là 150.', [3]),
-    ('A [Nguồn: data.xlsx, sheet Other]', [3]),  # wrong sheet: falls back to the named file
-    ('A [9]', []),
-])
-def test_citation_variants(answer, expected):
-    contexts = [hit(filename='quy_che.pdf', page=1), hit(filename='quy_che.pdf', page=2),
-                hit(filename='Báo cáo [2024].pdf', page=3), hit(filename='data.xlsx', page=None, sheet='Sales')]
-    assert cited_indexes(answer, contexts) == expected
-
-
-def test_partial_answer_with_citation_is_kept():
-    text = ('Nhân viên được nghỉ 12 ngày [Nguồn: policy.pdf, trang 1]. '
-            'Tài liệu không có đủ thông tin để trả lời câu hỏi này về phụ cấp.')
-    service, _ = service_with_reply(text)
-    verdict = service.answer('Nghỉ bao nhiêu ngày và phụ cấp bao nhiêu?', [hit()])
-    assert verdict.supported and verdict.answer == text and verdict.context_indexes == [0]
-
-
-def test_insufficient_with_punctuation_variant():
-    service, _ = service_with_reply('"Tài liệu không có đủ thông tin để trả lời câu hỏi này"')
-    assert service.answer('q', [hit()]).answer == INSUFFICIENT_ANSWER
-
-
-@pytest.mark.parametrize('error', [httpx.ConnectTimeout('no route'), httpx.PoolTimeout('pool')])
-def test_connect_timeout_is_unreachable_not_slow_model(error):
-    service, _ = service_with_reply(error=error)
-    with pytest.raises(PipelineError) as caught:
-        service.answer('q', [hit()])
-    assert caught.value.code == 'ollama_unavailable'
-
-
-@pytest.mark.parametrize('payload', [{'message': 'hi'}, ['x'], {'message': {'content': 5}}])
-def test_unexpected_chat_shapes_are_controlled_errors(payload):
-    config = Settings(_env_file=None, ollama_base_url=BASE_URL, ollama_model=MODEL)
-    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=payload))
-    with pytest.raises(PipelineError) as caught:
-        GenerationService(config, OllamaClient(config, transport=transport)).answer('q', [hit()])
-    assert caught.value.code == 'ollama_empty_response'
-
-
-@pytest.mark.parametrize('payload', [['x'], {'models': None}])
-def test_unexpected_tags_shapes_are_controlled_errors(payload):
-    config = Settings(_env_file=None, ollama_base_url=BASE_URL, ollama_model=MODEL)
-    transport = httpx.MockTransport(lambda request: httpx.Response(200, json=payload))
-    with pytest.raises(PipelineError) as caught:
-        OllamaClient(config, transport=transport).health()
-    assert caught.value.code == 'ollama_invalid_response'
-
-
-@pytest.mark.parametrize('text', [
-    # Observed from qwen2.5:7b: refusal with a spurious citation must stay a refusal.
-    'Tài liệu không có đủ thông tin để trả lời câu hỏi này. [Nguồn: sample.docx, sample.xlsx, sample.png]',
-    'Tài liệu không có đủ thông tin để trả lời câu hỏi này [1].',
-    'Xin lỗi, tài liệu không có đủ thông tin để trả lời câu hỏi này.',
-])
-def test_refusal_variants_have_no_sources(text):
-    service, _ = service_with_reply(text)
-    result = answer_from_contexts('q', [hit(), hit(filename='sample.docx', page=None)], service)
-    assert result.answer == INSUFFICIENT_ANSWER and result.sources == []
+    assert caught.value.code == 'llm_model_missing'

@@ -1,0 +1,88 @@
+{
+  "paddleocr_pp-ocrv5_latin": {
+    "cer_mean": 0.1073,
+    "seconds_per_page_median": 15.79,
+    "evaluation_keyword_recall": "8/8",
+    "pages": [
+      {
+        "page": 31,
+        "seconds": 16.97,
+        "cer": 0.1028,
+        "sample": "Chương 11: Tài sn và thit bi Điêu 91. Nhân viên mi đưc phân công ngưi hưng dn trong 13 tun đu tiên đ làm quen công vic. Nhân viên mi đưc phân công ngưi hưng dn "
+      },
+      {
+        "page": 32,
+        "seconds": 15.46,
+        "cer": 0.1088,
+        "sample": "Chương 11: Tài sn và thit b Điêu 94. Vic đánh giá kt qu thc hin đưc tin hành vào cui mi năm da trên các ch tiêu đã giao. Mi đ xut thay đi phi đưc lp thành văn b"
+      },
+      {
+        "page": 33,
+        "seconds": 15.79,
+        "cer": 0.1099,
+        "sample": "Chương 11: Tài sn và thit b Điêu 97. Trưng hp phát sinh vưng mc, nhân viên liên h b phn kho vt tư đ đưc gii đáp kp thi. H sơ liên quan đưc lưu tr ti thiu 6 năm "
+      },
+      {
+        "page": 34,
+        "seconds": 15.97,
+        "cer": 0.0984,
+        "sample": "Chương 12: Điêu khon thi hành Điêu 100. Nhân viên mi đưc phân công ngưi hưng dn trong 21 tun đu tiên đ làm quen công vic. Quy đnh này áp dng cho toàn b nhân viê"
+      },
+      {
+        "page": 35,
+        "seconds": 15.79,
+        "cer": 0.1032,
+        "sample": "Chương 12: Điêu khon thi hành Điêu 103. Công ty khuyn khích nhân viên đóng góp ý kin nhm ci tin quy trình làm vic ti phòng k toán. Công ty khuyn khích nhân viên"
+      },
+      {
+        "page": 36,
+        "seconds": 15.74,
+        "cer": 0.1206,
+        "sample": "Chương 12: Điêu khon thi hành Điêu 106. Trưng hp phát sinh vưng mc, nhân viên liên h b phn phòng k thut đ đưc gii đáp kp thi. Vic đánh giá kt qu thc hin đưc tin"
+      }
+    ]
+  },
+  "tesseract_vie": {
+    "cer_mean": 0.0009,
+    "seconds_per_page_median": 2.29,
+    "evaluation_keyword_recall": "8/8",
+    "pages": [
+      {
+        "page": 31,
+        "seconds": 2.46,
+        "cer": 0.0,
+        "sample": "Chương 11: Tài sản và thiết bị Điều 91. Nhân viên mới được phân công người hướng dẫn trong 13 tuần đầu tiên để làm quen công việc. Nhân viên mới được phân công "
+      },
+      {
+        "page": 32,
+        "seconds": 2.31,
+        "cer": 0.0008,
+        "sample": "Chương 11: Tài sản và thiết bị Điều 94. Việc đánh giá kết quả thực hiện được tiến hành vào cuối mỗi năm dựa trên các chỉ tiêu đã giao. Mọi đề xuất thay đổi phải"
+      },
+      {
+        "page": 33,
+        "seconds": 2.26,
+        "cer": 0.0008,
+        "sample": "Chương 11: Tài sản và thiết bị Điều 97. Trường hợp phát sinh vướng mắc, nhân viên liên hệ bộ phận kho vật tư để được giải đáp kịp thời. Hồ sơ liên quan được lưu"
+      },
+      {
+        "page": 34,
+        "seconds": 2.22,
+        "cer": 0.0008,
+        "sample": "Chương 12: Điều khoản thi hành Điều 100. Nhân viên mới được phân công người hướng dẫn trong 21 tuần đầu tiên để làm quen công việc. Quy định này áp dụng cho toà"
+      },
+      {
+        "page": 35,
+        "seconds": 2.27,
+        "cer": 0.0008,
+        "sample": "Chương 12: Điều khoản thi hành Điều 103. Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại phòng kế toán. Công ty khuyến khích"
+      },
+      {
+        "page": 36,
+        "seconds": 2.3,
+        "cer": 0.0024,
+        "sample": "Chương 12: Điều khoản thi hành Điều 106. Trường hợp phát sinh vướng mắc, nhân viên liên hệ bộ phận phòng kỹ thuật để được giải đáp kịp thời. Việc đánh giá kết q"
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import hashlib
 import logging
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -27,15 +28,25 @@ class IngestionService:
     def __init__(self, settings, ocr, embedding, store):
         self.settings, self.ocr, self.embedding, self.store = settings, ocr, embedding, store
 
-    def process(self, data: bytes, filename: str, document_id: str, id_prefix: str | None = None) -> ProcessedDocument:
-        """Chunk ids are new UUIDs (database rows) or '<id_prefix>_<n>' (stable, database-less re-ingest)."""
+    def process(self, data: bytes, filename: str, document_id: str, id_prefix: str | None = None,
+                progress: Callable[[str, float], None] | None = None,
+                warn: Callable[[dict], None] | None = None) -> ProcessedDocument:
+        """Chunk ids are new UUIDs (database rows) or '<id_prefix>_<n>' (stable, database-less re-ingest).
+
+        `progress(step, fraction)` reports extract/chunk/embed advancement; `warn` receives non-fatal
+        per-page problems (e.g. one page failing OCR) instead of failing the whole document.
+        """
+        report = progress or (lambda step, fraction=0.0: None)
         validate_extension(filename)
         if not data:
             raise PipelineError('empty_document', 'File is missing or empty.')
         if len(data) > self.settings.max_upload_mb * 1024 * 1024:
             raise PipelineError('file_too_large', 'File exceeds MAX_UPLOAD_MB.', 413)
+        report('extract', 0.0)
         try:
-            units = load_file(data, filename, self.ocr, self.settings.pdf_min_text_chars)
+            units = load_file(data, filename, self.ocr, self.settings.pdf_min_text_chars,
+                              progress=lambda fraction: report('extract', fraction), warn=warn,
+                              workers=self.settings.ocr_workers)
         except PipelineError:
             raise
         except Exception as exc:
@@ -43,16 +54,22 @@ class IngestionService:
         pages = [unit.metadata['page'] for unit in units if isinstance(unit.metadata.get('page'), int)]
         logger.info('extracted units=%d filename=%r', len(units), filename)
         for unit in units:
-            unit.content = clean_text(unit.content)
+            cleaned = clean_text(unit.content)
+            if cleaned != unit.content:
+                # Offsets would no longer match the word positions: keep the text, drop the boxes.
+                unit.content, unit.layout = cleaned, None
         units = [unit for unit in units if any(char.isalnum() for char in unit.content)]
         if not units:
             raise PipelineError('no_usable_text', 'No usable text found after extraction/OCR.')
+        report('chunk')
         model = self.embedding.model
         chunks = chunk_units(units, model.tokenizer, self.settings.chunk_size,
                              self.settings.chunk_overlap, model.max_seq_length)
         if not chunks:
             raise PipelineError('no_usable_text', 'No usable text chunks found.')
-        embeddings = self.embedding.embed_documents([chunk.content for chunk in chunks])
+        report('embed', 0.0)
+        embeddings = self.embedding.embed_documents([chunk.content for chunk in chunks],
+                                                    progress=lambda fraction: report('embed', fraction))
         logger.info('chunks=%d embeddings=%d dimension=%d filename=%r', len(chunks), len(embeddings),
                     len(embeddings[0]) if embeddings else 0, filename)
         chunk_ids = [f'{id_prefix}_{c.chunk_index}' if id_prefix else str(uuid.uuid4()) for c in chunks]

@@ -1,0 +1,227 @@
+{
+  "llm_model": "qwen2.5:7b",
+  "summary_model": "qwen2.5:7b",
+  "embedding_model": "BAAI/bge-m3",
+  "reranker_model": null,
+  "top_k": 6,
+  "retrieval_candidates": 20,
+  "questions": [
+    {
+      "id": "fact_text_1",
+      "question": "Thời gian thử việc đối với vị trí kỹ sư là bao lâu?",
+      "expect": "45",
+      "retrieval_seconds": 0.139,
+      "context_pages": [
+        2,
+        22,
+        29,
+        4,
+        5,
+        9
+      ],
+      "ttft_seconds": 20.07,
+      "total_seconds": 24.51,
+      "intent": "qa",
+      "answer_characters": 94,
+      "answer_words": 22,
+      "sources": [
+        {
+          "n": 1,
+          "filename": "test_4mb.pdf",
+          "page": 4
+        }
+      ],
+      "error": null,
+      "answer": "Theo quy định trong tài liệu, thời gian thử việc đối với vị trí kỹ sư là 45 ngày làm việc. [1]",
+      "expected_found": true
+    },
+    {
+      "id": "fact_text_2",
+      "question": "Nhân viên chính thức được nghỉ phép năm bao nhiêu ngày?",
+      "expect": "16",
+      "retrieval_seconds": 0.537,
+      "context_pages": [
+        10,
+        11,
+        12,
+        23,
+        4
+      ],
+      "ttft_seconds": 4.63,
+      "total_seconds": 9.2,
+      "intent": "qa",
+      "answer_characters": 104,
+      "answer_words": 23,
+      "sources": [
+        {
+          "n": 1,
+          "filename": "test_4mb.pdf",
+          "page": 10
+        },
+        {
+          "n": 4,
+          "filename": "test_4mb.pdf",
+          "page": 10
+        }
+      ],
+      "error": null,
+      "answer": "Nhân viên chính thức được nghỉ phép năm 16 ngày và được cộng thêm 1 ngày cho mỗi 5 năm thâm niên [1][4].",
+      "expected_found": true
+    },
+    {
+      "id": "fact_text_3",
+      "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+      "expect": "850.000",
+      "retrieval_seconds": 0.192,
+      "context_pages": [
+        1,
+        13,
+        14,
+        15,
+        18,
+        34
+      ],
+      "ttft_seconds": 4.62,
+      "total_seconds": 11.44,
+      "intent": "qa",
+      "answer_characters": 142,
+      "answer_words": 32,
+      "sources": [
+        {
+          "n": 1,
+          "filename": "test_4mb.pdf",
+          "page": 18
+        }
+      ],
+      "error": null,
+      "answer": "Phụ cấp ăn trưa mỗi tháng là 850.000 đồng. Theo đoạn [1], phụ cấp này áp dụng cho toàn bộ nhân viên, kể cả nhân viên thời vụ và cộng tác viên.",
+      "expected_found": true
+    },
+    {
+      "id": "fact_code",
+      "question": "Mã quy trình phê duyệt công tác phí là gì?",
+      "expect": "CTP-2026-07",
+      "retrieval_seconds": 0.178,
+      "context_pages": [
+        1,
+        15,
+        22,
+        23,
+        24,
+        4
+      ],
+      "ttft_seconds": 5.1,
+      "total_seconds": 7.09,
+      "intent": "qa",
+      "answer_characters": 54,
+      "answer_words": 13,
+      "sources": [],
+      "error": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "expected_found": false
+    },
+    {
+      "id": "fact_ocr_page",
+      "question": "Kho vật tư Sao Mai mở cửa lúc mấy giờ?",
+      "expect": "6 giờ 30",
+      "retrieval_seconds": 0.212,
+      "context_pages": [
+        1,
+        19,
+        3,
+        4,
+        5,
+        8
+      ],
+      "ttft_seconds": 3.09,
+      "total_seconds": 4.9,
+      "intent": "qa",
+      "answer_characters": 54,
+      "answer_words": 13,
+      "sources": [],
+      "error": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "expected_found": false
+    },
+    {
+      "id": "no_answer",
+      "question": "Công ty Sao Mai có bao nhiêu nhân viên?",
+      "expect": null,
+      "retrieval_seconds": 0.212,
+      "context_pages": [
+        1,
+        13,
+        27,
+        32,
+        34
+      ],
+      "ttft_seconds": 2.54,
+      "total_seconds": 4.26,
+      "intent": "qa",
+      "answer_characters": 54,
+      "answer_words": 13,
+      "sources": [],
+      "error": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "expected_found": null
+    },
+    {
+      "id": "summary",
+      "question": "Hãy tóm tắt toàn bộ nội dung của tài liệu quy chế này.",
+      "expect": null,
+      "retrieval_seconds": 0.246,
+      "context_pages": [
+        1,
+        17,
+        19,
+        25,
+        27,
+        28
+      ],
+      "ttft_seconds": 495.23,
+      "total_seconds": 684.63,
+      "intent": "summary",
+      "answer_characters": 4081,
+      "answer_words": 913,
+      "sources": [
+        {
+          "n": 1,
+          "filename": "test_4mb.pdf",
+          "page": null
+        }
+      ],
+      "error": null,
+      "answer": "## Tổng quan\nTài liệu này là một bản quy định chung của công ty, bao gồm các quy định về đánh giá kết quả thực hiện, thời gian làm việc, quản lý chi phí, lưu trữ hồ sơ, hướng dẫn cho nhân viên mới, và các quy định khác. Mục đích của tài liệu là hướng dẫn và quản lý hoạt động của nhân viên, đảm bảo tuân thủ các quy định và quy trình được ban hành. Phạm vi áp dụng bao gồm toàn bộ nhân viên, kể cả nhân viên thời vụ và cộng tác viên của các phòng ban khác nhau như nhân sự, kinh doanh, kế toán, kỹ thuật, và kho vật tư.\n\n## Các phần chính\n### Quy định chung\n- Đánh giá kết quả thực hiện được tiến hành vào cuối mỗi quý, tháng, hoặc năm dựa trên các chỉ tiêu đã giao.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong thời gian từ 4 đến 28 ngày làm việc.\n- Mọi đề xuất thay đổi phải được lập thành văn bản và gửi về phòng hành chính trước 30 ngày.\n- Nhân viên mới được phân công người hướng dẫn trong thời gian từ 6 đến 30 tuần để làm quen công việc.\n- Hồ sơ liên quan được lưu trữ tối thiểu 9 đến 30 năm theo quy định của pháp luật hiện hành.\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại các phòng ban khác nhau.\n\n### Thời giờ làm việc\n- Việc đánh giá kết quả thực hiện được tiến hành vào cuối mỗi tháng dựa trên các chỉ tiêu đã giao.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong vòng 4 đến 28 ngày làm việc.\n- Người lao động có trách nhiệm tuân thủ nội quy và các quy trình được ban hành tại các phòng ban khác nhau.\n- Hồ sơ liên quan được lưu trữ tối thiểu 9 đến 23 năm theo quy định của pháp luật hiện hành.\n- Trưởng bộ phận phòng nhân sự chịu trách nhiệm hướng dẫn, kiểm tra và báo cáo định kỳ 9 lần mỗi quý.\n- Nhân viên mới được phân công người hướng dẫn trong 29 tuần đầu tiên để làm quen công việc.\n\n### Bảo mật thông tin\n- Việc đánh giá kết quả thực hiện được tiến hành vào cuối mỗi năm dựa trên các chỉ tiêu đã giao.\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại các phòng ban khác nhau.\n- Mọi đề xuất thay đổi phải được lập thành văn bản và gửi về phòng hành chính trước 11 đến 30 ngày.\n- Quy định này áp dụng cho toàn bộ nhân viên, kể cả nhân viên thời vụ và cộng tác viên của các phòng ban khác nhau.\n- Trường hợp phát sinh vướng mắc, nhân viên liên hệ bộ phận phòng kinh doanh, ban giám đốc, hoặc phòng kế toán để được giải đáp kịp thời.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong vòng 5 đến 28 ngày làm việc.\n- Hồ sơ liên quan được lưu trữ tối thiểu 15 đến 30 năm theo quy định của pháp luật hiện hành.\n\n### Điêu kiện thi hành\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại phòng kế toán.\n- Vic đánh giá kết quả thực hiện vào cuối mỗi tháng dựa trên các tiêu chí đã giao.\n- Người lao động có trách nhiệm tuân thủ các quy định và các quy trình được ban hành tại khu vực tư vấn.\n- Miễn đỗ hoặc đề xuất thay đổi được lập thành văn bản và gửi về phòng hành chính trước 6 đến 20 ngày.\n- Trưng bày phần phòng kinh doanh, nhân sự, và kế toán chủ trách nhiệm hưng động, kiểm tra và báo cáo định kỳ 7 đến 26 lần mỗi quý.\n\n## Chi tiết và số liệu quan trọng\n- **Đánh giá kết quả thực hiện**: Cuối mỗi quý, tháng, hoặc năm.\n- **Thời gian phê duyệt chi phí**: 4 đến 28 ngày làm việc.\n- **Thời gian gửi đề xuất thay đổi**: 6 đến 30 ngày.\n- **Thời gian hướng dẫn cho nhân viên mới**: 6 đến 30 tuần.\n- **Thời gian lưu trữ hồ sơ**: 9 đến 30 năm.\n- **Phụ cấp ăn trưa**: 850.000 đồng mỗi tháng.\n- **Mã quy trình phê duyệt công tác phí**: CTP-2026-07.\n- **Trưng bày phần phòng kinh doanh, nhân sự, và kế toán**: 7 đến 26 lần mỗi quý.\n- **Trưng bày phần phát sinh vướng mắc**: 3 đến 9 lần mỗi quý.\n\n## Kết luận\nTài liệu này cung cấp các quy định chi tiết về quản lý hoạt động của nhân viên, bao gồm đánh giá kết quả thực hiện, quản lý chi phí, lưu trữ hồ sơ, hướng dẫn cho nhân viên mới, và các quy định khác. Các quy định này nhằm đảm bảo tuân thủ các quy định và quy trình được ban hành, đồng thời khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc.",
+      "expected_found": null
+    },
+    {
+      "id": "summary_cached",
+      "question": "Tóm tắt tài liệu quy chế.",
+      "expect": null,
+      "retrieval_seconds": 6.4,
+      "context_pages": [
+        17,
+        2,
+        25,
+        28,
+        30,
+        8
+      ],
+      "ttft_seconds": 0.2,
+      "total_seconds": 0.22,
+      "intent": "summary",
+      "answer_characters": 4081,
+      "answer_words": 913,
+      "sources": [
+        {
+          "n": 1,
+          "filename": "test_4mb.pdf",
+          "page": null
+        }
+      ],
+      "error": null,
+      "answer": "## Tổng quan\nTài liệu này là một bản quy định chung của công ty, bao gồm các quy định về đánh giá kết quả thực hiện, thời gian làm việc, quản lý chi phí, lưu trữ hồ sơ, hướng dẫn cho nhân viên mới, và các quy định khác. Mục đích của tài liệu là hướng dẫn và quản lý hoạt động của nhân viên, đảm bảo tuân thủ các quy định và quy trình được ban hành. Phạm vi áp dụng bao gồm toàn bộ nhân viên, kể cả nhân viên thời vụ và cộng tác viên của các phòng ban khác nhau như nhân sự, kinh doanh, kế toán, kỹ thuật, và kho vật tư.\n\n## Các phần chính\n### Quy định chung\n- Đánh giá kết quả thực hiện được tiến hành vào cuối mỗi quý, tháng, hoặc năm dựa trên các chỉ tiêu đã giao.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong thời gian từ 4 đến 28 ngày làm việc.\n- Mọi đề xuất thay đổi phải được lập thành văn bản và gửi về phòng hành chính trước 30 ngày.\n- Nhân viên mới được phân công người hướng dẫn trong thời gian từ 6 đến 30 tuần để làm quen công việc.\n- Hồ sơ liên quan được lưu trữ tối thiểu 9 đến 30 năm theo quy định của pháp luật hiện hành.\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại các phòng ban khác nhau.\n\n### Thời giờ làm việc\n- Việc đánh giá kết quả thực hiện được tiến hành vào cuối mỗi tháng dựa trên các chỉ tiêu đã giao.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong vòng 4 đến 28 ngày làm việc.\n- Người lao động có trách nhiệm tuân thủ nội quy và các quy trình được ban hành tại các phòng ban khác nhau.\n- Hồ sơ liên quan được lưu trữ tối thiểu 9 đến 23 năm theo quy định của pháp luật hiện hành.\n- Trưởng bộ phận phòng nhân sự chịu trách nhiệm hướng dẫn, kiểm tra và báo cáo định kỳ 9 lần mỗi quý.\n- Nhân viên mới được phân công người hướng dẫn trong 29 tuần đầu tiên để làm quen công việc.\n\n### Bảo mật thông tin\n- Việc đánh giá kết quả thực hiện được tiến hành vào cuối mỗi năm dựa trên các chỉ tiêu đã giao.\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại các phòng ban khác nhau.\n- Mọi đề xuất thay đổi phải được lập thành văn bản và gửi về phòng hành chính trước 11 đến 30 ngày.\n- Quy định này áp dụng cho toàn bộ nhân viên, kể cả nhân viên thời vụ và cộng tác viên của các phòng ban khác nhau.\n- Trường hợp phát sinh vướng mắc, nhân viên liên hệ bộ phận phòng kinh doanh, ban giám đốc, hoặc phòng kế toán để được giải đáp kịp thời.\n- Các khoản chi phí phát sinh phải có chứng từ hợp lệ và được phê duyệt trong vòng 5 đến 28 ngày làm việc.\n- Hồ sơ liên quan được lưu trữ tối thiểu 15 đến 30 năm theo quy định của pháp luật hiện hành.\n\n### Điêu kiện thi hành\n- Công ty khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc tại phòng kế toán.\n- Vic đánh giá kết quả thực hiện vào cuối mỗi tháng dựa trên các tiêu chí đã giao.\n- Người lao động có trách nhiệm tuân thủ các quy định và các quy trình được ban hành tại khu vực tư vấn.\n- Miễn đỗ hoặc đề xuất thay đổi được lập thành văn bản và gửi về phòng hành chính trước 6 đến 20 ngày.\n- Trưng bày phần phòng kinh doanh, nhân sự, và kế toán chủ trách nhiệm hưng động, kiểm tra và báo cáo định kỳ 7 đến 26 lần mỗi quý.\n\n## Chi tiết và số liệu quan trọng\n- **Đánh giá kết quả thực hiện**: Cuối mỗi quý, tháng, hoặc năm.\n- **Thời gian phê duyệt chi phí**: 4 đến 28 ngày làm việc.\n- **Thời gian gửi đề xuất thay đổi**: 6 đến 30 ngày.\n- **Thời gian hướng dẫn cho nhân viên mới**: 6 đến 30 tuần.\n- **Thời gian lưu trữ hồ sơ**: 9 đến 30 năm.\n- **Phụ cấp ăn trưa**: 850.000 đồng mỗi tháng.\n- **Mã quy trình phê duyệt công tác phí**: CTP-2026-07.\n- **Trưng bày phần phòng kinh doanh, nhân sự, và kế toán**: 7 đến 26 lần mỗi quý.\n- **Trưng bày phần phát sinh vướng mắc**: 3 đến 9 lần mỗi quý.\n\n## Kết luận\nTài liệu này cung cấp các quy định chi tiết về quản lý hoạt động của nhân viên, bao gồm đánh giá kết quả thực hiện, quản lý chi phí, lưu trữ hồ sơ, hướng dẫn cho nhân viên mới, và các quy định khác. Các quy định này nhằm đảm bảo tuân thủ các quy định và quy trình được ban hành, đồng thời khuyến khích nhân viên đóng góp ý kiến nhằm cải tiến quy trình làm việc.",
+      "expected_found": null
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "pdf": {
+    "path": ".cache/benchmark/test_4mb.pdf",
+    "megabytes": 4.11
+  },
+  "python": "3.11.16",
+  "cpu_count": 16,
+  "config": {
+    "embedding_model": "BAAI/bge-m3",
+    "chunk_size": 512,
+    "chunk_overlap": 64,
+    "ocr_lang": "vi",
+    "pdf_min_text_chars": 20
+  },
+  "import_seconds": 0.13,
+  "e2e_cold_upload": {
+    "seconds": 212.75,
+    "status": 200,
+    "body": {
+      "status": "success",
+      "filename": "test_4mb.pdf",
+      "chunks_created": 49,
+      "document_id": "4b33b752-110a-4312-8e2a-c1c4b3acdbd8",
+      "duplicate": false
+    }
+  },
+  "ocr_busy_seconds": 58.8,
+  "ocr": {
+    "engine": "paddle",
+    "workers": 1
+  },
+  "warm_steps_seconds": {
+    "extract_wall": 59.59,
+    "clean": 0.007,
+    "chunk": 0.07,
+    "embedding": 77.72,
+    "chroma_write": 0.09,
+    "total": 137.48
+  },
+  "counts": {
+    "pages": 36,
+    "ocr_pages": 6,
+    "text_pages": 30,
+    "characters": 71450,
+    "chunks": 49,
+    "chunk_tokens": {
+      "min": 66,
+      "median": 501,
+      "max": 512
+    },
+    "effective_chunk_tokens": 512,
+    "embedding_dimension": 1024
+  },
+  "ocr_seconds_per_page": [
+    11.473,
+    10.095,
+    9.188,
+    9.382,
+    9.454,
+    9.203
+  ],
+  "throughput": {
+    "ocr_seconds_per_page_median": 9.418,
+    "embedding_chunks_per_second": 0.6,
+    "warm_pages_per_second": 0.26
+  },
+  "e2e_warm_upload": {
+    "seconds": 139.88,
+    "status": 200,
+    "body": {
+      "status": "success",
+      "filename": "test_4mb.pdf",
+      "chunks_created": 49,
+      "document_id": "4a154b0c-c036-41f7-9fc2-f30767837ab3",
+      "duplicate": false
+    },
+    "inside_request_seconds": {
+      "ocr": 60.34,
+      "ocr_pages": 6,
+      "embedding": 77.98,
+      "chroma_write": 0.11
+    }
+  },
+  "model_load_seconds_estimate": 72.87,
+  "peak_rss_mb": 6242.6
+}

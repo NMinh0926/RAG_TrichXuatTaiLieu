@@ -76,12 +76,13 @@ def legacy_id(filename: str, data: bytes) -> str:
 
 def migrate(uploads: Path, chroma: Path) -> dict:
     from app.core.dependencies import get_services, get_storage
-    from app.db.models import Chunk, Document, DocumentStatus
+    from app.db.models import Chunk, Document, DocumentStatus, IngestJob
     from app.db.repositories import DocumentRepository
     from app.db.session import get_sessionmaker
     from app.models.schemas import Chunk as ChunkModel
     from app.services.documents import DocumentService
     from app.services.file_router import content_type_for, extension_of, SUPPORTED_EXTENSIONS
+    from app.services.jobs import IngestRunner, InlineJobQueue
     ingestion, _ = get_services()
     store, storage = ingestion.store, get_storage()
     legacy = read_legacy(chroma, store.collection.name)
@@ -89,9 +90,11 @@ def migrate(uploads: Path, chroma: Path) -> dict:
     report = {'linked': [], 'reindexed': [], 'skipped_existing': [], 'failed': [],
               'legacy_documents_without_file': []}
     matched_legacy = set()
+    runner = IngestRunner(get_sessionmaker(), storage, ingestion)
     with get_sessionmaker()() as session:
         repository = DocumentRepository(session)
-        service = DocumentService(session, storage, ingestion, store)
+        # Unlinkable files are processed right here, not by the shared worker.
+        service = DocumentService(session, storage, store, InlineJobQueue(runner))
         for path in sorted(p for p in uploads.iterdir() if p.suffix.lower() in SUPPORTED_EXTENSIONS):
             data = path.read_bytes()
             match = next(((name, legacy_id(name, data)) for name in known_names
@@ -104,11 +107,13 @@ def migrate(uploads: Path, chroma: Path) -> dict:
                 report['skipped_existing'].append(filename)
                 continue
             if existing is not None:
-                service.delete(existing)  # left over by an interrupted run
+                service.delete(existing, force=True)  # left over by an interrupted run
             linked = None
             try:
                 if match is None:
-                    service.upload(filename, data)
+                    submission = service.submit(filename, data)
+                    session.expire_all()
+                    service.raise_for_failure(session.get(IngestJob, submission.job.id))
                     report['reindexed'].append(filename)
                     continue
                 entry = legacy[match[1]]

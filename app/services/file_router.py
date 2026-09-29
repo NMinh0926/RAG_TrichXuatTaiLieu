@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from pathlib import PurePath
 
 from app.core.errors import PipelineError
@@ -31,10 +32,12 @@ def content_type_for(filename: str) -> str:
     return CONTENT_TYPES[validate_extension(filename)]
 
 
-def load_file(data: bytes, filename: str, ocr, min_text_chars: int):
+def load_file(data: bytes, filename: str, ocr, min_text_chars: int,
+              progress: Callable[[float], None] | None = None, warn: Callable[[dict], None] | None = None,
+              workers: int = 1):
     extension = validate_extension(filename)
     if extension == '.pdf':
-        return load_pdf(data, filename, ocr, min_text_chars)
+        return load_pdf(data, filename, ocr, min_text_chars, progress=progress, warn=warn, workers=workers)
     if extension == '.docx':
         return load_docx(data, filename)
     if extension in {'.xls', '.xlsx'}:

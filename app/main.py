@@ -2,23 +2,27 @@ import logging
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import documents, questions
+from app.api import chat, documents, questions
 from app.core.config import get_settings
-from app.core.dependencies import get_generation
+from app.core.dependencies import get_llm
 from app.core.errors import PipelineError
 from app.core.logging import configure_logging, log_failure
 
 configure_logging()
 logger = logging.getLogger(__name__)
-app = FastAPI(title='Multi-modal Document Assistant', version='2.0.0',
-              description='Local extraction/OCR and retrieval; a local Ollama model answers from retrieved text only.')
+app = FastAPI(title='Multi-modal Document Assistant', version='3.0.0',
+              description='Documents in PostgreSQL + S3 storage; retrieval over Chroma; an OpenAI-compatible LLM '
+                          '(local Ollama by default) answers from retrieved text only.')
 app.add_middleware(CORSMiddleware,
                    allow_origins=get_settings().allowed_frontend_origins,
                    allow_credentials=False, allow_methods=['GET', 'POST', 'DELETE'],
                    allow_headers=['Content-Type'])
 app.include_router(questions.router)
 app.include_router(documents.api_router)
+app.include_router(documents.jobs_router)
 app.include_router(questions.api_router)
+app.include_router(chat.chat_router)
+app.include_router(chat.conversations_router)
 
 
 @app.exception_handler(PipelineError)
@@ -39,7 +43,7 @@ def health():
     return {'status': 'ok', 'phase': 'generation'}
 
 
-@app.get('/health/ollama')
-def ollama_health(generation=Depends(get_generation)):
-    # GET {OLLAMA_BASE_URL}/api/tags and confirm OLLAMA_MODEL is pulled; failures return 503.
-    return generation.client.health()
+@app.get('/health/llm')
+def llm_health(llm=Depends(get_llm)):
+    # GET {LLM_BASE_URL}/models and confirm LLM_MODEL is available; failures return 503.
+    return llm.health()

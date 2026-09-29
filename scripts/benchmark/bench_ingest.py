@@ -26,12 +26,13 @@ class TimedOCR:
 
     def __init__(self, ocr):
         self.ocr, self.calls = ocr, []
+        self.parallel = ocr.parallel
 
-    def extract(self, image):
+    def extract_words(self, image):
         start = time.perf_counter()
-        text = self.ocr.extract(image)
+        words = self.ocr.extract_words(image)
         self.calls.append(round(time.perf_counter() - start, 3))
-        return text
+        return words
 
 
 def clear(client) -> None:
@@ -88,10 +89,12 @@ def main():
         steps = {}
         ocr = TimedOCR(ingestion.ocr)
         start = time.perf_counter()
-        units = load_pdf(args.pdf.read_bytes(), args.pdf.name, ocr, settings.pdf_min_text_chars)
-        read_total = time.perf_counter() - start
-        steps['pdf_read_and_render'] = round(read_total - sum(ocr.calls), 2)
-        steps['ocr'] = round(sum(ocr.calls), 2)
+        units = load_pdf(args.pdf.read_bytes(), args.pdf.name, ocr, settings.pdf_min_text_chars,
+                         workers=settings.ocr_workers)
+        # Wall time of reading + OCR (pages may be recognized in parallel); OCR busy time reported separately.
+        steps['extract_wall'] = round(time.perf_counter() - start, 2)
+        result['ocr_busy_seconds'] = round(sum(ocr.calls), 2)
+        result['ocr'] = {'engine': 'tesseract', 'lang': settings.ocr_lang, 'workers': settings.ocr_workers}
         start = time.perf_counter()
         for unit in units:
             unit.content = clean_text(unit.content)

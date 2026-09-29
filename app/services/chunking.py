@@ -1,4 +1,5 @@
 from app.models.schemas import Chunk, DocumentUnit
+from app.services.layout import chunk_boxes
 
 
 def chunk_units(units: list[DocumentUnit], tokenizer, chunk_size: int,
@@ -28,10 +29,12 @@ def chunk_units(units: list[DocumentUnit], tokenizer, chunk_size: int,
             content = raw.strip()
             if content:
                 char_start = raw_start + (len(raw) - len(raw.lstrip()))
+                char_end = char_start + len(content)
+                page = unit.metadata.get('page')
+                bboxes = chunk_boxes(unit.layout, char_start, char_end, page) if unit.layout and page else None
                 index = len(chunks)
-                chunks.append(Chunk(content=content, chunk_index=index, char_start=char_start,
-                                    char_end=char_start + len(content),
-                                    metadata={**unit.metadata, 'chunk_index': index}))
+                chunks.append(Chunk(content=content, chunk_index=index, char_start=char_start, char_end=char_end,
+                                    bboxes=bboxes or None, metadata={**unit.metadata, 'chunk_index': index}))
             if end == len(offsets):
                 break
     return chunks

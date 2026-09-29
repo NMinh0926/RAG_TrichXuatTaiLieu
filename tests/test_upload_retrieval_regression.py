@@ -12,7 +12,7 @@ from app.core import dependencies
 from app.core.config import get_settings
 from app.core.dependencies import get_generation
 from app.db.session import get_db
-from app.services.prompts import INSUFFICIENT_ANSWER
+from app.llm.prompts import INSUFFICIENT_ANSWER
 from tests.test_generation import grounded_reply, service_with_reply, user_message
 
 
@@ -22,12 +22,17 @@ from tests.test_generation import grounded_reply, service_with_reply, user_messa
      'Một năm nhân viên được nghỉ bao nhiêu ngày phép?', '12'),
     ('Project Orion có mã nội bộ ZXQ-91827.', 'Mã nội bộ của Project Orion là gì?', 'ZXQ-91827'),
 ])
-def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding, db_session,
+def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding, db_session, db_engine,
                                                     memory_storage, fact, question, keyword):
+    from sqlalchemy.orm import sessionmaker
+    from app.services.jobs import IngestRunner, InlineJobQueue
     monkeypatch.setenv('CHROMA_HOST', '')
     monkeypatch.setenv('CHROMA_PATH', str(tmp_path / 'chroma'))
     monkeypatch.setattr(dependencies, '_services', None)
     monkeypatch.setattr(dependencies, 'get_storage', lambda: memory_storage)
+    # The worker's code path, run inline against the test database.
+    monkeypatch.setattr(dependencies, 'get_job_queue', lambda: InlineJobQueue(IngestRunner(
+        sessionmaker(bind=db_engine, expire_on_commit=False), memory_storage, dependencies.get_services()[0])))
     app.dependency_overrides[get_db] = lambda: db_session
     # Share the already loaded real model, leaving production service wiring intact.
     monkeypatch.setattr(dependencies, 'EmbeddingService', lambda name: real_embedding)
@@ -62,7 +67,7 @@ def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real
             assert any(keyword in h['content'] for h in filtered.json()['results'])
             answer = client.post('/api/questions/ask', json={'question': question})
             assert answer.status_code == 200
-            assert answer.json()['answer'] == f'{keyword} [Nguồn: unique.docx]'
+            assert answer.json()['answer'] == f'{keyword} [1]'
             assert fact in user_message(fake.chats[0])
             assert answer.json()['sources'] == [{'filename': 'unique.docx'}]
             outside = client.post('/api/questions/ask', json={'question': 'CEO của Microsoft là ai?'})

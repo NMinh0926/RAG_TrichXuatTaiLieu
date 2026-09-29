@@ -6,7 +6,7 @@ import uuid
 from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
-from app.db.models import Chunk, Document
+from app.db.models import Chunk, Conversation, Document, Message, MessageRole
 
 
 class DocumentRepository:
@@ -50,6 +50,44 @@ class DocumentRepository:
         if not chunk_ids:
             return {}
         return {chunk.id: chunk for chunk in self.session.scalars(select(Chunk).where(Chunk.id.in_(chunk_ids)))}
+
+
+class ConversationRepository:
+    def __init__(self, session: Session):
+        self.session = session
+
+    def get(self, conversation_id: uuid.UUID) -> Conversation | None:
+        return self.session.get(Conversation, conversation_id)
+
+    def create(self, title: str) -> Conversation:
+        conversation = Conversation(title=title)
+        self.session.add(conversation)
+        self.session.flush()
+        return conversation
+
+    def list(self, page: int, page_size: int) -> tuple[list[Conversation], int]:
+        total = self.session.scalar(select(func.count()).select_from(Conversation)) or 0
+        items = self.session.scalars(select(Conversation).order_by(Conversation.updated_at.desc(), Conversation.id)
+                                     .offset((page - 1) * page_size).limit(page_size)).all()
+        return list(items), total
+
+    def add_message(self, conversation: Conversation, role: MessageRole, content: str,
+                    sources: list | None = None) -> Message:
+        message = Message(conversation_id=conversation.id, role=role, content=content, sources=sources)
+        self.session.add(message)
+        conversation.updated_at = func.now()
+        self.session.flush()
+        return message
+
+    def history(self, conversation_id: uuid.UUID, limit: int) -> list[Message]:
+        """The last `limit` messages, oldest first."""
+        recent = self.session.scalars(select(Message).where(Message.conversation_id == conversation_id)
+                                      .order_by(Message.seq.desc()).limit(limit)).all()
+        return list(reversed(recent))
+
+    def delete(self, conversation: Conversation) -> None:
+        self.session.delete(conversation)
+        self.session.flush()
 
 
 def _escape_like(text: str) -> str:

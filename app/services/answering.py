@@ -1,7 +1,7 @@
 import logging
 
 from app.models.schemas import AnswerResponse, Source
-from app.services.prompts import NO_CONTEXT_ANSWER
+from app.llm.prompts import NO_CONTEXT_ANSWER
 
 logger = logging.getLogger(__name__)
 

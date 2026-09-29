@@ -12,13 +12,25 @@ def samples(tmp_path_factory):
 
 
 class FakeOCR:
-    def __init__(self):
-        self.calls = 0
+    """OCR double: OCR_TEXT as one line of words, 100 px wide each, at the top of the image."""
+    parallel = False
 
-    def extract(self, image):
+    def __init__(self, fail_calls: set[int] | None = None):
+        self.calls = 0
+        self.fail_calls = fail_calls or set()
+
+    def extract_words(self, image):
+        from app.core.errors import PipelineError
+        from app.services.layout import Word
         self.calls += 1
         assert image.width > 0
-        return OCR_TEXT
+        if self.calls in self.fail_calls:
+            raise PipelineError('ocr_failure', 'OCR failed.', 503)
+        return [Word(text, 100 * i, 10, 100 * i + 90, 40, block=0, line=0) for i, text in enumerate(OCR_TEXT.split())]
+
+    def extract(self, image):
+        from app.services.layout import build_text
+        return build_text(self.extract_words(image))[0]
 
 
 class WordTokenizer:
@@ -32,7 +44,9 @@ class WordTokenizer:
 class FakeEmbedding:
     model = SimpleNamespace(tokenizer=WordTokenizer(), max_seq_length=128)
 
-    def embed_documents(self, texts):
+    def embed_documents(self, texts, progress=None):
+        if progress is not None:
+            progress(1.0)
         return [[1.0, 0.0, 0.0] for _ in texts]
 
     def embed_query(self, question):
@@ -61,7 +75,7 @@ def _test_database_url() -> str:
     import os
     from app.core.config import Settings
     from scripts.isolation import scratch_database_url
-    return os.environ.get('TEST_DATABASE_URL') or scratch_database_url(Settings().database_url)
+    return os.environ.get('TEST_DATABASE_URL') or scratch_database_url(Settings().database_url, '_test')
 
 
 @pytest.fixture(scope='session')

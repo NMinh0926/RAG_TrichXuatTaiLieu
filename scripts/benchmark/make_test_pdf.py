@@ -76,14 +76,20 @@ def scanned_page(text: str, rng: np.random.Generator) -> bytes:
     return buffer.getvalue()
 
 
+def page_texts(text_pages: int = 30, scanned_pages: int = 6, sentences_per_page: int = 22) -> list[str]:
+    """Ground-truth text of every page, in order (deterministic)."""
+    rng = random.Random(20260929)
+    texts = [page_text(rng, index, sentences_per_page if index < text_pages else 12)
+             for index in range(text_pages + scanned_pages)]
+    texts[0] = f'{TITLE}\n{texts[0]}'
+    return texts
+
+
 def build(output: Path, text_pages: int = 30, scanned_pages: int = 6, sentences_per_page: int = 22) -> dict:
-    rng, noise = random.Random(20260929), np.random.default_rng(20260929)
+    noise = np.random.default_rng(20260929)
     output.parent.mkdir(parents=True, exist_ok=True)
     with fitz.open() as pdf:
-        for index in range(text_pages + scanned_pages):
-            text = page_text(rng, index, sentences_per_page if index < text_pages else 12)
-            if index == 0:
-                text = f'{TITLE}\n{text}'
+        for index, text in enumerate(page_texts(text_pages, scanned_pages, sentences_per_page)):
             page = pdf.new_page(width=595, height=842)
             if index < text_pages:
                 page.insert_textbox(fitz.Rect(56, 56, 539, 786), text, fontsize=11, fontname='dejavu', fontfile=FONT)

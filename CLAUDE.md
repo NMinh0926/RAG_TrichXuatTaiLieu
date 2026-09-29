@@ -56,8 +56,12 @@ Chạy từ thư mục gốc project bằng PowerShell. Python chỉ chạy tron
   - Toàn bộ: `docker compose run --rm -v "${PWD}:/app" api python -m pytest -q -p no:cacheprovider`
   - Nhanh (bỏ OCR/embedding thật): thêm `-m "not integration"`.
 - Xem log: `docker compose logs -f --tail=100 api`
-- Re-index dữ liệu: chưa có script re-index; hiện chỉ nạp lại file qua `POST /api/documents/upload`
-  (cùng nội dung → cùng ID, upsert). Đổi embedding/chunk config tạo collection Chroma mới → phải nạp lại.
+- Re-index dữ liệu: chưa có script re-index (Giai đoạn 2). Đổi embedding/chunk config tạo collection Chroma mới.
+- Migration DB: tự chạy bởi service `init`; tạo migration mới:
+  `docker compose run --rm --no-deps -v "${PWD}:/app" api alembic revision --autogenerate -m "<msg>"`
+- Chuyển dữ liệu cũ `./data`: `docker compose run --rm -v "${PWD}/data:/legacy:ro" api python -m scripts.migrate_legacy --uploads /legacy/uploads --chroma /legacy/chroma`
+- Backup / restore: `powershell -ExecutionPolicy Bypass -File scripts\backup.ps1` ;
+  `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 -From backups\<timestamp>`
 - Benchmark (DB Chroma riêng trong volume cache, không đụng dữ liệu thật):
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.make_test_pdf`
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.bench_ingest`

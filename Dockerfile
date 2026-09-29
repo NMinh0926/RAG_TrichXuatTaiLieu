@@ -12,11 +12,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 libgl1 libglib2.0-0 fonts-dejavu-core \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements.lock.txt ./
+# Separate layer: changing requirements.lock.txt must not re-download torch.
 # CPU wheels avoid installing the large CUDA runtime on this CPU backend.
-RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.0 \
-    && pip install -r requirements.lock.txt
+RUN pip install --index-url https://download.pytorch.org/whl/cpu torch==2.14.0
+COPY requirements.lock.txt ./
+RUN pip install -r requirements.lock.txt
 
+COPY alembic.ini ./
+COPY migrations ./migrations
 COPY app ./app
 COPY scripts ./scripts
 COPY tests ./tests
@@ -25,7 +28,7 @@ COPY evaluation ./evaluation
 COPY pytest.ini ./
 
 RUN useradd --create-home --uid 10001 appuser \
-    && mkdir -p /app/data/uploads /app/data/chroma /app/.cache \
+    && mkdir -p /app/data/chroma /app/.cache \
     && chown -R appuser:appuser /app
 USER appuser
 

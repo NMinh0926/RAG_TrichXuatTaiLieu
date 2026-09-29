@@ -5,7 +5,7 @@
 | Giai đoạn | Trạng thái |
 |---|---|
 | 0 — Khảo sát & baseline | **Xong** (29/09/2026) |
-| 1 — Lưu trữ PostgreSQL + MinIO | Chưa bắt đầu |
+| 1 — Lưu trữ PostgreSQL + object storage | **Xong** (29/09/2026) — SeaweedFS thay MinIO |
 | 2 — Chất lượng câu trả lời | Chưa bắt đầu |
 | 3 — Tốc độ ingest | Chưa bắt đầu |
 | 4 — Giao diện | Chưa bắt đầu |
@@ -73,16 +73,47 @@
 3. System prompt yêu cầu "rõ ràng, ngắn gọn" và "không lặp lại nguyên văn".
 4. Không có phân loại ý định / map-reduce; num_ctx 8192 nhưng prompt chỉ ~800 token.
 
+## Giai đoạn 1 — đã làm
+
+- **Compose**: `postgres` (17-alpine, volume `pg_data`, tự tạo DB `<db>_test` cho test), `seaweedfs`
+  (S3 API, credential từ `S3_ACCESS_KEY/S3_SECRET_KEY`, tự tạo bucket khi khởi động — `docker/seaweedfs/start.sh`),
+  `chroma` (server 1.5.9, volume `chroma_data`), `init` (một lần: `alembic upgrade head` + kiểm tra storage/Chroma),
+  `api` (chờ `init`). Mọi dữ liệu nằm trong Docker volume. Fallback credential dev trong compose chỉ để chạy local.
+- **Schema** (SQLAlchemy 2 + Alembic `0001`): `documents` (sha256 unique, status pending/processing/ready/failed,
+  object_key, page_count, chunk_count), `chunks` (ordinal, page/sheet, content, char_start/char_end, bboxes JSONB),
+  `ingest_jobs` (status, progress, step, warnings JSONB, started/finished), `conversations`, `messages`
+  (sources JSONB, `seq` identity để giữ thứ tự). ID vector trong Chroma = `chunks.id`; metadata `document_id` = `documents.id`.
+- **Storage**: `app/storage/base.py` (Protocol put/get/read/delete/presigned_url/ping), `app/storage/s3.py` (boto3,
+  path-style, SigV4). Loader nhận bytes; không còn ghi file người dùng ra đĩa (`UPLOAD_DIR` đã bỏ).
+- **Upload**: `DocumentService` — sha256 → trùng thì trả document cũ (`duplicate: true`), không xử lý lại;
+  giữ chỗ sha256 bằng bản ghi trước khi OCR (upload đồng thời cùng file an toàn); lỗi → xóa object/rows/vectors.
+- **API mới** (dưới `/api/documents` thay vì `/documents` để sau này chung reverse proxy với frontend):
+  `GET /api/documents?page&page_size&q`, `GET /api/documents/{id}`, `GET /api/documents/{id}/file` (stream, inline),
+  `DELETE /api/documents/{id}`. `POST /api/documents/upload` giữ nguyên field cũ + `document_id`, `duplicate`.
+  Bỏ endpoint phase 1 `POST /documents/ingest` (frontend không dùng).
+- **Migrate**: `scripts/migrate_legacy.py` — đã chạy trên dữ liệu thật: 9 tài liệu liên kết vector cũ (không OCR lại,
+  khôi phục đúng tên file gốc từ id cũ), 2 file trùng nội dung bỏ qua, 0 lỗi. `data/` cũ vẫn giữ nguyên.
+- **Backup/restore**: `scripts/backup.ps1`, `scripts/restore.ps1` (+ `scripts/objects_transfer.py`). Đã thử: xóa 1 tài liệu
+  → restore → tài liệu, file và vector quay lại.
+- **Cách ly**: `scripts/isolation.py` — test/benchmark dùng DB `_test`, bucket `-scratch`, Chroma local; không chạm dữ liệu thật.
+- Xóa script chẩn đoán cũ (`inspect_retrieval`, `debug_representation`, `reproduce_retrieval_gate`, `diagnose_upload`).
+- Tests: 125 passed (storage stub + SeaweedFS thật, repository, API tài liệu, migrate, persistence 2 tiến trình).
+
 ## Quyết định / ghi chú
 
+- **MinIO → SeaweedFS** (người dùng duyệt): MinIO không còn image Docker công khai (Docker Hub gỡ, quay/ghcr cần đăng nhập).
+  Code chỉ dùng S3 API nên đổi sang S3/R2 chỉ bằng cấu hình.
+- **Chroma chế độ server** từ Giai đoạn 1: API và worker (Giai đoạn 3) cùng ghi vector; persistent client không an toàn đa tiến trình.
+- Chunk migrate từ dữ liệu cũ chưa có char offset/bbox (char_start=0) — sẽ đầy đủ khi re-index (Giai đoạn 2/3).
+
 - Không sửa logic ứng dụng trong Giai đoạn 0.
-- **Git chưa commit**: repo git hiện ở `C:/Users/NhatMinh/Documents` (cả thư mục Documents, có file
-  dự án khác đang staged); `Bai_1` chưa được track. Cần người dùng chọn: `git init` riêng trong `Bai_1`
-  (khuyến nghị) rồi tạo nhánh `upgrade`, hay dùng repo Documents.
+- Git: repo riêng trong `Bai_1`, nhánh `upgrade` (người dùng duyệt). `data/`, `backups/`, `.env` không commit.
+- Quyết định người dùng cho các giai đoạn sau: hàng đợi **RQ + Redis**; frontend **React + TS + Vite + Tailwind**;
+  làm liền các giai đoạn, tự chốt model theo số đo.
 
 ## Việc còn dở / đề xuất cho giai đoạn sau
 
-- Git: chờ người dùng quyết định (xem trên).
+- README chưa viết lại theo kiến trúc mới (làm ở Giai đoạn 6); lệnh hiện hành nằm trong CLAUDE.md.
 - Giai đoạn 2/3 cần xét: model OCR hỗ trợ đầy đủ dấu tiếng Việt; tăng Top-K + rerank cho tài liệu dài;
   map-reduce cho tóm tắt; streaming.
 - Giai đoạn 3: điều tra OCR chậm theo thread (số luồng Paddle), đưa OCR/embedding ra worker nền.

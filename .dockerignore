@@ -2,6 +2,9 @@
 !Dockerfile
 !requirements.lock.txt
 !pytest.ini
+!alembic.ini
+!migrations/
+!migrations/**
 !app/
 !app/**
 !scripts/

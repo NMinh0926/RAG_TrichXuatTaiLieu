@@ -21,3 +21,4 @@ frontend/dist/
 submission/
 *.zip
 *.log
+backups/

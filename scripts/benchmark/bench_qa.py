@@ -71,8 +71,9 @@ def main():
     parser.add_argument('--work', type=Path, default=Path('.cache/benchmark/run'))
     parser.add_argument('--output', type=Path, default=Path('docs/benchmarks/baseline_qa.json'))
     args = parser.parse_args()
-    os.environ['CHROMA_PATH'] = str(args.work / 'chroma')
-    os.environ['UPLOAD_DIR'] = str(args.work / 'uploads')
+    from scripts.isolation import isolate, prepare
+    isolate(args.work)  # the scratch resources bench_ingest filled
+    prepare()
     from fastapi.testclient import TestClient
     from app.core.config import get_settings
     from app.core.dependencies import get_generation, get_services

@@ -12,7 +12,7 @@ pytestmark = pytest.mark.integration
 
 
 def test_02_real_scanned_pdf(samples, real_ocr):
-    unit = load_pdf(samples / 'sample_scan.pdf', real_ocr)[0]
+    unit = load_pdf((samples / 'sample_scan.pdf').read_bytes(), 'sample_scan.pdf', real_ocr)[0]
     assert '12' in unit.content
     assert 'leave' in unit.content.lower()
     assert unit.metadata['page'] == 1
@@ -21,7 +21,7 @@ def test_02_real_scanned_pdf(samples, real_ocr):
 
 def test_05_real_image_ocr(samples, real_ocr):
     for name in ['sample.jpg', 'sample.png']:
-        unit = load_image(samples / name, real_ocr)[0]
+        unit = load_image((samples / name).read_bytes(), name, real_ocr)[0]
         assert '12' in unit.content and 'leave' in unit.content.lower()
 
 

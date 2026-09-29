@@ -8,9 +8,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
-from app.api import documents, questions
-from app.core.config import Settings, get_settings
-from app.core.dependencies import get_generation
+from app.api import questions
+from app.core.config import Settings
+from app.core.dependencies import get_document_service, get_generation
+from app.services.documents import DocumentService
 from app.services.ingestion import IngestionService
 from app.services.retrieval import RetrievalService
 from app.services.vector_store import VectorStore
@@ -27,17 +28,17 @@ pytestmark = pytest.mark.integration
     ('sample.jpg', 'How many days of annual leave do employees receive?', '12', {}),
     ('sample_scan.pdf', 'How many days of annual leave do employees receive?', '12', {'page': 1}),
 ])
-def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch,
+def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch, db_session, memory_storage,
                          filename, question, keyword, source):
-    settings = Settings(upload_dir=tmp_path / 'uploads', chroma_path=tmp_path / 'chroma', _env_file=None)
+    settings = Settings(chroma_path=tmp_path / 'chroma', chroma_host='', _env_file=None)
     store = VectorStore(settings.chroma_path, settings.embedding_model, settings.chunk_size, settings.chunk_overlap)
     services = (IngestionService(settings, real_ocr, real_embedding, store),
                 RetrievalService(settings, real_embedding, store))
-    monkeypatch.setattr(documents, 'get_services', lambda: services)
+    app.dependency_overrides[get_document_service] = lambda: DocumentService(db_session, memory_storage,
+                                                                             services[0], store)
     monkeypatch.setattr(questions, 'get_services', lambda: services)
     # Raw Top-K reaches the model; the fake model cites the chunk containing the keyword.
     generation, fake = service_with_reply(grounded_reply(question, keyword))
-    app.dependency_overrides[get_settings] = lambda: settings
     app.dependency_overrides[get_generation] = lambda: generation
     try:
         with TestClient(app) as client:
@@ -67,29 +68,40 @@ def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatc
         app.dependency_overrides.clear()
 
 
-def test_persistence_after_process_restart(samples, tmp_path):
+def test_persistence_after_process_restart(samples, tmp_path, db_session):
+    """Upload in one process, ask in a new one: file, rows and vectors come back from storage.
+
+    Uses scratch resources (test database, scratch bucket, local Chroma dir) via scripts.isolation.
+    """
     code = '''
 import json, sys
+from pathlib import Path
+from scripts.isolation import isolate, prepare
+isolate(Path(sys.argv[2]))
+prepare()
 from fastapi.testclient import TestClient
 from app.main import app
 from app.core.dependencies import get_generation
-from tests.test_generation import service_with_reply
-service, _ = service_with_reply('12 days [Nguồn: sample.pdf, trang 1]')
+from tests.test_generation import service_with_reply, user_message
+service, fake = service_with_reply('12 days [Nguồn: sample.pdf, trang 1]')
 app.dependency_overrides[get_generation] = lambda: service
 with TestClient(app) as client:
     if sys.argv[1] == 'upload':
-        with open(sys.argv[2], 'rb') as file:
+        with open(sys.argv[3], 'rb') as file:
             response = client.post('/api/documents/upload', files={'file': ('sample.pdf', file)})
     else:
-        response = client.post('/api/questions/ask', json={'question':'How many days of annual leave do employees receive?'})
+        assert client.get(f'/api/documents/{sys.argv[3]}/file').status_code == 200
+        response = client.post('/api/questions/ask', json={'question': 'How many days of annual leave do employees receive?'})
+        assert '12 days of annual leave' in user_message(fake.chats[0])
     assert response.status_code == 200, response.text
     print(json.dumps(response.json()))
 '''
-    env = {**os.environ, 'CHROMA_PATH': str(tmp_path / 'chroma'), 'UPLOAD_DIR': str(tmp_path / 'uploads')}
-    subprocess.run([sys.executable, '-c', code, 'upload', str(samples / 'sample.pdf')],
-                   check=True, capture_output=True, text=True, env=env, timeout=180)
-    restarted = subprocess.run([sys.executable, '-c', code, 'ask'], check=True, capture_output=True,
-                               text=True, env=env, timeout=180)
-    response = json.loads(restarted.stdout.strip().splitlines()[-1])
+
+    def run(*args: str) -> dict:
+        done = subprocess.run([sys.executable, '-c', code, *args], check=True, capture_output=True, text=True,
+                              env=dict(os.environ), timeout=300)
+        return json.loads(done.stdout.strip().splitlines()[-1])
+    uploaded = run('upload', str(tmp_path), str(samples / 'sample.pdf'))
+    response = run('ask', str(tmp_path), uploaded['document_id'])
     assert response['answer'] == '12 days [Nguồn: sample.pdf, trang 1]'
     assert response['sources'] == [{'filename': 'sample.pdf', 'page': 1}]

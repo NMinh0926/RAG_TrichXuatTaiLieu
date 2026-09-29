@@ -1,27 +1,101 @@
 name: bai1-rag
+
+# Credentials come from .env. The fallbacks below exist only so a fresh local checkout starts;
+# services are not published outside localhost. Set real values in .env for any shared machine.
+x-app: &app
+  image: bai1-rag:local
+  init: true
+  env_file:
+    - .env
+  environment:
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-rag}:${POSTGRES_PASSWORD:-rag_dev_password}@postgres:5432/${POSTGRES_DB:-rag}
+    S3_ENDPOINT: http://seaweedfs:8333
+    S3_ACCESS_KEY: ${S3_ACCESS_KEY:-rag_dev_access}
+    S3_SECRET_KEY: ${S3_SECRET_KEY:-rag_dev_secret_change_me}
+    S3_BUCKET: ${S3_BUCKET:-documents}
+    CHROMA_HOST: chroma
+    CHROMA_PORT: "8000"
+    HF_HOME: /app/.cache/huggingface
+    PADDLE_PDX_CACHE_HOME: /app/.cache/paddlex
+    PADDLE_HOME: /app/.cache/paddle
+  # Ollama runs on the Windows host, not in a container.
+  extra_hosts:
+    - "host.docker.internal:host-gateway"
+  volumes:
+    - model_cache:/app/.cache
+  shm_size: 1gb
+
 services:
-  api:
-    build: .
-    image: bai1-rag:local
-    init: true
-    env_file:
-      - .env
+  postgres:
+    image: postgres:17-alpine
     environment:
-      UPLOAD_DIR: /app/data/uploads
-      CHROMA_PATH: /app/data/chroma
-      HF_HOME: /app/.cache/huggingface
-      PADDLE_PDX_CACHE_HOME: /app/.cache/paddlex
-      PADDLE_HOME: /app/.cache/paddle
-    # Ollama runs on the Windows host, not in a container.
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      POSTGRES_USER: ${POSTGRES_USER:-rag}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rag_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-rag}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # S3-compatible object storage for original files (MinIO no longer ships public images).
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.48
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-rag_dev_access}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-rag_dev_secret_change_me}
+      S3_BUCKET: ${S3_BUCKET:-documents}
+    entrypoint: ["/bin/sh", "/seaweedfs-start.sh"]
+    volumes:
+      - s3_data:/data
+      - ./docker/seaweedfs/start.sh:/seaweedfs-start.sh:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://127.0.0.1:8333/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  chroma:
+    image: chromadb/chroma:1.5.9
+    volumes:
+      - chroma_data:/data
+    healthcheck:
+      test: ["CMD", "bash", "-c", "exec 3<>/dev/tcp/127.0.0.1/8000 && printf 'GET /api/v2/heartbeat HTTP/1.0\\r\\n\\r\\n' >&3 && grep -q ' 200 ' <&3"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  # One-shot: database migrations and storage checks before the API starts.
+  init:
+    <<: *app
+    command: ["python", "-m", "scripts.init_services"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+      chroma:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *app
+    build: .
     ports:
       - "127.0.0.1:8000:8000"
-    volumes:
-      - ./data:/app/data
-      - model_cache:/app/.cache
+    depends_on:
+      init:
+        condition: service_completed_successfully
     restart: unless-stopped
-    shm_size: 1gb
 
 volumes:
   model_cache:
+  pg_data:
+  s3_data:
+  chroma_data:

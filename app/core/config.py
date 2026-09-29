@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field, model_validator
+from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
 
@@ -11,7 +11,17 @@ load_dotenv(override=False)
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', extra='ignore')
-    upload_dir: Path = Path('data/uploads')
+    # Metadata database (documents, chunks, jobs, conversations).
+    database_url: str = 'postgresql+psycopg://rag:rag@localhost:5432/rag'
+    # Original files: any S3-compatible storage (SeaweedFS in compose, S3/R2 in deployment).
+    s3_endpoint: str = 'http://localhost:8333'
+    s3_access_key: SecretStr = SecretStr('')
+    s3_secret_key: SecretStr = SecretStr('')
+    s3_bucket: str = 'documents'
+    s3_region: str = 'us-east-1'
+    # Vectors: Chroma server when CHROMA_HOST is set, otherwise a local persistent directory.
+    chroma_host: str = ''
+    chroma_port: int = Field(8000, ge=1, le=65535)
     chroma_path: Path = Path('data/chroma')
     embedding_model: str = 'sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2'
     chunk_size: int = Field(700, ge=2)

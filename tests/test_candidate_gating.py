@@ -1,4 +1,7 @@
-"""/api/questions/ask: raw Top-K candidates -> LLM support decision -> answer / no-answer / 5xx."""
+"""/api/questions/ask: raw Top-K candidates -> LLM support decision -> answer / no-answer / 5xx.
+
+Persistence across a process restart is covered by tests/test_e2e.py.
+"""
 import json
 
 import httpx
@@ -135,38 +138,4 @@ def test_e_raw_ranking_keeps_relevant_chunk_in_top_k(tmp_path, real_embedding):
     assert len(hits) == settings.top_k
     assert [hit.relevance for hit in hits] == sorted((hit.relevance for hit in hits), reverse=True)
     assert any('ZXQ-91827' in hit.content for hit in hits[:3])
-
-
-@pytest.mark.integration
-def test_f_upload_persists_and_candidates_reach_llm_after_restart(samples, tmp_path):
-    """Upload in one process, ask in a new process: candidates come from persisted Chroma."""
-    import os
-    import subprocess
-    import sys
-    code = '''
-import json, sys
-from fastapi.testclient import TestClient
-from app.main import app
-from app.core.dependencies import get_generation
-from tests.test_generation import service_with_reply, user_message
-service, fake = service_with_reply('12 days [Nguồn: sample.pdf, trang 1]')
-app.dependency_overrides[get_generation] = lambda: service
-with TestClient(app) as client:
-    if sys.argv[1] == 'upload':
-        with open(sys.argv[2], 'rb') as file:
-            response = client.post('/api/documents/upload', files={'file': ('sample.pdf', file)})
-    else:
-        response = client.post('/api/questions/ask', json={'question': 'How many days of annual leave?'})
-        assert '12 days of annual leave' in user_message(fake.chats[0])
-    assert response.status_code == 200, response.text
-    print(json.dumps(response.json()))
-'''
-    env = {**os.environ, 'CHROMA_PATH': str(tmp_path / 'chroma'), 'UPLOAD_DIR': str(tmp_path / 'uploads'),
-           'CANDIDATE_MIN_RELEVANCE': '-1'}
-    subprocess.run([sys.executable, '-c', code, 'upload', str(samples / 'sample.pdf')],
-                   check=True, capture_output=True, text=True, env=env, timeout=300)
-    restarted = subprocess.run([sys.executable, '-c', code, 'ask'], check=True, capture_output=True,
-                               text=True, env=env, timeout=300)
-    assert json.loads(restarted.stdout.strip().splitlines()[-1]) == {
-        'answer': '12 days [Nguồn: sample.pdf, trang 1]', 'sources': [{'filename': 'sample.pdf', 'page': 1}]}
 

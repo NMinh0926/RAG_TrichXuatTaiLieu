@@ -11,6 +11,7 @@ from app.main import app
 from app.core import dependencies
 from app.core.config import get_settings
 from app.core.dependencies import get_generation
+from app.db.session import get_db
 from app.services.prompts import INSUFFICIENT_ANSWER
 from tests.test_generation import grounded_reply, service_with_reply, user_message
 
@@ -21,11 +22,13 @@ from tests.test_generation import grounded_reply, service_with_reply, user_messa
      'Một năm nhân viên được nghỉ bao nhiêu ngày phép?', '12'),
     ('Project Orion có mã nội bộ ZXQ-91827.', 'Mã nội bộ của Project Orion là gì?', 'ZXQ-91827'),
 ])
-def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding,
-                                                    fact, question, keyword):
+def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding, db_session,
+                                                    memory_storage, fact, question, keyword):
+    monkeypatch.setenv('CHROMA_HOST', '')
     monkeypatch.setenv('CHROMA_PATH', str(tmp_path / 'chroma'))
-    monkeypatch.setenv('UPLOAD_DIR', str(tmp_path / 'uploads'))
     monkeypatch.setattr(dependencies, '_services', None)
+    monkeypatch.setattr(dependencies, 'get_storage', lambda: memory_storage)
+    app.dependency_overrides[get_db] = lambda: db_session
     # Share the already loaded real model, leaving production service wiring intact.
     monkeypatch.setattr(dependencies, 'EmbeddingService', lambda name: real_embedding)
     get_settings.cache_clear()

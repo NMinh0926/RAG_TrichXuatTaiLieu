@@ -97,7 +97,7 @@ def test_ocr_failure_is_typed(samples):
     ocr = OCRService()
     ocr._engine = BrokenEngine()
     with pytest.raises(PipelineError) as error:
-        load_image(samples / 'sample.jpg', ocr)
+        load_image((samples / 'sample.jpg').read_bytes(), 'sample.jpg', ocr)
     assert error.value.code == 'ocr_failure'
 
 

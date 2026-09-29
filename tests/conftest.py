@@ -55,3 +55,46 @@ def real_embedding():
 def real_ocr():
     from app.services.ocr_service import OCRService
     return OCRService('vi')
+
+
+def _test_database_url() -> str:
+    import os
+    from app.core.config import Settings
+    from scripts.isolation import scratch_database_url
+    return os.environ.get('TEST_DATABASE_URL') or scratch_database_url(Settings().database_url)
+
+
+@pytest.fixture(scope='session')
+def db_engine():
+    """The <db>_test database migrated with Alembic (also checks the migrations apply)."""
+    from alembic import command
+    from alembic.config import Config
+    from sqlalchemy import create_engine, text
+    url = _test_database_url()
+    engine = create_engine(url, pool_pre_ping=True)
+    try:
+        with engine.connect() as connection:
+            connection.execute(text('select 1'))
+    except Exception as exc:
+        pytest.skip(f'PostgreSQL test database unavailable ({type(exc).__name__}); run tests via docker compose')
+    config = Config('alembic.ini')
+    config.set_main_option('sqlalchemy.url', url.replace('%', '%%'))
+    command.upgrade(config, 'head')
+    yield engine
+    engine.dispose()
+
+
+@pytest.fixture
+def db_session(db_engine):
+    from sqlalchemy import text
+    from sqlalchemy.orm import sessionmaker
+    with db_engine.begin() as connection:
+        connection.execute(text('TRUNCATE documents, conversations CASCADE'))
+    with sessionmaker(bind=db_engine, expire_on_commit=False)() as session:
+        yield session
+
+
+@pytest.fixture
+def memory_storage():
+    from tests.fakes import InMemoryStorage
+    return InMemoryStorage()

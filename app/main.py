@@ -14,9 +14,8 @@ app = FastAPI(title='Multi-modal Document Assistant', version='2.0.0',
               description='Local extraction/OCR and retrieval; a local Ollama model answers from retrieved text only.')
 app.add_middleware(CORSMiddleware,
                    allow_origins=get_settings().allowed_frontend_origins,
-                   allow_credentials=False, allow_methods=['POST'],
+                   allow_credentials=False, allow_methods=['GET', 'POST', 'DELETE'],
                    allow_headers=['Content-Type'])
-app.include_router(documents.router)
 app.include_router(questions.router)
 app.include_router(documents.api_router)
 app.include_router(questions.api_router)

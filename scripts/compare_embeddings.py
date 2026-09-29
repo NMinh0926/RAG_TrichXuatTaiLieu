@@ -53,7 +53,7 @@ def prepare(work, pdf):
         frozen = []
         for path, name in paths:
             source_hashes[name] = hashlib.sha256(path.read_bytes()).hexdigest()
-            units = load_file(path, ocr, settings.pdf_min_text_chars)
+            units = load_file(path.read_bytes(), path.name, ocr, settings.pdf_min_text_chars)
             for unit in units:
                 unit.content = clean_text(unit.content)
                 unit.metadata['filename'] = name

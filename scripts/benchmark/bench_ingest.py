@@ -34,7 +34,15 @@ class TimedOCR:
         return text
 
 
+def clear(client) -> None:
+    """Delete every document in the scratch database so the next upload is not a SHA-256 duplicate."""
+    while items := client.get('/api/documents', params={'page_size': 100}).json()['items']:
+        for item in items:
+            client.delete(f"/api/documents/{item['id']}")
+
+
 def upload(client, pdf: Path) -> dict:
+    clear(client)
     start = time.perf_counter()
     response = client.post('/api/documents/upload', files={'file': (pdf.name, pdf.read_bytes(), 'application/pdf')})
     return {'seconds': round(time.perf_counter() - start, 2), 'status': response.status_code, 'body': response.json()}
@@ -46,9 +54,10 @@ def main():
     parser.add_argument('--work', type=Path, default=Path('.cache/benchmark/run'))
     parser.add_argument('--output', type=Path, default=Path('docs/benchmarks/baseline_ingest.json'))
     args = parser.parse_args()
-    # Isolated storage; must be set before app settings are created.
-    os.environ['CHROMA_PATH'] = str(args.work / 'chroma')
-    os.environ['UPLOAD_DIR'] = str(args.work / 'uploads')
+    # Scratch database/bucket/Chroma dir; must be set before app settings are created.
+    from scripts.isolation import isolate, prepare
+    isolate(args.work)
+    prepare()
     started = time.perf_counter()
     from fastapi.testclient import TestClient
     from app.core.config import get_settings
@@ -79,7 +88,7 @@ def main():
         steps = {}
         ocr = TimedOCR(ingestion.ocr)
         start = time.perf_counter()
-        units = load_pdf(args.pdf, ocr, settings.pdf_min_text_chars)
+        units = load_pdf(args.pdf.read_bytes(), args.pdf.name, ocr, settings.pdf_min_text_chars)
         read_total = time.perf_counter() - start
         steps['pdf_read_and_render'] = round(read_total - sum(ocr.calls), 2)
         steps['ocr'] = round(sum(ocr.calls), 2)

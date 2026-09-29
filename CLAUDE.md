@@ -47,24 +47,28 @@ File và dữ liệu lưu trong database/storage thay vì thư mục `./data/upl
 ## Lệnh thường dùng
 Chạy từ thư mục gốc project bằng PowerShell. Python chỉ chạy trong Docker (host không có Python).
 - Chạy app:
-  - Ollama trên host phải đang chạy: `ollama list` (cần `qwen2.5:7b`).
-  - Backend: `docker compose up -d --build` → http://127.0.0.1:8000/docs ;
-    kiểm tra `curl.exe http://127.0.0.1:8000/health` và `curl.exe http://127.0.0.1:8000/health/ollama`.
-  - Frontend (container Vite dev có sẵn): `docker start bai1-rag-frontend-demo` → http://localhost:5173
-    (tạo mới: xem README mục "Run Frontend").
+  - Ollama trên host phải đang chạy: `ollama list` (cần `qwen2.5:7b`, khuyến nghị thêm `qwen2.5:3b`),
+    biến môi trường user `OLLAMA_CONTEXT_LENGTH=8192`.
+  - Toàn bộ (postgres, seaweedfs, chroma, redis, init, api, worker, frontend): `docker compose up -d --build`
+    → giao diện http://localhost:8080 ; API http://127.0.0.1:8000/docs ;
+    kiểm tra `curl.exe http://127.0.0.1:8000/health` và `curl.exe http://127.0.0.1:8000/health/llm`.
+  - Frontend dev (hot reload): `cd frontend; npm run dev` (proxy tới :8000) hoặc qua node:22-alpine.
 - Chạy test (dùng source hiện tại, không cần build lại image):
   - Toàn bộ: `docker compose run --rm -v "${PWD}:/app" api python -m pytest -q -p no:cacheprovider`
   - Nhanh (bỏ OCR/embedding thật): thêm `-m "not integration"`.
-- Xem log: `docker compose logs -f --tail=100 api`
-- Re-index dữ liệu: chưa có script re-index (Giai đoạn 2). Đổi embedding/chunk config tạo collection Chroma mới.
+  - Frontend: `docker run --rm -v "${PWD}/frontend:/workspace" -w /workspace node:22-alpine sh -c "npm ci && npm run typecheck && npm run test && npm run build"`
+- Xem log: `docker compose logs -f --tail=100 api worker`
 - Migration DB: tự chạy bởi service `init`; tạo migration mới:
   `docker compose run --rm --no-deps -v "${PWD}:/app" api alembic revision --autogenerate -m "<msg>"`
 - Chuyển dữ liệu cũ `./data`: `docker compose run --rm -v "${PWD}/data:/legacy:ro" api python -m scripts.migrate_legacy --uploads /legacy/uploads --chroma /legacy/chroma`
 - Backup / restore: `powershell -ExecutionPolicy Bypass -File scripts\backup.ps1` ;
   `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 -From backups\<timestamp>`
-- Benchmark (DB Chroma riêng trong volume cache, không đụng dữ liệu thật):
+- Benchmark (DB `<db>_scratch`, bucket `-scratch`, Chroma local; không đụng dữ liệu thật, job chạy inline):
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.make_test_pdf`
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.bench_ingest`
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.bench_qa`
-- Kiểm tra LLM: `docker compose run --rm api python -m scripts.check_ollama`
+- Kiểm tra LLM: `curl.exe http://127.0.0.1:8000/health/llm` ; `docker compose run --rm api python -m scripts.check_llm`
+- Re-index toàn bộ (sau khi đổi embedding/chunk/OCR): `docker compose stop worker` rồi
+  `docker compose run --rm api python -m scripts.reindex --drop-other-collections` rồi `docker compose start worker`
+- A/B retrieval: `docker compose run --rm --no-deps -v "${PWD}:/app" api python -m scripts.ab_retrieval`
 - Evaluation retrieval: `docker compose run --rm -v "${PWD}:/app" api python -m scripts.evaluate --retrieval-only`

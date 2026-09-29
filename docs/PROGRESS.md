@@ -6,9 +6,9 @@
 |---|---|
 | 0 — Khảo sát & baseline | **Xong** (29/09/2026) |
 | 1 — Lưu trữ PostgreSQL + object storage | **Xong** (29/09/2026) — SeaweedFS thay MinIO |
-| 2 — Chất lượng câu trả lời | Chưa bắt đầu |
-| 3 — Tốc độ ingest | Chưa bắt đầu |
-| 4 — Giao diện | Chưa bắt đầu |
+| 2 — Chất lượng câu trả lời | **Xong** (30/09/2026) — bge-m3, map-reduce, SSE, hội thoại |
+| 3 — Tốc độ ingest | **Xong** (30/09/2026) — RQ worker, Tesseract, bbox |
+| 4 — Giao diện | **Xong** (30/09/2026) — React + TS + Tailwind, nginx trong compose |
 | 5 — Benchmark | Chưa bắt đầu |
 | 6 — Hoàn thiện nội bộ | Chưa bắt đầu |
 
@@ -99,6 +99,48 @@
 - Xóa script chẩn đoán cũ (`inspect_retrieval`, `debug_representation`, `reproduce_retrieval_gate`, `diagnose_upload`).
 - Tests: 125 passed (storage stub + SeaweedFS thật, repository, API tài liệu, migrate, persistence 2 tiến trình).
 
+## Giai đoạn 2 — đã làm
+
+- **LLM**: `app/llm/client.py` — client chung API tương thích OpenAI (`/chat/completions`, stream SSE, `/models`);
+  cấu hình `LLM_BASE_URL/LLM_API_KEY/LLM_MODEL/LLM_TIMEOUT_SECONDS/LLM_MAX_TOKENS/LLM_TEMPERATURE/LLM_CONTEXT_TOKENS`,
+  tùy chọn `LLM_SUMMARY_MODEL` cho bước map. Đã xóa client Ollama native. `/health/llm`, `scripts/check_llm.py`.
+  Ollama host đặt `OLLAMA_CONTEXT_LENGTH=8192` (biến môi trường user Windows) vì API OpenAI không truyền num_ctx.
+- **Ý định**: `app/services/intent.py` — quy tắc (tóm tắt/tổng quan/ý chính/overview…), câu mơ hồ ("nói về gì")
+  mới hỏi LLM.
+- **Tóm tắt map-reduce**: `app/services/summarizer.py` — toàn bộ chunk theo thứ tự (bỏ phần overlap nhờ char offset),
+  gom nhóm vừa context, tóm tắt từng nhóm, gộp nhiều cấp nếu cần, bản cuối có cấu trúc Tổng quan / Các phần chính /
+  Chi tiết và số liệu / Kết luận; cache bảng `document_summaries` (model + phiên bản prompt).
+- **Retrieval**: A/B 4 cấu hình → chốt **bge-m3, chunk 512/64, TOP_K 6, không rerank** (reranker tùy chọn
+  `RERANKER_MODEL`). `scripts/reindex.py` re-index toàn bộ từ storage.
+- **Prompt**: trả lời đầy đủ, markdown, trích dẫn `[n]` theo đoạn ngữ cảnh; nguồn có chunk_id, document_id, trang,
+  đoạn trích, bboxes.
+- **Streaming + hội thoại**: `POST /api/chat` (SSE qua POST: meta/progress/token/replace/done/error),
+  `GET/DELETE /api/conversations[/{id}]`; câu hỏi nối tiếp được LLM viết lại thành câu độc lập trước retrieval.
+  `/api/questions/ask` giữ cho client cũ (non-stream).
+- Số liệu: [benchmarks/stage2.md](benchmarks/stage2.md).
+
+## Giai đoạn 3 — đã làm
+
+- **Hàng đợi**: Redis + RQ (`app/services/jobs.py`, `app/worker.py`, service `worker` trong compose, SimpleWorker
+  nạp model một lần). Upload `POST /api/documents` → 202 + job; `GET /api/jobs/{id}`, SSE `/api/jobs/{id}/events`;
+  bảng `ingest_jobs` lưu %/bước/cảnh báo/thời gian từng bước. Worker khởi động lại tự đưa job dang dở vào hàng đợi.
+  `POST /api/documents/upload` (cũ) chờ job xong để giữ tương thích. `POST /api/documents/{id}/reindex`.
+- **OCR**: Tesseract `vie` thay PaddleOCR (CER 0,09% vs 10,7%; 2,3 vs 15,8 s/trang), OCR nhiều trang song song
+  (`OCR_WORKERS`); chỉ OCR trang không có text layer; lỗi OCR một trang → cảnh báo, không hỏng file.
+- **Bounding box**: text trang dựng từ từng từ (PyMuPDF / Tesseract TSV) → mỗi chunk lưu trang, char offset, bboxes
+  (điểm PDF, 1 hình chữ nhật/dòng).
+- **Embedding** theo batch có tiến độ; tự dùng GPU nếu torch thấy CUDA (image hiện là CPU).
+- Số liệu: [benchmarks/stage3.md](benchmarks/stage3.md) — upload 4 MB 77,6 s (baseline 95–104 s), OCR 5,3 s
+  (baseline ~60 s), RAM 3,1 GB (5,3 GB).
+
+## Giai đoạn 4 — đã làm
+
+- Frontend mới `frontend/`: React 19 + TypeScript + Vite + Tailwind 4, PDF.js (worker đóng gói), react-markdown.
+  Đặc tả và hợp đồng API: [frontend-spec.md](frontend-spec.md). Sidebar (thư viện + lịch sử), chat streaming,
+  viewer PDF bên phải có highlight bbox khi bấm `[n]`, upload kéo thả nhiều file với tiến độ thời gian thực,
+  phạm vi hỏi, gợi ý nhanh, dark/light, responsive. 30 unit test (SSE parser, citation, bbox).
+- Chạy bằng service `frontend` (nginx, cổng 127.0.0.1:8080, proxy `/api` + `/health`, SSE không buffer).
+
 ## Quyết định / ghi chú
 
 - **MinIO → SeaweedFS** (người dùng duyệt): MinIO không còn image Docker công khai (Docker Hub gỡ, quay/ghcr cần đăng nhập).
@@ -114,7 +156,6 @@
 ## Việc còn dở / đề xuất cho giai đoạn sau
 
 - README chưa viết lại theo kiến trúc mới (làm ở Giai đoạn 6); lệnh hiện hành nằm trong CLAUDE.md.
-- Giai đoạn 2/3 cần xét: model OCR hỗ trợ đầy đủ dấu tiếng Việt; tăng Top-K + rerank cho tài liệu dài;
-  map-reduce cho tóm tắt; streaming.
-- Giai đoạn 3: điều tra OCR chậm theo thread (số luồng Paddle), đưa OCR/embedding ra worker nền.
-- Frontend chưa nằm trong compose (Giai đoạn 4).
+- `.env` của người dùng vẫn đặt MiniLM / CHUNK 700/120 / TOP_K 4 (không được sửa .env): cần đổi theo `.env.example`
+  rồi chạy `scripts/reindex.py --drop-other-collections`.
+- Nút thắt ingest còn lại: embedding bge-m3 CPU (~0,6 chunk/s).

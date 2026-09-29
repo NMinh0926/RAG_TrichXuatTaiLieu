@@ -2,6 +2,7 @@
 import hashlib
 import logging
 import uuid
+from datetime import datetime, timedelta, timezone
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -15,6 +16,8 @@ from app.services.vector_store import VectorStore
 from app.storage.base import Storage
 
 logger = logging.getLogger(__name__)
+# A 'processing' row this old belongs to an interrupted ingest (process killed) and may be replaced.
+PROCESSING_STALE_AFTER = timedelta(minutes=30)
 
 
 class DocumentService:
@@ -32,15 +35,15 @@ class DocumentService:
             raise PipelineError('empty_document', 'File is missing or empty.')
         sha256 = hashlib.sha256(data).hexdigest()
         existing = self.repository.get_by_sha256(sha256)
-        if existing is not None and existing.status != DocumentStatus.failed:
-            logger.info('duplicate upload document_id=%s', existing.id)
-            return existing, True
         if existing is not None:
-            self.delete(existing)
+            if self._usable_duplicate(existing):
+                logger.info('duplicate upload document_id=%s', existing.id)
+                return existing, True
+            self.delete(existing)  # failed, or abandoned while processing
         document_id = uuid.uuid4()
+        object_key = f'documents/{document_id}{extension_of(filename)}'
         document = Document(id=document_id, filename=filename, content_type=content_type, size_bytes=len(data),
-                            sha256=sha256, object_key=f'documents/{document_id}{extension_of(filename)}',
-                            status=DocumentStatus.processing)
+                            sha256=sha256, object_key=object_key, status=DocumentStatus.processing)
         try:
             # Claim the SHA-256 first: a concurrent identical upload loses here, not after OCR.
             self.repository.add(document)
@@ -50,6 +53,8 @@ class DocumentService:
             winner = self.repository.get_by_sha256(sha256)
             if winner is None:
                 raise
+            if not self._usable_duplicate(winner):
+                raise PipelineError('document_processing', 'Tài liệu giống hệt đang được xử lý; thử lại sau.', 409)
             return winner, True
         try:
             self.storage.put(document.object_key, data, content_type)
@@ -64,11 +69,23 @@ class DocumentService:
             document.status = DocumentStatus.ready
             self.session.commit()
         except Exception:
-            self.session.rollback()
-            self._cleanup(document_id, document.object_key)
+            self.session.rollback()  # expires `document`; use locals from here on
+            self._cleanup(document_id, object_key)
             raise
         logger.info('document stored document_id=%s chunks=%d', document_id, document.chunk_count)
         return document, False
+
+    def _usable_duplicate(self, document: Document) -> bool:
+        """Ready → reuse. Failed or stale processing → caller replaces it. Fresh processing → 409."""
+        if document.status == DocumentStatus.ready:
+            return True
+        if document.status == DocumentStatus.failed:
+            return False
+        age = datetime.now(timezone.utc) - document.updated_at
+        if age > PROCESSING_STALE_AFTER:
+            logger.warning('replacing abandoned processing document_id=%s age=%s', document.id, age)
+            return False
+        raise PipelineError('document_processing', 'Tài liệu giống hệt đang được xử lý; thử lại sau.', 409)
 
     def delete(self, document: Document) -> None:
         """Vectors first: a failure then leaves a visible document the user can delete again."""

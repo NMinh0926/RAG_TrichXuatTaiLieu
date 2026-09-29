@@ -20,6 +20,8 @@ def read_upload(file: UploadFile, settings: Settings) -> tuple[str, bytes]:
     """Validate name/type and read at most MAX_UPLOAD_MB into memory (never onto local disk)."""
     # Both POSIX and Windows separators are stripped from the display filename.
     filename = (file.filename or '').replace('\\', '/').rsplit('/', 1)[-1][:255]
+    if any(ord(char) < 32 for char in filename):
+        raise PipelineError('invalid_filename', 'Tên file chứa ký tự không hợp lệ.', 400)
     validate_extension(filename)
     limit = settings.max_upload_mb * 1024 * 1024
     blocks, size = [], 0
@@ -52,8 +54,8 @@ def upload_document(file: UploadFile = File(...), settings: Settings = Depends(g
 
 
 @api_router.get('', response_model=DocumentList)
-def list_documents(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100),
-                   q: str | None = Query(None, max_length=255),
+def list_documents(page: int = Query(1, ge=1, le=100_000), page_size: int = Query(20, ge=1, le=100),
+                   q: str | None = Query(None, max_length=255, pattern=r'^[^\x00]*$'),
                    service: DocumentService = Depends(get_document_service)):
     items, total = service.repository.list(page, page_size, q.strip() if q and q.strip() else None)
     return DocumentList(items=[DocumentOut.model_validate(item) for item in items], total=total,

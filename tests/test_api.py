@@ -143,3 +143,64 @@ def test_search_after_upload(documents_api, samples):
     hits = client.post('/questions/search', json={'question': 'nghỉ phép'}).json()['results']
     assert hits[0]['metadata']['filename'] == 'sample.docx'
     assert hits[0]['id']
+
+
+def _claim(session, data: bytes, status: DocumentStatus, minutes_old: int = 0) -> Document:
+    import hashlib
+    from datetime import datetime, timedelta, timezone
+    document = Document(filename='claimed.pdf', content_type='application/pdf', size_bytes=len(data),
+                        sha256=hashlib.sha256(data).hexdigest(), object_key='documents/claimed.pdf', status=status)
+    session.add(document)
+    session.commit()
+    if minutes_old:
+        document.updated_at = datetime.now(timezone.utc) - timedelta(minutes=minutes_old)
+        session.commit()
+    return document
+
+
+def test_duplicate_of_in_flight_upload_is_409_not_success(documents_api, samples):
+    client, _, _, session = documents_api
+    data = (samples / 'sample.pdf').read_bytes()
+    _claim(session, data, DocumentStatus.processing)
+    response = upload(client, 'again.pdf', data)
+    assert response.status_code == 409 and response.json()['error'] == 'document_processing'
+
+
+def test_abandoned_processing_row_is_replaced(documents_api, samples):
+    client, store, _, session = documents_api
+    data = (samples / 'sample.pdf').read_bytes()
+    stale = _claim(session, data, DocumentStatus.processing, minutes_old=120)
+    body = upload(client, 'again.pdf', data).json()
+    assert body['duplicate'] is False and body['document_id'] != str(stale.id) and body['chunks_created'] > 0
+    assert session.query(Document).count() == 1 and store.collection.count() == body['chunks_created']
+
+
+def test_row_deleted_mid_ingest_leaves_no_orphans(documents_api, samples, db_engine, monkeypatch):
+    """DELETE during OCR: the upload must still remove its vectors and object, not crash on the expired row."""
+    from sqlalchemy import text
+    from app.db.repositories import DocumentRepository
+    client, store, storage, _ = documents_api
+    original = DocumentRepository.replace_chunks
+
+    def delete_then_fail(self, document_id, chunks):
+        with db_engine.begin() as connection:
+            connection.execute(text('DELETE FROM documents WHERE id = :id'), {'id': document_id})
+        return original(self, document_id, chunks)  # FK violation: the document row is gone
+    monkeypatch.setattr(DocumentRepository, 'replace_chunks', delete_then_fail)
+    with pytest.raises(Exception):
+        upload(client, 'sample.docx', (samples / 'sample.docx').read_bytes())
+    assert store.collection.count() == 0 and storage.objects == {}
+
+
+def test_invalid_query_and_filename_are_rejected(documents_api):
+    client, *_ = documents_api
+    assert client.get('/api/documents', params={'q': 'a\x00b'}).status_code == 422
+    assert client.get('/api/documents', params={'page': 10**17}).status_code == 422
+    # HTTP clients escape control characters in multipart names, so check the parser directly.
+    import io
+    from types import SimpleNamespace
+    from app.api.documents import read_upload
+    from app.core.errors import PipelineError
+    with pytest.raises(PipelineError) as caught:
+        read_upload(SimpleNamespace(filename='bad\x00name.pdf', file=io.BytesIO(b'%PDF')), Settings(_env_file=None))
+    assert (caught.value.code, caught.value.status_code) == ('invalid_filename', 400)

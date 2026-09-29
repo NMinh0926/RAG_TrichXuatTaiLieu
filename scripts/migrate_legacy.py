@@ -62,6 +62,14 @@ def read_legacy(path: Path, collection_name: str) -> dict[str, LegacyDocument]:
     return documents
 
 
+def _delete_row(session, document_id: uuid.UUID) -> None:
+    from app.db.models import Document
+    row = session.get(Document, document_id)
+    if row is not None:
+        session.delete(row)
+        session.commit()
+
+
 def legacy_id(filename: str, data: bytes) -> str:
     return hashlib.sha256(filename.encode('utf-8') + b'\0' + data).hexdigest()
 
@@ -91,9 +99,12 @@ def migrate(uploads: Path, chroma: Path) -> dict:
             if match:
                 matched_legacy.add(match[1])
             filename = match[0] if match else path.name
-            if repository.get_by_sha256(hashlib.sha256(data).hexdigest()):
+            existing = repository.get_by_sha256(hashlib.sha256(data).hexdigest())
+            if existing is not None and existing.status == DocumentStatus.ready:
                 report['skipped_existing'].append(filename)
                 continue
+            if existing is not None:
+                service.delete(existing)  # left over by an interrupted run
             linked = None
             try:
                 if match is None:
@@ -105,10 +116,13 @@ def migrate(uploads: Path, chroma: Path) -> dict:
                 document = Document(id=document_id, filename=filename, content_type=content_type_for(filename),
                                     size_bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
                                     object_key=f'documents/{document_id}{extension_of(filename)}',
-                                    status=DocumentStatus.ready, chunk_count=len(entry.ids),
+                                    status=DocumentStatus.processing, chunk_count=len(entry.ids),
                                     page_count=max((m.get('page') or 0 for m in entry.metadatas), default=0) or None)
                 repository.add(document)
-                linked = document
+                # Commit before writing vectors: an interrupted run leaves a visible 'processing' row
+                # that the next run replaces, never invisible orphan vectors.
+                session.commit()
+                linked = (document_id, document.object_key)
                 storage.put(document.object_key, data, document.content_type)
                 order = sorted(range(len(entry.ids)), key=lambda i: entry.metadatas[i].get('chunk_index', i))
                 chunk_ids = [str(uuid.uuid4()) for _ in order]
@@ -122,17 +136,21 @@ def migrate(uploads: Path, chroma: Path) -> dict:
                                      | {'chunk_index': n})
                           for n, i in enumerate(order)]
                 store.add(str(document_id), chunks, [entry.embeddings[i] for i in order], ids=chunk_ids)
+                document.status = DocumentStatus.ready
                 session.commit()
                 report['linked'].append(filename)
             except Exception as exc:
                 session.rollback()
                 if linked is not None:
-                    # Linked path: do not leave an orphan object or vectors behind.
-                    for cleanup in (lambda: store.delete_document(str(linked.id)),
-                                    lambda: storage.delete(linked.object_key)):
+                    # Linked path: remove the claimed row, object and vectors.
+                    linked_id, object_key = linked
+                    for cleanup in (lambda: store.delete_document(str(linked_id)),
+                                    lambda: storage.delete(object_key),
+                                    lambda: _delete_row(session, linked_id)):
                         try:
                             cleanup()
                         except Exception:
+                            session.rollback()
                             logger.warning('cleanup failed file=%s', path.name)
                 logger.error('migration failed file=%s error=%s', path.name, type(exc).__name__)
                 report['failed'].append({'file': path.name, 'error': getattr(exc, 'code', type(exc).__name__)})

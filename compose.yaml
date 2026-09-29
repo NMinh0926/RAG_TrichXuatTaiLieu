@@ -15,9 +15,8 @@ x-app: &app
     S3_BUCKET: ${S3_BUCKET:-documents}
     CHROMA_HOST: chroma
     CHROMA_PORT: "8000"
+    REDIS_URL: redis://redis:6379/0
     HF_HOME: /app/.cache/huggingface
-    PADDLE_PDX_CACHE_HOME: /app/.cache/paddlex
-    PADDLE_HOME: /app/.cache/paddle
   # Ollama runs on the Windows host, not in a container.
   extra_hosts:
     - "host.docker.internal:host-gateway"
@@ -71,7 +70,20 @@ services:
       retries: 30
     restart: unless-stopped
 
-  # One-shot: database migrations and storage checks before the API starts.
+  # Ingest job queue (RQ). Job state of record lives in PostgreSQL; the worker re-queues lost jobs.
+  redis:
+    image: redis:8-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # One-shot: database migrations and storage checks before the API/worker start.
   init:
     <<: *app
     command: ["python", "-m", "scripts.init_services"]
@@ -82,7 +94,24 @@ services:
         condition: service_healthy
       chroma:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: "no"
+
+  # Background ingest: OCR, chunking, embedding. Models load once at start.
+  worker:
+    <<: *app
+    command: ["python", "-m", "app.worker"]
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys, redis, os; from rq import Worker; sys.exit(0 if Worker.all(connection=redis.Redis.from_url(os.environ['REDIS_URL'])) else 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3
+    restart: unless-stopped
 
   api:
     <<: *app
@@ -94,8 +123,19 @@ services:
         condition: service_completed_successfully
     restart: unless-stopped
 
+  # Built React app served by nginx; /api and /health are proxied to the api service (same origin).
+  frontend:
+    build: ./frontend
+    image: bai1-rag-frontend:local
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
 volumes:
   model_cache:
   pg_data:
   s3_data:
   chroma_data:
+  redis_data:

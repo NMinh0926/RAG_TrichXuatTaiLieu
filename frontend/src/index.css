@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --color-brand-50: #eefaf7;
+  --color-brand-100: #d5f2ea;
+  --color-brand-500: #1f9d86;
+  --color-brand-600: #17806d;
+  --color-brand-700: #136758;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}
+
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-brand-500;
+}
+
+/* Answer markdown: compact prose styles for streamed LLM output. */
+.markdown {
+  @apply space-y-3 leading-relaxed break-words;
+}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+  @apply mt-4 font-semibold;
+}
+.markdown h1 {
+  @apply text-xl;
+}
+.markdown h2 {
+  @apply text-lg;
+}
+.markdown h3,
+.markdown h4 {
+  @apply text-base;
+}
+.markdown ul {
+  @apply list-disc space-y-1 pl-6;
+}
+.markdown ol {
+  @apply list-decimal space-y-1 pl-6;
+}
+.markdown a {
+  @apply text-brand-600 underline dark:text-brand-500;
+}
+.markdown code {
+  @apply rounded bg-slate-100 px-1 py-0.5 text-[0.9em] dark:bg-slate-800;
+}
+.markdown pre {
+  @apply overflow-x-auto rounded-lg bg-slate-100 p-3 dark:bg-slate-800;
+}
+.markdown pre code {
+  @apply bg-transparent p-0;
+}
+.markdown blockquote {
+  @apply border-l-4 border-slate-300 pl-3 text-slate-600 dark:border-slate-600 dark:text-slate-300;
+}
+.markdown table {
+  @apply w-full border-collapse text-sm;
+}
+.markdown th,
+.markdown td {
+  @apply border border-slate-300 px-2 py-1 text-left align-top dark:border-slate-700;
+}
+.markdown th {
+  @apply bg-slate-100 font-semibold dark:bg-slate-800;
+}
+
+@keyframes highlight-pulse {
+  from {
+    background-color: rgb(250 204 21 / 0.65);
+  }
+  to {
+    background-color: rgb(250 204 21 / 0.3);
+  }
+}
+
+.pdf-highlight {
+  @apply pointer-events-none absolute rounded-sm mix-blend-multiply dark:mix-blend-normal;
+  background-color: rgb(250 204 21 / 0.3);
+  outline: 1px solid rgb(202 138 4 / 0.7);
+  animation: highlight-pulse 1.2s ease-out;
+}

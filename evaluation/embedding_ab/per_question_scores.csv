@@ -1,0 +1,85 @@
+﻿corpus,id,question,answerable,model,top_score,best_relevant_score,recommended_threshold,accepted,relevant_hit
+evaluation,1,What is the Orion hotel allowance per night?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.8293617963790894,0.8293617963790894,0.55,True,True
+evaluation,2,What is the daily Orion meal reimbursement limit?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6967031955718994,0.6967031955718994,0.55,True,True
+evaluation,3,Within how many days must Orion travel receipts be submitted?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7190625071525574,0.7060527801513672,0.55,True,True
+evaluation,4,What is the Orion mileage reimbursement per kilometer?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.8079400062561035,0.8079400062561035,0.55,True,True
+evaluation,5,What is the Orion travel approval code?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7949408888816833,0.7949408888816833,0.55,True,True
+evaluation,6,Một năm người lao động có bao nhiêu ngày phép?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6604276895523071,0.6604276895523071,0.55,True,True
+evaluation,7,Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6520830392837524,0.6520830392837524,0.55,True,True
+evaluation,8,Nhân viên An Bình được làm từ xa mấy ngày một tuần?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7263746857643127,0.7263746857643127,0.55,True,True
+evaluation,9,Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6513640880584717,0.6513640880584717,0.55,True,True
+evaluation,10,What is the revenue for Atlas Laptop?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7335695028305054,0.7335695028305054,0.55,True,True
+evaluation,11,What is the revenue for Nova Phone?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.502113401889801,0.502113401889801,0.55,False,False
+evaluation,12,How many response hours does the Silver support plan allow?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6276413202285767,0.6276413202285767,0.55,True,True
+evaluation,13,How many response hours does the Gold support plan allow?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6373467445373535,0.6373467445373535,0.55,True,True
+evaluation,14,What time does the Lyra workshop start?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.821334183216095,0.821334183216095,0.55,True,True
+evaluation,15,Which room hosts the Lyra workshop?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6865363717079163,0.6865363717079163,0.55,True,True
+evaluation,16,How many people can attend the Lyra workshop?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.693467915058136,0.693467915058136,0.55,True,True
+evaluation,17,When is the Lyra workshop registration deadline?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.828536868095398,0.828536868095398,0.55,True,True
+evaluation,18,What time does the Vega warehouse open?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7391128540039062,0.7391128540039062,0.55,True,True
+evaluation,19,What time does the Vega warehouse close?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.7306530475616455,0.7306530475616455,0.55,True,True
+evaluation,20,What color safety helmet is required at Vega?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.6468805074691772,0.6468805074691772,0.55,True,True
+evaluation,21,What is the Vega emergency extension?,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.5307214260101318,0.5307214260101318,0.55,False,False
+evaluation,22,CEO của Microsoft là ai?,False,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.2295513153076172,,0.55,False,False
+evaluation,23,What is the distance from Earth to Mars?,False,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.2621835470199585,,0.55,False,False
+evaluation,24,What is the Orion hotel Wi-Fi password?,False,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.5329340100288391,,0.55,False,False
+evaluation,25,Ai là giám đốc nhân sự An Bình?,False,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.17378365993499756,,0.55,False,False
+supplemental,user-1,bài toán 1 là gì,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.30591368675231934,0.30591368675231934,0.55,False,False
+supplemental,user-2,bài toán 2 là gì,True,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.24109876155853271,0.23399996757507324,0.55,False,False
+supplemental,user-3,bài toán 3 là gì,False,sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2,0.3224421739578247,,0.55,False,False
+evaluation,1,What is the Orion hotel allowance per night?,True,BAAI/bge-m3,0.7709301114082336,0.7709301114082336,0.57,True,True
+evaluation,2,What is the daily Orion meal reimbursement limit?,True,BAAI/bge-m3,0.7374979853630066,0.7374979853630066,0.57,True,True
+evaluation,3,Within how many days must Orion travel receipts be submitted?,True,BAAI/bge-m3,0.7219424843788147,0.7219424843788147,0.57,True,True
+evaluation,4,What is the Orion mileage reimbursement per kilometer?,True,BAAI/bge-m3,0.7454155087471008,0.7454155087471008,0.57,True,True
+evaluation,5,What is the Orion travel approval code?,True,BAAI/bge-m3,0.7305294871330261,0.7305294871330261,0.57,True,True
+evaluation,6,Một năm người lao động có bao nhiêu ngày phép?,True,BAAI/bge-m3,0.609362006187439,0.609362006187439,0.57,True,True
+evaluation,7,Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?,True,BAAI/bge-m3,0.7435058951377869,0.7435058951377869,0.57,True,True
+evaluation,8,Nhân viên An Bình được làm từ xa mấy ngày một tuần?,True,BAAI/bge-m3,0.7337583899497986,0.7337583899497986,0.57,True,True
+evaluation,9,Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?,True,BAAI/bge-m3,0.7004113793373108,0.7004113793373108,0.57,True,True
+evaluation,10,What is the revenue for Atlas Laptop?,True,BAAI/bge-m3,0.7024357318878174,0.7024357318878174,0.57,True,True
+evaluation,11,What is the revenue for Nova Phone?,True,BAAI/bge-m3,0.649899959564209,0.649899959564209,0.57,True,True
+evaluation,12,How many response hours does the Silver support plan allow?,True,BAAI/bge-m3,0.7316926717758179,0.7316926717758179,0.57,True,True
+evaluation,13,How many response hours does the Gold support plan allow?,True,BAAI/bge-m3,0.7202610969543457,0.7202610969543457,0.57,True,True
+evaluation,14,What time does the Lyra workshop start?,True,BAAI/bge-m3,0.7600418329238892,0.7600418329238892,0.57,True,True
+evaluation,15,Which room hosts the Lyra workshop?,True,BAAI/bge-m3,0.6547368764877319,0.6547368764877319,0.57,True,True
+evaluation,16,How many people can attend the Lyra workshop?,True,BAAI/bge-m3,0.7349715232849121,0.7349715232849121,0.57,True,True
+evaluation,17,When is the Lyra workshop registration deadline?,True,BAAI/bge-m3,0.7497114539146423,0.7497114539146423,0.57,True,True
+evaluation,18,What time does the Vega warehouse open?,True,BAAI/bge-m3,0.7537391185760498,0.7537391185760498,0.57,True,True
+evaluation,19,What time does the Vega warehouse close?,True,BAAI/bge-m3,0.747474730014801,0.747474730014801,0.57,True,True
+evaluation,20,What color safety helmet is required at Vega?,True,BAAI/bge-m3,0.6825303435325623,0.6825303435325623,0.57,True,True
+evaluation,21,What is the Vega emergency extension?,True,BAAI/bge-m3,0.5830194354057312,0.5830194354057312,0.57,True,True
+evaluation,22,CEO của Microsoft là ai?,False,BAAI/bge-m3,0.34099215269088745,,0.57,False,False
+evaluation,23,What is the distance from Earth to Mars?,False,BAAI/bge-m3,0.33577072620391846,,0.57,False,False
+evaluation,24,What is the Orion hotel Wi-Fi password?,False,BAAI/bge-m3,0.5528081655502319,,0.57,False,False
+evaluation,25,Ai là giám đốc nhân sự An Bình?,False,BAAI/bge-m3,0.5606018900871277,,0.57,False,False
+supplemental,user-1,bài toán 1 là gì,True,BAAI/bge-m3,0.5175355672836304,0.5175355672836304,0.57,False,False
+supplemental,user-2,bài toán 2 là gì,True,BAAI/bge-m3,0.5366014242172241,0.5366014242172241,0.57,False,False
+supplemental,user-3,bài toán 3 là gì,False,BAAI/bge-m3,0.48002099990844727,,0.57,False,False
+evaluation,1,What is the Orion hotel allowance per night?,True,intfloat/multilingual-e5-base,0.891284167766571,0.891284167766571,0.84,True,True
+evaluation,2,What is the daily Orion meal reimbursement limit?,True,intfloat/multilingual-e5-base,0.8909429907798767,0.8909429907798767,0.84,True,True
+evaluation,3,Within how many days must Orion travel receipts be submitted?,True,intfloat/multilingual-e5-base,0.8780335783958435,0.8780335783958435,0.84,True,True
+evaluation,4,What is the Orion mileage reimbursement per kilometer?,True,intfloat/multilingual-e5-base,0.9086065888404846,0.9086065888404846,0.84,True,True
+evaluation,5,What is the Orion travel approval code?,True,intfloat/multilingual-e5-base,0.8927893042564392,0.8927893042564392,0.84,True,True
+evaluation,6,Một năm người lao động có bao nhiêu ngày phép?,True,intfloat/multilingual-e5-base,0.8196539282798767,0.8196539282798767,0.84,False,False
+evaluation,7,Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?,True,intfloat/multilingual-e5-base,0.8894385099411011,0.8894385099411011,0.84,True,True
+evaluation,8,Nhân viên An Bình được làm từ xa mấy ngày một tuần?,True,intfloat/multilingual-e5-base,0.87977135181427,0.87977135181427,0.84,True,True
+evaluation,9,Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?,True,intfloat/multilingual-e5-base,0.8974126577377319,0.8974126577377319,0.84,True,True
+evaluation,10,What is the revenue for Atlas Laptop?,True,intfloat/multilingual-e5-base,0.8579000234603882,0.8579000234603882,0.84,True,True
+evaluation,11,What is the revenue for Nova Phone?,True,intfloat/multilingual-e5-base,0.8524119257926941,0.8524119257926941,0.84,True,True
+evaluation,12,How many response hours does the Silver support plan allow?,True,intfloat/multilingual-e5-base,0.8639984130859375,0.8639984130859375,0.84,True,True
+evaluation,13,How many response hours does the Gold support plan allow?,True,intfloat/multilingual-e5-base,0.8622862696647644,0.8622862696647644,0.84,True,True
+evaluation,14,What time does the Lyra workshop start?,True,intfloat/multilingual-e5-base,0.8910222053527832,0.8910222053527832,0.84,True,True
+evaluation,15,Which room hosts the Lyra workshop?,True,intfloat/multilingual-e5-base,0.8689874410629272,0.8689874410629272,0.84,True,True
+evaluation,16,How many people can attend the Lyra workshop?,True,intfloat/multilingual-e5-base,0.8842524290084839,0.8842524290084839,0.84,True,True
+evaluation,17,When is the Lyra workshop registration deadline?,True,intfloat/multilingual-e5-base,0.9032772183418274,0.9032772183418274,0.84,True,True
+evaluation,18,What time does the Vega warehouse open?,True,intfloat/multilingual-e5-base,0.8956997394561768,0.8956997394561768,0.84,True,True
+evaluation,19,What time does the Vega warehouse close?,True,intfloat/multilingual-e5-base,0.8946414589881897,0.8946414589881897,0.84,True,True
+evaluation,20,What color safety helmet is required at Vega?,True,intfloat/multilingual-e5-base,0.8819175958633423,0.8819175958633423,0.84,True,True
+evaluation,21,What is the Vega emergency extension?,True,intfloat/multilingual-e5-base,0.8566120266914368,0.8566120266914368,0.84,True,True
+evaluation,22,CEO của Microsoft là ai?,False,intfloat/multilingual-e5-base,0.7102092504501343,,0.84,False,False
+evaluation,23,What is the distance from Earth to Mars?,False,intfloat/multilingual-e5-base,0.7756556272506714,,0.84,False,False
+evaluation,24,What is the Orion hotel Wi-Fi password?,False,intfloat/multilingual-e5-base,0.8273203372955322,,0.84,False,False
+evaluation,25,Ai là giám đốc nhân sự An Bình?,False,intfloat/multilingual-e5-base,0.8342856764793396,,0.84,False,False
+supplemental,user-1,bài toán 1 là gì,True,intfloat/multilingual-e5-base,0.8232237100601196,0.8105672597885132,0.84,False,False
+supplemental,user-2,bài toán 2 là gì,True,intfloat/multilingual-e5-base,0.8196811676025391,0.8196811676025391,0.84,False,False
+supplemental,user-3,bài toán 3 là gì,False,intfloat/multilingual-e5-base,0.816655695438385,,0.84,False,False

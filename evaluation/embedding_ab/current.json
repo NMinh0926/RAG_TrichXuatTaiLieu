@@ -1,0 +1,2925 @@
+{
+  "variant": "current",
+  "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+  "input_sha256": "e96aee8378781e78facab6552b9d8c1664366978c47f202450a09b126686ed47",
+  "dataset_sha256": "760cc317ab4ae1545d696305f9111fbdbf80ce3b64feaa00cf6aa5f8217d3de9",
+  "top_k": 4,
+  "baseline_threshold": 0.55,
+  "encoding": "no instruction/prefix",
+  "device": "cpu",
+  "dtype": "torch.float32",
+  "threads": 4,
+  "batch_size": 4,
+  "corpora": {
+    "evaluation": {
+      "chunks_sha256": "78a1aefe55c9fdf6438e8211aba1c5a96061d88c77535db8ced7eda10e3a9eb6",
+      "chunk_count": 7,
+      "max_candidate_input_tokens": 66,
+      "embedding_dimension": 384,
+      "model_max_sequence_length": 128,
+      "chunks_exceeding_model_token_limit": 0,
+      "maximum_tokens_truncated": 0,
+      "collection": "documents_85d5decab4479bc4",
+      "test_db": "/experiment/ab_20260929/databases/current/c060516ca5714c0ca7361b00358b33ec/evaluation",
+      "raw_hit_count": 21,
+      "at_baseline_threshold": {
+        "threshold": 0.55,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      "relevant_distribution": {
+        "count": 21,
+        "min": 0.502113401889801,
+        "p25": 0.6513640880584717,
+        "median": 0.6967031955718994,
+        "p75": 0.7391128540039062,
+        "max": 0.8293617963790894
+      },
+      "no_answer_distribution": {
+        "count": 4,
+        "min": 0.17378365993499756,
+        "p25": 0.21560940146446228,
+        "median": 0.24586743116378784,
+        "p75": 0.32987116277217865,
+        "max": 0.5329340100288391
+      },
+      "separation_gap": -0.030820608139038086,
+      "cases": [
+        {
+          "id": 1,
+          "question": "What is the Orion hotel allowance per night?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "travel.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.17063820362091064,
+              "relevance": 0.8293617963790894,
+              "metadata": {
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "source_type": "text",
+                "chunk_index": 0,
+                "filename": "travel.pdf",
+                "page": 1,
+                "file_type": "pdf"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.3678027391433716,
+              "relevance": 0.6321972608566284,
+              "metadata": {
+                "filename": "travel.pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 1,
+                "page": 2,
+                "file_type": "pdf",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7079364061355591,
+              "relevance": 0.2920635938644409,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 0,
+                "filename": "operations.xlsx",
+                "file_type": "excel",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "sheet": "Sales"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7580112218856812,
+              "relevance": 0.24198877811431885,
+              "metadata": {
+                "filename": "hr.docx",
+                "source_type": "text",
+                "file_type": "docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.8293617963790894,
+          "best_relevant_score": 0.8293617963790894
+        },
+        {
+          "id": 2,
+          "question": "What is the daily Orion meal reimbursement limit?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "travel.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.3032968044281006,
+              "relevance": 0.6967031955718994,
+              "metadata": {
+                "source_type": "text",
+                "file_type": "pdf",
+                "chunk_index": 0,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "filename": "travel.pdf",
+                "page": 1
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.39384323358535767,
+              "relevance": 0.6061567664146423,
+              "metadata": {
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "filename": "travel.pdf",
+                "chunk_index": 1,
+                "file_type": "pdf",
+                "page": 2
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7128521800041199,
+              "relevance": 0.2871478199958801,
+              "metadata": {
+                "file_type": "excel",
+                "sheet": "Support",
+                "source_type": "text",
+                "filename": "operations.xlsx",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7240246534347534,
+              "relevance": 0.2759753465652466,
+              "metadata": {
+                "file_type": "excel",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 0,
+                "source_type": "text",
+                "filename": "operations.xlsx",
+                "sheet": "Sales"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6967031955718994,
+          "best_relevant_score": 0.6967031955718994
+        },
+        {
+          "id": 3,
+          "question": "Within how many days must Orion travel receipts be submitted?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "travel.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.2809374928474426,
+              "relevance": 0.7190625071525574,
+              "metadata": {
+                "filename": "travel.pdf",
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 1,
+                "page": 2,
+                "file_type": "pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.2939472198486328,
+              "relevance": 0.7060527801513672,
+              "metadata": {
+                "source_type": "text",
+                "filename": "travel.pdf",
+                "chunk_index": 0,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "page": 1,
+                "file_type": "pdf"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 3,
+              "distance": 0.6327980756759644,
+              "relevance": 0.36720192432403564,
+              "metadata": {
+                "filename": "hr.docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "file_type": "docx",
+                "chunk_index": 0,
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7611382007598877,
+              "relevance": 0.2388617992401123,
+              "metadata": {
+                "filename": "operations.xlsx",
+                "file_type": "excel",
+                "sheet": "Support",
+                "source_type": "text",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7190625071525574,
+          "best_relevant_score": 0.7060527801513672
+        },
+        {
+          "id": 4,
+          "question": "What is the Orion mileage reimbursement per kilometer?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "travel.pdf",
+            "page": 2
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.19205999374389648,
+              "relevance": 0.8079400062561035,
+              "metadata": {
+                "source_type": "text",
+                "page": 2,
+                "chunk_index": 1,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "file_type": "pdf",
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.35339510440826416,
+              "relevance": 0.6466048955917358,
+              "metadata": {
+                "page": 1,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "source_type": "text",
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.656549870967865,
+              "relevance": 0.343450129032135,
+              "metadata": {
+                "file_type": "excel",
+                "source_type": "text",
+                "chunk_index": 0,
+                "sheet": "Sales",
+                "filename": "operations.xlsx",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7277221083641052,
+              "relevance": 0.2722778916358948,
+              "metadata": {
+                "source_type": "text",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "file_type": "docx"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.8079400062561035,
+          "best_relevant_score": 0.8079400062561035
+        },
+        {
+          "id": 5,
+          "question": "What is the Orion travel approval code?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "travel.pdf",
+            "page": 2
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.20505911111831665,
+              "relevance": 0.7949408888816833,
+              "metadata": {
+                "source_type": "text",
+                "filename": "travel.pdf",
+                "page": 2,
+                "file_type": "pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 1
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.3064113259315491,
+              "relevance": 0.6935886740684509,
+              "metadata": {
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "filename": "travel.pdf",
+                "source_type": "text",
+                "page": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.813587486743927,
+              "relevance": 0.186412513256073,
+              "metadata": {
+                "filename": "operations.xlsx",
+                "sheet": "Sales",
+                "source_type": "text",
+                "chunk_index": 0,
+                "file_type": "excel",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8304010629653931,
+              "relevance": 0.16959893703460693,
+              "metadata": {
+                "file_type": "docx",
+                "filename": "hr.docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "chunk_index": 0,
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7949408888816833,
+          "best_relevant_score": 0.7949408888816833
+        },
+        {
+          "id": 6,
+          "question": "Một năm người lao động có bao nhiêu ngày phép?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "hr.docx"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.33957231044769287,
+              "relevance": 0.6604276895523071,
+              "metadata": {
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "source_type": "text",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "file_type": "docx"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7479763627052307,
+              "relevance": 0.2520236372947693,
+              "metadata": {
+                "chunk_index": 1,
+                "filename": "operations.xlsx",
+                "source_type": "text",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "sheet": "Support",
+                "file_type": "excel"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8639345169067383,
+              "relevance": 0.13606548309326172,
+              "metadata": {
+                "page": 1,
+                "filename": "travel.pdf",
+                "chunk_index": 0,
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "file_type": "pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8657042384147644,
+              "relevance": 0.1342957615852356,
+              "metadata": {
+                "source_type": "ocr",
+                "file_type": "pdf",
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "page": 1,
+                "filename": "warehouse_scan.pdf",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6604276895523071,
+          "best_relevant_score": 0.6604276895523071
+        },
+        {
+          "id": 7,
+          "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "hr.docx"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.34791696071624756,
+              "relevance": 0.6520830392837524,
+              "metadata": {
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "source_type": "text",
+                "chunk_index": 0,
+                "file_type": "docx",
+                "filename": "hr.docx"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7335596680641174,
+              "relevance": 0.26644033193588257,
+              "metadata": {
+                "filename": "operations.xlsx",
+                "file_type": "excel",
+                "source_type": "text",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "sheet": "Support",
+                "chunk_index": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7390714287757874,
+              "relevance": 0.26092857122421265,
+              "metadata": {
+                "chunk_index": 0,
+                "source_type": "ocr",
+                "filename": "notice.png",
+                "file_type": "image",
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.761411190032959,
+              "relevance": 0.23858880996704102,
+              "metadata": {
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "chunk_index": 0,
+                "source_type": "ocr",
+                "page": 1,
+                "file_type": "pdf",
+                "filename": "warehouse_scan.pdf"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6520830392837524,
+          "best_relevant_score": 0.6520830392837524
+        },
+        {
+          "id": 8,
+          "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "hr.docx"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.27362531423568726,
+              "relevance": 0.7263746857643127,
+              "metadata": {
+                "source_type": "text",
+                "file_type": "docx",
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7481098771095276,
+              "relevance": 0.2518901228904724,
+              "metadata": {
+                "page": 2,
+                "chunk_index": 1,
+                "source_type": "text",
+                "file_type": "pdf",
+                "filename": "travel.pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7828822135925293,
+              "relevance": 0.2171177864074707,
+              "metadata": {
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "source_type": "ocr"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7948527336120605,
+              "relevance": 0.20514726638793945,
+              "metadata": {
+                "file_type": "pdf",
+                "chunk_index": 0,
+                "filename": "travel.pdf",
+                "page": 1,
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7263746857643127,
+          "best_relevant_score": 0.7263746857643127
+        },
+        {
+          "id": 9,
+          "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "hr.docx"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.3486359119415283,
+              "relevance": 0.6513640880584717,
+              "metadata": {
+                "chunk_index": 0,
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "filename": "hr.docx",
+                "source_type": "text",
+                "file_type": "docx"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7393128275871277,
+              "relevance": 0.2606871724128723,
+              "metadata": {
+                "page": 2,
+                "file_type": "pdf",
+                "chunk_index": 1,
+                "filename": "travel.pdf",
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7681818604469299,
+              "relevance": 0.23181813955307007,
+              "metadata": {
+                "filename": "travel.pdf",
+                "page": 1,
+                "chunk_index": 0,
+                "source_type": "text",
+                "file_type": "pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7774913311004639,
+              "relevance": 0.22250866889953613,
+              "metadata": {
+                "filename": "notice.png",
+                "file_type": "image",
+                "source_type": "ocr",
+                "chunk_index": 0,
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6513640880584717,
+          "best_relevant_score": 0.6513640880584717
+        },
+        {
+          "id": 10,
+          "question": "What is the revenue for Atlas Laptop?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "operations.xlsx",
+            "sheet": "Sales"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.26643049716949463,
+              "relevance": 0.7335695028305054,
+              "metadata": {
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "file_type": "excel",
+                "sheet": "Sales",
+                "filename": "operations.xlsx",
+                "source_type": "text",
+                "chunk_index": 0
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.606550931930542,
+              "relevance": 0.393449068069458,
+              "metadata": {
+                "page": 1,
+                "file_type": "pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "source_type": "text",
+                "chunk_index": 0,
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.6109363436698914,
+              "relevance": 0.38906365633010864,
+              "metadata": {
+                "filename": "travel.pdf",
+                "source_type": "text",
+                "page": 2,
+                "chunk_index": 1,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "file_type": "pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8349165320396423,
+              "relevance": 0.16508346796035767,
+              "metadata": {
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "filename": "notice.png",
+                "file_type": "image",
+                "source_type": "ocr",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7335695028305054,
+          "best_relevant_score": 0.7335695028305054
+        },
+        {
+          "id": 11,
+          "question": "What is the revenue for Nova Phone?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "operations.xlsx",
+            "sheet": "Sales"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.497886598110199,
+              "relevance": 0.502113401889801,
+              "metadata": {
+                "chunk_index": 0,
+                "sheet": "Sales",
+                "file_type": "excel",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "source_type": "text",
+                "filename": "operations.xlsx"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7465410232543945,
+              "relevance": 0.25345897674560547,
+              "metadata": {
+                "source_type": "text",
+                "page": 2,
+                "chunk_index": 1,
+                "file_type": "pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.760692834854126,
+              "relevance": 0.23930716514587402,
+              "metadata": {
+                "page": 1,
+                "file_type": "pdf",
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "filename": "travel.pdf",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.866192102432251,
+              "relevance": 0.13380789756774902,
+              "metadata": {
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "source_type": "ocr",
+                "filename": "warehouse_scan.pdf",
+                "page": 1
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.502113401889801,
+          "best_relevant_score": 0.502113401889801
+        },
+        {
+          "id": 12,
+          "question": "How many response hours does the Silver support plan allow?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "operations.xlsx",
+            "sheet": "Support"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.37235867977142334,
+              "relevance": 0.6276413202285767,
+              "metadata": {
+                "sheet": "Support",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1,
+                "source_type": "text",
+                "file_type": "excel",
+                "filename": "operations.xlsx"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.559477686882019,
+              "relevance": 0.44052231311798096,
+              "metadata": {
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "file_type": "docx",
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.6442165374755859,
+              "relevance": 0.35578346252441406,
+              "metadata": {
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "file_type": "pdf",
+                "source_type": "text",
+                "page": 2,
+                "chunk_index": 1,
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.6526789665222168,
+              "relevance": 0.3473210334777832,
+              "metadata": {
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "filename": "travel.pdf",
+                "source_type": "text",
+                "page": 1,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6276413202285767,
+          "best_relevant_score": 0.6276413202285767
+        },
+        {
+          "id": 13,
+          "question": "How many response hours does the Gold support plan allow?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "operations.xlsx",
+            "sheet": "Support"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.3626532554626465,
+              "relevance": 0.6373467445373535,
+              "metadata": {
+                "source_type": "text",
+                "filename": "operations.xlsx",
+                "file_type": "excel",
+                "sheet": "Support",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.5283651351928711,
+              "relevance": 0.4716348648071289,
+              "metadata": {
+                "file_type": "docx",
+                "filename": "hr.docx",
+                "source_type": "text",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.6395591497421265,
+              "relevance": 0.36044085025787354,
+              "metadata": {
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "source_type": "text",
+                "page": 2,
+                "file_type": "pdf",
+                "chunk_index": 1,
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.6582986116409302,
+              "relevance": 0.3417013883590698,
+              "metadata": {
+                "filename": "travel.pdf",
+                "page": 1,
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6373467445373535,
+          "best_relevant_score": 0.6373467445373535
+        },
+        {
+          "id": 14,
+          "question": "What time does the Lyra workshop start?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "notice.png"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.17866581678390503,
+              "relevance": 0.821334183216095,
+              "metadata": {
+                "file_type": "image",
+                "chunk_index": 0,
+                "filename": "notice.png",
+                "source_type": "ocr",
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.6538980007171631,
+              "relevance": 0.3461019992828369,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 0,
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "filename": "hr.docx",
+                "file_type": "docx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.6931764483451843,
+              "relevance": 0.3068235516548157,
+              "metadata": {
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "file_type": "pdf",
+                "chunk_index": 0,
+                "source_type": "ocr",
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8460650444030762,
+              "relevance": 0.15393495559692383,
+              "metadata": {
+                "chunk_index": 0,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "file_type": "pdf",
+                "page": 1,
+                "filename": "travel.pdf",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.821334183216095,
+          "best_relevant_score": 0.821334183216095
+        },
+        {
+          "id": 15,
+          "question": "Which room hosts the Lyra workshop?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "notice.png"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.31346362829208374,
+              "relevance": 0.6865363717079163,
+              "metadata": {
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "chunk_index": 0,
+                "filename": "notice.png",
+                "file_type": "image",
+                "source_type": "ocr"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7939664125442505,
+              "relevance": 0.2060335874557495,
+              "metadata": {
+                "file_type": "pdf",
+                "page": 1,
+                "filename": "warehouse_scan.pdf",
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "chunk_index": 0,
+                "source_type": "ocr"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8485057353973389,
+              "relevance": 0.15149426460266113,
+              "metadata": {
+                "sheet": "Support",
+                "source_type": "text",
+                "chunk_index": 1,
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8488621711730957,
+              "relevance": 0.1511378288269043,
+              "metadata": {
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 0,
+                "source_type": "text",
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "sheet": "Sales"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6865363717079163,
+          "best_relevant_score": 0.6865363717079163
+        },
+        {
+          "id": 16,
+          "question": "How many people can attend the Lyra workshop?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "notice.png"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.306532084941864,
+              "relevance": 0.693467915058136,
+              "metadata": {
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "chunk_index": 0,
+                "file_type": "image",
+                "filename": "notice.png",
+                "source_type": "ocr"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.7234424352645874,
+              "relevance": 0.2765575647354126,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "file_type": "docx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.812573254108429,
+              "relevance": 0.18742674589157104,
+              "metadata": {
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "sheet": "Support",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1,
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8249874114990234,
+              "relevance": 0.17501258850097656,
+              "metadata": {
+                "filename": "operations.xlsx",
+                "sheet": "Sales",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "file_type": "excel",
+                "source_type": "text",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.693467915058136,
+          "best_relevant_score": 0.693467915058136
+        },
+        {
+          "id": 17,
+          "question": "When is the Lyra workshop registration deadline?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "notice.png"
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.17146313190460205,
+              "relevance": 0.828536868095398,
+              "metadata": {
+                "filename": "notice.png",
+                "file_type": "image",
+                "source_type": "ocr",
+                "chunk_index": 0,
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.6597923040390015,
+              "relevance": 0.34020769596099854,
+              "metadata": {
+                "chunk_index": 0,
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "source_type": "text",
+                "filename": "hr.docx",
+                "file_type": "docx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7835601568222046,
+              "relevance": 0.2164398431777954,
+              "metadata": {
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "source_type": "ocr",
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8044037818908691,
+              "relevance": 0.19559621810913086,
+              "metadata": {
+                "file_type": "excel",
+                "chunk_index": 1,
+                "filename": "operations.xlsx",
+                "sheet": "Support",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.828536868095398,
+          "best_relevant_score": 0.828536868095398
+        },
+        {
+          "id": 18,
+          "question": "What time does the Vega warehouse open?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.26088714599609375,
+              "relevance": 0.7391128540039062,
+              "metadata": {
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "source_type": "ocr",
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "file_type": "pdf",
+                "chunk_index": 0
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.6100419759750366,
+              "relevance": 0.3899580240249634,
+              "metadata": {
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "filename": "notice.png",
+                "source_type": "ocr",
+                "file_type": "image",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7348743677139282,
+              "relevance": 0.2651256322860718,
+              "metadata": {
+                "filename": "hr.docx",
+                "file_type": "docx",
+                "chunk_index": 0,
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8487565517425537,
+              "relevance": 0.1512434482574463,
+              "metadata": {
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "source_type": "text",
+                "file_type": "pdf",
+                "filename": "travel.pdf",
+                "page": 1,
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7391128540039062,
+          "best_relevant_score": 0.7391128540039062
+        },
+        {
+          "id": 19,
+          "question": "What time does the Vega warehouse close?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.2693469524383545,
+              "relevance": 0.7306530475616455,
+              "metadata": {
+                "filename": "warehouse_scan.pdf",
+                "source_type": "ocr",
+                "file_type": "pdf",
+                "chunk_index": 0,
+                "page": 1,
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.6429265737533569,
+              "relevance": 0.35707342624664307,
+              "metadata": {
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "chunk_index": 0,
+                "file_type": "image",
+                "filename": "notice.png",
+                "source_type": "ocr"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.6912133693695068,
+              "relevance": 0.30878663063049316,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 0,
+                "filename": "hr.docx",
+                "file_type": "docx",
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8299835920333862,
+              "relevance": 0.17001640796661377,
+              "metadata": {
+                "source_type": "text",
+                "file_type": "excel",
+                "chunk_index": 1,
+                "filename": "operations.xlsx",
+                "sheet": "Support",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.7306530475616455,
+          "best_relevant_score": 0.7306530475616455
+        },
+        {
+          "id": 20,
+          "question": "What color safety helmet is required at Vega?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.35311949253082275,
+              "relevance": 0.6468805074691772,
+              "metadata": {
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "source_type": "ocr",
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.8315183520317078,
+              "relevance": 0.16848164796829224,
+              "metadata": {
+                "file_type": "pdf",
+                "page": 2,
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "filename": "travel.pdf",
+                "chunk_index": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8423017263412476,
+              "relevance": 0.15769827365875244,
+              "metadata": {
+                "source_type": "text",
+                "page": 1,
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "filename": "travel.pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.871509850025177,
+              "relevance": 0.128490149974823,
+              "metadata": {
+                "source_type": "text",
+                "file_type": "excel",
+                "sheet": "Support",
+                "chunk_index": 1,
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "filename": "operations.xlsx"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.6468805074691772,
+          "best_relevant_score": 0.6468805074691772
+        },
+        {
+          "id": 21,
+          "question": "What is the Vega emergency extension?",
+          "answerable": true,
+          "expected_source": {
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.46927857398986816,
+              "relevance": 0.5307214260101318,
+              "metadata": {
+                "source_type": "ocr",
+                "chunk_index": 0,
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "page": 1,
+                "filename": "warehouse_scan.pdf",
+                "file_type": "pdf"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.85576331615448,
+              "relevance": 0.14423668384552002,
+              "metadata": {
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "source_type": "text",
+                "file_type": "docx",
+                "chunk_index": 0,
+                "filename": "hr.docx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8627182245254517,
+              "relevance": 0.13728177547454834,
+              "metadata": {
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "sheet": "Support",
+                "source_type": "text",
+                "file_type": "excel",
+                "chunk_index": 1,
+                "filename": "operations.xlsx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.9170207977294922,
+              "relevance": 0.08297920227050781,
+              "metadata": {
+                "page": 2,
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "chunk_index": 1,
+                "file_type": "pdf",
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.5307214260101318,
+          "best_relevant_score": 0.5307214260101318
+        },
+        {
+          "id": 22,
+          "question": "CEO của Microsoft là ai?",
+          "answerable": false,
+          "expected_source": null,
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.7704486846923828,
+              "relevance": 0.2295513153076172,
+              "metadata": {
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "chunk_index": 0,
+                "sheet": "Sales",
+                "source_type": "text",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.8592739105224609,
+              "relevance": 0.14072608947753906,
+              "metadata": {
+                "source_type": "ocr",
+                "chunk_index": 0,
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "file_type": "image",
+                "filename": "notice.png"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8811075687408447,
+              "relevance": 0.11889243125915527,
+              "metadata": {
+                "chunk_index": 0,
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "page": 1,
+                "file_type": "pdf",
+                "source_type": "ocr",
+                "filename": "warehouse_scan.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8875018358230591,
+              "relevance": 0.11249816417694092,
+              "metadata": {
+                "sheet": "Support",
+                "filename": "operations.xlsx",
+                "file_type": "excel",
+                "source_type": "text",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 1
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.2295513153076172,
+          "best_relevant_score": null
+        },
+        {
+          "id": 23,
+          "question": "What is the distance from Earth to Mars?",
+          "answerable": false,
+          "expected_source": null,
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.7378164529800415,
+              "relevance": 0.2621835470199585,
+              "metadata": {
+                "file_type": "pdf",
+                "source_type": "text",
+                "page": 2,
+                "chunk_index": 1,
+                "filename": "travel.pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.8153572082519531,
+              "relevance": 0.18464279174804688,
+              "metadata": {
+                "filename": "travel.pdf",
+                "file_type": "pdf",
+                "source_type": "text",
+                "chunk_index": 0,
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "page": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.855908989906311,
+              "relevance": 0.14409101009368896,
+              "metadata": {
+                "sheet": "Sales",
+                "chunk_index": 0,
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "file_type": "excel",
+                "source_type": "text",
+                "filename": "operations.xlsx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8695536851882935,
+              "relevance": 0.13044631481170654,
+              "metadata": {
+                "source_type": "text",
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "sheet": "Support",
+                "chunk_index": 1,
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.2621835470199585,
+          "best_relevant_score": null
+        },
+        {
+          "id": 24,
+          "question": "What is the Orion hotel Wi-Fi password?",
+          "answerable": false,
+          "expected_source": null,
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.4670659899711609,
+              "relevance": 0.5329340100288391,
+              "metadata": {
+                "page": 1,
+                "filename": "travel.pdf",
+                "chunk_index": 0,
+                "file_type": "pdf",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.5176270604133606,
+              "relevance": 0.4823729395866394,
+              "metadata": {
+                "file_type": "pdf",
+                "source_type": "text",
+                "document_id": "7fc9eed98f84d4098109fdaae58daa212b208366232fce4e740cc08fd0206de6",
+                "page": 2,
+                "chunk_index": 1,
+                "filename": "travel.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7987772822380066,
+              "relevance": 0.2012227177619934,
+              "metadata": {
+                "filename": "operations.xlsx",
+                "sheet": "Sales",
+                "chunk_index": 0,
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "file_type": "excel",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8514244556427002,
+              "relevance": 0.1485755443572998,
+              "metadata": {
+                "file_type": "pdf",
+                "filename": "warehouse_scan.pdf",
+                "page": 1,
+                "source_type": "ocr",
+                "document_id": "678e222726191ee213ee4aaf43f04ff513852d3a08b851d4e540cff9a585696b",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.5329340100288391,
+          "best_relevant_score": null
+        },
+        {
+          "id": 25,
+          "question": "Ai là giám đốc nhân sự An Bình?",
+          "answerable": false,
+          "expected_source": null,
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.8262163400650024,
+              "relevance": 0.17378365993499756,
+              "metadata": {
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "source_type": "text",
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "chunk_index": 1,
+                "sheet": "Support"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.8339217901229858,
+              "relevance": 0.16607820987701416,
+              "metadata": {
+                "filename": "hr.docx",
+                "source_type": "text",
+                "chunk_index": 0,
+                "document_id": "018a9db44bb8a9ad447e379493ff59dfd902c1f38eabeb465b6aa4a717b105d5",
+                "file_type": "docx"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.8574342131614685,
+              "relevance": 0.1425657868385315,
+              "metadata": {
+                "chunk_index": 0,
+                "document_id": "ce79ea25871a0bf6a03ca5fbb4ec145d93a59a17228dd0d73ba6d27e7e61d32a",
+                "filename": "notice.png",
+                "source_type": "ocr",
+                "file_type": "image"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.8808364272117615,
+              "relevance": 0.11916357278823853,
+              "metadata": {
+                "file_type": "excel",
+                "filename": "operations.xlsx",
+                "source_type": "text",
+                "sheet": "Sales",
+                "document_id": "8e94a1728229dcdee9305787ebb7d06240c15775bd4cc04be4528ddb9e9d3ce4",
+                "chunk_index": 0
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.17378365993499756,
+          "best_relevant_score": null
+        }
+      ]
+    },
+    "supplemental": {
+      "chunks_sha256": "02790987072bfbcf32d19e0b6b2dbeb13b04e9da22053da4bf72a899913251cf",
+      "chunk_count": 6,
+      "max_candidate_input_tokens": 129,
+      "embedding_dimension": 384,
+      "model_max_sequence_length": 128,
+      "chunks_exceeding_model_token_limit": 1,
+      "maximum_tokens_truncated": 1,
+      "collection": "documents_85d5decab4479bc4",
+      "test_db": "/experiment/ab_20260929/databases/current/c060516ca5714c0ca7361b00358b33ec/supplemental",
+      "raw_hit_count": 2,
+      "at_baseline_threshold": {
+        "threshold": 0.55,
+        "answerable_hit_count": 0,
+        "answerable_count": 2,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 1,
+        "no_answer_empty": 1
+      },
+      "relevant_distribution": {
+        "count": 2,
+        "min": 0.23399996757507324,
+        "p25": 0.25197839736938477,
+        "median": 0.2699568271636963,
+        "p75": 0.2879352569580078,
+        "max": 0.30591368675231934
+      },
+      "no_answer_distribution": {
+        "count": 1,
+        "min": 0.3224421739578247,
+        "p25": 0.3224421739578247,
+        "median": 0.3224421739578247,
+        "p75": 0.3224421739578247,
+        "max": 0.3224421739578247
+      },
+      "separation_gap": -0.08844220638275146,
+      "cases": [
+        {
+          "id": "user-1",
+          "question": "bài toán 1 là gì",
+          "answerable": true,
+          "expected_source": {
+            "filename": "user_document.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.6940863132476807,
+              "relevance": 0.30591368675231934,
+              "metadata": {
+                "filename": "user_document.pdf",
+                "page": 1,
+                "file_type": "pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "chunk_index": 0,
+                "source_type": "text"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 2,
+              "distance": 0.764970064163208,
+              "relevance": 0.235029935836792,
+              "metadata": {
+                "file_type": "pdf",
+                "source_type": "text",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "filename": "user_document.pdf",
+                "chunk_index": 1,
+                "page": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7832440137863159,
+              "relevance": 0.21675598621368408,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 2,
+                "page": 1,
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "filename": "user_document.pdf",
+                "file_type": "pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7995094656944275,
+              "relevance": 0.2004905343055725,
+              "metadata": {
+                "file_type": "pdf",
+                "page": 1,
+                "chunk_index": 3,
+                "filename": "user_document.pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "source_type": "text"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.30591368675231934,
+          "best_relevant_score": 0.30591368675231934
+        },
+        {
+          "id": "user-2",
+          "question": "bài toán 2 là gì",
+          "answerable": true,
+          "expected_source": {
+            "filename": "user_document.pdf",
+            "page": 1
+          },
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.7589012384414673,
+              "relevance": 0.24109876155853271,
+              "metadata": {
+                "chunk_index": 0,
+                "source_type": "text",
+                "file_type": "pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "page": 1,
+                "filename": "user_document.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.7660000324249268,
+              "relevance": 0.23399996757507324,
+              "metadata": {
+                "file_type": "pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "chunk_index": 1,
+                "source_type": "text",
+                "page": 1,
+                "filename": "user_document.pdf"
+              },
+              "expected_fact_match": true
+            },
+            {
+              "rank": 3,
+              "distance": 0.7843527793884277,
+              "relevance": 0.21564722061157227,
+              "metadata": {
+                "file_type": "pdf",
+                "source_type": "text",
+                "filename": "user_document.pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "page": 1,
+                "chunk_index": 2
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7941907644271851,
+              "relevance": 0.20580923557281494,
+              "metadata": {
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "file_type": "pdf",
+                "source_type": "text",
+                "page": 1,
+                "chunk_index": 3,
+                "filename": "user_document.pdf"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.24109876155853271,
+          "best_relevant_score": 0.23399996757507324
+        },
+        {
+          "id": "user-3",
+          "question": "bài toán 3 là gì",
+          "answerable": false,
+          "expected_source": null,
+          "top_k": [
+            {
+              "rank": 1,
+              "distance": 0.6775578260421753,
+              "relevance": 0.3224421739578247,
+              "metadata": {
+                "filename": "user_document.pdf",
+                "file_type": "pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "source_type": "text",
+                "chunk_index": 0,
+                "page": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 2,
+              "distance": 0.7497725486755371,
+              "relevance": 0.2502274513244629,
+              "metadata": {
+                "file_type": "pdf",
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "filename": "user_document.pdf",
+                "source_type": "text",
+                "chunk_index": 1,
+                "page": 1
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 3,
+              "distance": 0.7548247575759888,
+              "relevance": 0.24517524242401123,
+              "metadata": {
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "file_type": "pdf",
+                "source_type": "text",
+                "chunk_index": 3,
+                "page": 1,
+                "filename": "user_document.pdf"
+              },
+              "expected_fact_match": false
+            },
+            {
+              "rank": 4,
+              "distance": 0.7605036497116089,
+              "relevance": 0.2394963502883911,
+              "metadata": {
+                "source_type": "text",
+                "chunk_index": 5,
+                "filename": "user_document.pdf",
+                "page": 1,
+                "document_id": "e400dfa6dd4f77ca4244c200ad5cc5fad9256ec113cefe7051123c15db9036ca",
+                "file_type": "pdf"
+              },
+              "expected_fact_match": false
+            }
+          ],
+          "top_score": 0.3224421739578247,
+          "best_relevant_score": null
+        }
+      ],
+      "at_recommended_threshold": {
+        "threshold": 0.55,
+        "answerable_hit_count": 0,
+        "answerable_count": 2,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 1,
+        "no_answer_empty": 1
+      }
+    }
+  },
+  "calibration": {
+    "policy": "max recall subject to zero no-answer FP; 0.01 grid; evaluation corpus only",
+    "recommended": {
+      "threshold": 0.55,
+      "answerable_hit_count": 19,
+      "answerable_count": 21,
+      "retrieval_hit_rate": 0.9047619047619048,
+      "no_answer_false_positive": 0,
+      "no_answer_count": 4,
+      "no_answer_empty": 4
+    },
+    "sweep": [
+      {
+        "threshold": 0.0,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.01,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.02,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.03,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.04,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.05,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.06,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.07,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.08,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.09,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.1,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.11,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.12,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.13,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.14,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.15,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.16,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.17,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 4,
+        "no_answer_count": 4,
+        "no_answer_empty": 0
+      },
+      {
+        "threshold": 0.18,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 3,
+        "no_answer_count": 4,
+        "no_answer_empty": 1
+      },
+      {
+        "threshold": 0.19,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 3,
+        "no_answer_count": 4,
+        "no_answer_empty": 1
+      },
+      {
+        "threshold": 0.2,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 3,
+        "no_answer_count": 4,
+        "no_answer_empty": 1
+      },
+      {
+        "threshold": 0.21,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 3,
+        "no_answer_count": 4,
+        "no_answer_empty": 1
+      },
+      {
+        "threshold": 0.22,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 3,
+        "no_answer_count": 4,
+        "no_answer_empty": 1
+      },
+      {
+        "threshold": 0.23,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 2,
+        "no_answer_count": 4,
+        "no_answer_empty": 2
+      },
+      {
+        "threshold": 0.24,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 2,
+        "no_answer_count": 4,
+        "no_answer_empty": 2
+      },
+      {
+        "threshold": 0.25,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 2,
+        "no_answer_count": 4,
+        "no_answer_empty": 2
+      },
+      {
+        "threshold": 0.26,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 2,
+        "no_answer_count": 4,
+        "no_answer_empty": 2
+      },
+      {
+        "threshold": 0.27,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.28,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.29,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.3,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.31,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.32,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.33,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.34,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.35,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.36,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.37,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.38,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.39,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.4,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.41,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.42,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.43,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.44,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.45,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.46,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.47,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.48,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.49,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.5,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.51,
+        "answerable_hit_count": 20,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9523809523809523,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.52,
+        "answerable_hit_count": 20,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9523809523809523,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.53,
+        "answerable_hit_count": 20,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9523809523809523,
+        "no_answer_false_positive": 1,
+        "no_answer_count": 4,
+        "no_answer_empty": 3
+      },
+      {
+        "threshold": 0.54,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.55,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.56,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.57,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.58,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.59,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.6,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.61,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.62,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.63,
+        "answerable_hit_count": 18,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.8571428571428571,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.64,
+        "answerable_hit_count": 17,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.8095238095238095,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.65,
+        "answerable_hit_count": 16,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.7619047619047619,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.66,
+        "answerable_hit_count": 14,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.6666666666666666,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.67,
+        "answerable_hit_count": 13,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.6190476190476191,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.68,
+        "answerable_hit_count": 13,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.6190476190476191,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.69,
+        "answerable_hit_count": 12,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.5714285714285714,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.7,
+        "answerable_hit_count": 10,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.47619047619047616,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.71,
+        "answerable_hit_count": 9,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.42857142857142855,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.72,
+        "answerable_hit_count": 9,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.42857142857142855,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.73,
+        "answerable_hit_count": 8,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.38095238095238093,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.74,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.75,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.76,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.77,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.78,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.79,
+        "answerable_hit_count": 5,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.23809523809523808,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.8,
+        "answerable_hit_count": 4,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.19047619047619047,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.81,
+        "answerable_hit_count": 3,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.14285714285714285,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.82,
+        "answerable_hit_count": 3,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.14285714285714285,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.83,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.84,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.85,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.86,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.87,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.88,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.89,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.9,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.91,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.92,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.93,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.94,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.95,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.96,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.97,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.98,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 0.99,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      {
+        "threshold": 1.0,
+        "answerable_hit_count": 0,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      }
+    ],
+    "not_independent_validation": true
+  },
+  "resources": {
+    "download_or_cache_check_seconds": 0.4110437039998942,
+    "cached_model_load_seconds": 2.667208095001115,
+    "rss_before_model_bytes": 538488832,
+    "rss_after_load_bytes": 1156329472,
+    "peak_process_rss_bytes": 1313251328,
+    "first_document_encoding_seconds": 0.43079534700518707,
+    "document_count": 13,
+    "warm_documents_seconds_median": 0.46572629200090887,
+    "warm_documents_per_second": 27.91339081190338,
+    "query_latency_seconds_median": 0.02094066949939588,
+    "query_latency_seconds_p95": 0.031154201851313686,
+    "query_count": 28,
+    "snapshot_bytes": 499561295
+  }
+}

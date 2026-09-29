@@ -1,0 +1,11 @@
+{
+  "synthetic_only": true,
+  "context": "Project Orion has internal code ZXQ-91827.",
+  "question": "What is the internal code of Project Orion?",
+  "status": "FAIL",
+  "category": "gemini_project_access_denied",
+  "provider_http_status": 403,
+  "backend_mapped_status": 503,
+  "real_documents_sent": false,
+  "connectivity_verified": false
+}

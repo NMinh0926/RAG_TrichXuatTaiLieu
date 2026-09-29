@@ -1,0 +1,1774 @@
+{
+  "mode": "retrieval_only",
+  "created_at": "2026-09-29T11:21:40.070130+00:00",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "gemini_model": null,
+  "top_k": 4,
+  "threshold": 0.55,
+  "candidate_min_relevance": -1.0,
+  "retrieval_ranking": {
+    "answerable": 21,
+    "no_answer": 4,
+    "top_k": 4,
+    "hit@1": 0.9523809523809523,
+    "hit@3": 1.0,
+    "hit@4": 1.0,
+    "mrr": 0.9761904761904762,
+    "misses": [],
+    "relevant_chunk_relevance": {
+      "n": 21,
+      "min": 0.502113,
+      "median": 0.696703,
+      "max": 0.829362
+    },
+    "answerable_top1_relevance": {
+      "n": 21,
+      "min": 0.502113,
+      "median": 0.696703,
+      "max": 0.829362
+    },
+    "no_answer_top1_relevance": {
+      "n": 4,
+      "min": 0.173784,
+      "median": 0.245867,
+      "max": 0.532934
+    },
+    "relevant_vs_no_answer_overlap": true,
+    "legacy_threshold": 0.55,
+    "legacy_threshold_hit_rate": 0.9047619047619048,
+    "candidate_floor_sweep": [
+      {
+        "floor": 0.0,
+        "relevant_kept": 21,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.05,
+        "relevant_kept": 21,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.1,
+        "relevant_kept": 21,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.15,
+        "relevant_kept": 21,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.2,
+        "relevant_kept": 21,
+        "no_answer_emptied": 1
+      },
+      {
+        "floor": 0.25,
+        "relevant_kept": 21,
+        "no_answer_emptied": 2
+      },
+      {
+        "floor": 0.3,
+        "relevant_kept": 21,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.35,
+        "relevant_kept": 21,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.4,
+        "relevant_kept": 21,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.45,
+        "relevant_kept": 21,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.5,
+        "relevant_kept": 21,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.55,
+        "relevant_kept": 19,
+        "no_answer_emptied": 4
+      },
+      {
+        "floor": 0.6,
+        "relevant_kept": 19,
+        "no_answer_emptied": 4
+      }
+    ]
+  },
+  "answering": null,
+  "metrics": {
+    "total_questions": 25,
+    "answerable_questions": 21,
+    "retrieval_hit_count": 19,
+    "retrieval_hit_rate": 0.9047619047619048,
+    "correct_answer_count": null,
+    "answer_accuracy": null,
+    "no_answer_total": 4,
+    "no_answer_correct_count": null,
+    "no_answer_accuracy": null,
+    "error_count": 0
+  },
+  "cases": [
+    {
+      "id": 1,
+      "question": "What is the Orion hotel allowance per night?",
+      "category": "pdf",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.829362,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 0,
+            "source_type": "text",
+            "page": 1
+          },
+          "relevance": 0.829362,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "source_type": "text",
+            "page": 2,
+            "filename": "travel.pdf",
+            "chunk_index": 1
+          },
+          "relevance": 0.632197,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "sheet": "Sales",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "relevance": 0.292064,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "file_type": "docx",
+            "source_type": "text",
+            "filename": "hr.docx"
+          },
+          "relevance": 0.241989,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "What is the daily Orion meal reimbursement limit?",
+      "category": "pdf",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.696703,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "chunk_index": 0,
+            "page": 1,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text"
+          },
+          "relevance": 0.696703,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "page": 2,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 1
+          },
+          "relevance": 0.606157,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "sheet": "Support",
+            "source_type": "text"
+          },
+          "relevance": 0.287148,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 0,
+            "sheet": "Sales",
+            "file_type": "excel",
+            "source_type": "text",
+            "filename": "operations.xlsx"
+          },
+          "relevance": 0.275975,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Within how many days must Orion travel receipts be submitted?",
+      "category": "pdf",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 2,
+      "relevant_relevance": 0.706053,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "source_type": "text",
+            "chunk_index": 1,
+            "page": 2,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.719063,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "page": 1
+          },
+          "relevance": 0.706053,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "source_type": "text",
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f"
+          },
+          "relevance": 0.367202,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "excel",
+            "chunk_index": 1,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "filename": "operations.xlsx",
+            "sheet": "Support",
+            "source_type": "text"
+          },
+          "relevance": 0.238862,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "What is the Orion mileage reimbursement per kilometer?",
+      "category": "pdf",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.80794,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "chunk_index": 1,
+            "page": 2,
+            "source_type": "text"
+          },
+          "relevance": 0.80794,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "page": 1,
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.646605,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "chunk_index": 0,
+            "sheet": "Sales",
+            "source_type": "text",
+            "filename": "operations.xlsx"
+          },
+          "relevance": 0.34345,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "filename": "hr.docx",
+            "chunk_index": 0,
+            "file_type": "docx",
+            "source_type": "text"
+          },
+          "relevance": 0.272278,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "What is the Orion travel approval code?",
+      "category": "pdf",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.794941,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "file_type": "pdf",
+            "chunk_index": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "page": 2
+          },
+          "relevance": 0.794941,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "chunk_index": 0,
+            "source_type": "text",
+            "file_type": "pdf",
+            "page": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.693589,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "chunk_index": 0,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "sheet": "Sales"
+          },
+          "relevance": 0.186413,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "source_type": "text",
+            "filename": "hr.docx",
+            "chunk_index": 0,
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "file_type": "docx"
+          },
+          "relevance": 0.169599,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "question": "Một năm người lao động có bao nhiêu ngày phép?",
+      "category": "docx",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.660428,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "source_type": "text",
+            "chunk_index": 0,
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f"
+          },
+          "relevance": 0.660428,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "file_type": "excel",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "sheet": "Support"
+          },
+          "relevance": 0.252024,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "page": 1,
+            "chunk_index": 0
+          },
+          "relevance": 0.136065,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "pdf",
+            "page": 1,
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "relevance": 0.134296,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+      "category": "docx",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.652083,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "file_type": "docx",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "filename": "hr.docx",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "relevance": 0.652083,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Support"
+          },
+          "relevance": 0.26644,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "notice.png",
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "file_type": "image"
+          },
+          "relevance": 0.260929,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "source_type": "ocr",
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1,
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0"
+          },
+          "relevance": 0.238589,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+      "category": "docx",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.726375,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "source_type": "text",
+            "file_type": "docx"
+          },
+          "relevance": 0.726375,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "page": 2,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "source_type": "text",
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.25189,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "file_type": "pdf",
+            "page": 1,
+            "chunk_index": 0,
+            "filename": "warehouse_scan.pdf"
+          },
+          "relevance": 0.217118,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "page": 1
+          },
+          "relevance": 0.205147,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+      "category": "docx",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.651364,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "docx",
+            "filename": "hr.docx",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "source_type": "text"
+          },
+          "relevance": 0.651364,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "page": 2,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 1
+          },
+          "relevance": 0.260687,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "page": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf"
+          },
+          "relevance": 0.231818,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "filename": "notice.png",
+            "file_type": "image",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "relevance": 0.222509,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "question": "What is the revenue for Atlas Laptop?",
+      "category": "excel",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.733569,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Sales"
+          },
+          "relevance": 0.733569,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "page": 1,
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.393449,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "source_type": "text",
+            "page": 2,
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.389064,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "filename": "notice.png",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "file_type": "image"
+          },
+          "relevance": 0.165083,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "question": "What is the revenue for Nova Phone?",
+      "category": "excel",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.502113,
+      "retrieval_hit": false,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "sheet": "Sales",
+            "file_type": "excel",
+            "chunk_index": 0,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "filename": "operations.xlsx",
+            "source_type": "text"
+          },
+          "relevance": 0.502113,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "page": 2,
+            "chunk_index": 1
+          },
+          "relevance": 0.253459,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "chunk_index": 0,
+            "page": 1
+          },
+          "relevance": 0.239307,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "page": 1,
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "relevance": 0.133808,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "question": "How many response hours does the Silver support plan allow?",
+      "category": "excel",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.627641,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "sheet": "Support",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "source_type": "text",
+            "filename": "operations.xlsx"
+          },
+          "relevance": 0.627641,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "source_type": "text",
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0
+          },
+          "relevance": 0.440522,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "page": 2,
+            "chunk_index": 1
+          },
+          "relevance": 0.355783,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "pdf",
+            "source_type": "text",
+            "chunk_index": 0,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "page": 1
+          },
+          "relevance": 0.347321,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "question": "How many response hours does the Gold support plan allow?",
+      "category": "excel",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.637347,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "sheet": "Support",
+            "file_type": "excel",
+            "source_type": "text",
+            "chunk_index": 1,
+            "filename": "operations.xlsx"
+          },
+          "relevance": 0.637347,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "file_type": "docx"
+          },
+          "relevance": 0.471635,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "chunk_index": 1,
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text"
+          },
+          "relevance": 0.360441,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "pdf",
+            "source_type": "text",
+            "page": 1,
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.341701,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "question": "What time does the Lyra workshop start?",
+      "category": "image",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.821334,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "chunk_index": 0,
+            "filename": "notice.png",
+            "file_type": "image",
+            "source_type": "ocr"
+          },
+          "relevance": 0.821334,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "filename": "hr.docx",
+            "source_type": "text",
+            "file_type": "docx"
+          },
+          "relevance": 0.346102,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "page": 1,
+            "source_type": "ocr"
+          },
+          "relevance": 0.306824,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "page": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "source_type": "text"
+          },
+          "relevance": 0.153935,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "question": "Which room hosts the Lyra workshop?",
+      "category": "image",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.686536,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr",
+            "filename": "notice.png",
+            "file_type": "image",
+            "chunk_index": 0
+          },
+          "relevance": 0.686536,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "page": 1,
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "chunk_index": 0,
+            "file_type": "pdf"
+          },
+          "relevance": 0.206034,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "file_type": "excel",
+            "source_type": "text",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "filename": "operations.xlsx",
+            "chunk_index": 1,
+            "sheet": "Support"
+          },
+          "relevance": 0.151494,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "operations.xlsx",
+            "sheet": "Sales",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "source_type": "text"
+          },
+          "relevance": 0.151138,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "question": "How many people can attend the Lyra workshop?",
+      "category": "image",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.693468,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "image",
+            "filename": "notice.png",
+            "source_type": "ocr",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942"
+          },
+          "relevance": 0.693468,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "filename": "hr.docx",
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "chunk_index": 0,
+            "file_type": "docx"
+          },
+          "relevance": 0.276557,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "file_type": "excel",
+            "sheet": "Support",
+            "filename": "operations.xlsx",
+            "chunk_index": 1,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "source_type": "text"
+          },
+          "relevance": 0.187427,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "file_type": "excel",
+            "filename": "operations.xlsx",
+            "chunk_index": 0,
+            "sheet": "Sales",
+            "source_type": "text",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97"
+          },
+          "relevance": 0.175013,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "question": "When is the Lyra workshop registration deadline?",
+      "category": "image",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.828537,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "file_type": "image",
+            "source_type": "ocr",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "filename": "notice.png",
+            "chunk_index": 0
+          },
+          "relevance": 0.828537,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "file_type": "docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "filename": "hr.docx"
+          },
+          "relevance": 0.340208,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "file_type": "pdf",
+            "page": 1,
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "relevance": 0.21644,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "source_type": "text",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "sheet": "Support"
+          },
+          "relevance": 0.195596,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "question": "What time does the Vega warehouse open?",
+      "category": "scan",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.739113,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "chunk_index": 0,
+            "source_type": "ocr",
+            "page": 1,
+            "file_type": "pdf"
+          },
+          "relevance": 0.739113,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "filename": "notice.png",
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "file_type": "image",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942"
+          },
+          "relevance": 0.389958,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "hr.docx",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "source_type": "text",
+            "file_type": "docx",
+            "chunk_index": 0
+          },
+          "relevance": 0.265126,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "page": 1
+          },
+          "relevance": 0.151244,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "question": "What time does the Vega warehouse close?",
+      "category": "scan",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.730653,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "page": 1
+          },
+          "relevance": 0.730653,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "file_type": "image",
+            "source_type": "ocr",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "chunk_index": 0,
+            "filename": "notice.png"
+          },
+          "relevance": 0.357073,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "file_type": "docx",
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "filename": "hr.docx",
+            "chunk_index": 0
+          },
+          "relevance": 0.308787,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 1,
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "sheet": "Support"
+          },
+          "relevance": 0.170016,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "question": "What color safety helmet is required at Vega?",
+      "category": "scan",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.64688,
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "relevance": 0.64688,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "page": 2,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.168482,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "page": 1
+          },
+          "relevance": 0.157698,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "file_type": "excel",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "sheet": "Support"
+          },
+          "relevance": 0.12849,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "question": "What is the Vega emergency extension?",
+      "category": "scan",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "relevant_relevance": 0.530722,
+      "retrieval_hit": false,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "page": 1
+          },
+          "relevance": 0.530722,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "file_type": "docx",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "source_type": "text"
+          },
+          "relevance": 0.144237,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "file_type": "excel",
+            "sheet": "Support",
+            "filename": "operations.xlsx"
+          },
+          "relevance": 0.137282,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "page": 2,
+            "filename": "travel.pdf",
+            "chunk_index": 1
+          },
+          "relevance": 0.082979,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "question": "CEO của Microsoft là ai?",
+      "category": "no_answer",
+      "expected_source": null,
+      "relevant_rank": null,
+      "relevant_relevance": null,
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "sheet": "Sales",
+            "filename": "operations.xlsx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel"
+          },
+          "relevance": 0.229551,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "filename": "notice.png",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr",
+            "file_type": "image",
+            "chunk_index": 0
+          },
+          "relevance": 0.140726,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "chunk_index": 0,
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "file_type": "pdf",
+            "page": 1
+          },
+          "relevance": 0.118892,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "sheet": "Support",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "source_type": "text"
+          },
+          "relevance": 0.112498,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "question": "What is the distance from Earth to Mars?",
+      "category": "no_answer",
+      "expected_source": null,
+      "relevant_rank": null,
+      "relevant_relevance": null,
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "page": 2,
+            "chunk_index": 1,
+            "file_type": "pdf"
+          },
+          "relevance": 0.262184,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "page": 1,
+            "chunk_index": 0
+          },
+          "relevance": 0.184643,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "sheet": "Sales",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "relevance": 0.144091,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Support",
+            "chunk_index": 1
+          },
+          "relevance": 0.130446,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "question": "What is the Orion hotel Wi-Fi password?",
+      "category": "no_answer",
+      "expected_source": null,
+      "relevant_rank": null,
+      "relevant_relevance": null,
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "page": 1,
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "source_type": "text",
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.532934,
+          "preview": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "file_type": "pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "page": 2,
+            "filename": "travel.pdf",
+            "chunk_index": 1
+          },
+          "relevance": 0.482373,
+          "preview": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "source_type": "text",
+            "sheet": "Sales",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 0
+          },
+          "relevance": 0.201223,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "page": 1,
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0"
+          },
+          "relevance": 0.148576,
+          "preview": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehou"
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "question": "Ai là giám đốc nhân sự An Bình?",
+      "category": "no_answer",
+      "expected_source": null,
+      "relevant_rank": null,
+      "relevant_relevance": null,
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "raw_top_k": [
+        {
+          "rank": 1,
+          "metadata": {
+            "sheet": "Support",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "chunk_index": 1,
+            "source_type": "text"
+          },
+          "relevance": 0.173784,
+          "preview": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours"
+        },
+        {
+          "rank": 2,
+          "metadata": {
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "hr.docx"
+          },
+          "relevance": 0.166078,
+          "preview": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗ"
+        },
+        {
+          "rank": 3,
+          "metadata": {
+            "source_type": "ocr",
+            "file_type": "image",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "filename": "notice.png",
+            "chunk_index": 0
+          },
+          "relevance": 0.142566,
+          "preview": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in"
+        },
+        {
+          "rank": 4,
+          "metadata": {
+            "sheet": "Sales",
+            "file_type": "excel",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "filename": "operations.xlsx",
+            "chunk_index": 0,
+            "source_type": "text"
+          },
+          "relevance": 0.119164,
+          "preview": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Rev"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,547 @@
+{
+  "mode": "retrieval_only",
+  "created_at": "2026-09-29T04:35:16.987316+00:00",
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "gemini_model": null,
+  "top_k": 4,
+  "threshold": 0.55,
+  "metrics": {
+    "total_questions": 25,
+    "answerable_questions": 21,
+    "retrieval_hit_count": 19,
+    "retrieval_hit_rate": 0.9047619047619048,
+    "correct_answer_count": null,
+    "answer_accuracy": null,
+    "no_answer_total": 4,
+    "no_answer_correct_count": null,
+    "no_answer_accuracy": null,
+    "error_count": 0
+  },
+  "cases": [
+    {
+      "id": 1,
+      "question": "What is the Orion hotel allowance per night?",
+      "category": "pdf",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "page": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "chunk_index": 0
+          },
+          "relevance": 0.8293619751930237
+        },
+        {
+          "metadata": {
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "page": 2
+          },
+          "relevance": 0.632197380065918
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 2,
+      "question": "What is the daily Orion meal reimbursement limit?",
+      "category": "pdf",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "page": 1,
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "relevance": 0.6967031359672546
+        },
+        {
+          "metadata": {
+            "page": 2,
+            "source_type": "text",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.6061568260192871
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 3,
+      "question": "Within how many days must Orion travel receipts be submitted?",
+      "category": "pdf",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "file_type": "pdf",
+            "page": 2,
+            "chunk_index": 1,
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278"
+          },
+          "relevance": 0.7190625667572021
+        },
+        {
+          "metadata": {
+            "source_type": "text",
+            "chunk_index": 0,
+            "page": 1,
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.7060527801513672
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 4,
+      "question": "What is the Orion mileage reimbursement per kilometer?",
+      "category": "pdf",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "page": 2
+          },
+          "relevance": 0.8079399466514587
+        },
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "page": 1,
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "file_type": "pdf"
+          },
+          "relevance": 0.6466048359870911
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 5,
+      "question": "What is the Orion travel approval code?",
+      "category": "pdf",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "chunk_index": 1,
+            "page": 2,
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "relevance": 0.7949409484863281
+        },
+        {
+          "metadata": {
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "document_id": "f9d4260b082ba282ac988cae39877b478b5de7adf33227dd276ffd365c284278",
+            "page": 1,
+            "chunk_index": 0,
+            "file_type": "pdf"
+          },
+          "relevance": 0.6935887336730957
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 6,
+      "question": "Một năm người lao động có bao nhiêu ngày phép?",
+      "category": "docx",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "file_type": "docx",
+            "filename": "hr.docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f"
+          },
+          "relevance": 0.6604276299476624
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 7,
+      "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+      "category": "docx",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f"
+          },
+          "relevance": 0.6520830988883972
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 8,
+      "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+      "category": "docx",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "source_type": "text",
+            "chunk_index": 0,
+            "file_type": "docx",
+            "filename": "hr.docx"
+          },
+          "relevance": 0.7263745069503784
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 9,
+      "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+      "category": "docx",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "source_type": "text",
+            "document_id": "66025fb0713598801897c4deced6c036e7d6f235557bbd719038405520bf336f",
+            "chunk_index": 0
+          },
+          "relevance": 0.6513639688491821
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 10,
+      "question": "What is the revenue for Atlas Laptop?",
+      "category": "excel",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "sheet": "Sales",
+            "chunk_index": 0,
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "file_type": "excel"
+          },
+          "relevance": 0.7335693836212158
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 11,
+      "question": "What is the revenue for Nova Phone?",
+      "category": "excel",
+      "retrieval_hit": false,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    },
+    {
+      "id": 12,
+      "question": "How many response hours does the Silver support plan allow?",
+      "category": "excel",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "chunk_index": 1,
+            "file_type": "excel",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "sheet": "Support"
+          },
+          "relevance": 0.6276412606239319
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 13,
+      "question": "How many response hours does the Gold support plan allow?",
+      "category": "excel",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "chunk_index": 1,
+            "sheet": "Support",
+            "document_id": "ce64aac232b3f609f639cfed0ac029ee90571a9c3da3c9c320fc55f5ee6def97",
+            "file_type": "excel"
+          },
+          "relevance": 0.6373465657234192
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 14,
+      "question": "What time does the Lyra workshop start?",
+      "category": "image",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "notice.png",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "file_type": "image",
+            "source_type": "ocr"
+          },
+          "relevance": 0.8213341236114502
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 15,
+      "question": "Which room hosts the Lyra workshop?",
+      "category": "image",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr",
+            "file_type": "image",
+            "filename": "notice.png"
+          },
+          "relevance": 0.6865361928939819
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 16,
+      "question": "How many people can attend the Lyra workshop?",
+      "category": "image",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "image",
+            "filename": "notice.png",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr"
+          },
+          "relevance": 0.6934678554534912
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 17,
+      "question": "When is the Lyra workshop registration deadline?",
+      "category": "image",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "image",
+            "document_id": "a988ab5ddc5526ca971b7f5db9f2b5947f8c62ed65a83ed3773600cbf5e32942",
+            "source_type": "ocr",
+            "filename": "notice.png"
+          },
+          "relevance": 0.8285368084907532
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 18,
+      "question": "What time does the Vega warehouse open?",
+      "category": "scan",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "source_type": "ocr",
+            "page": 1
+          },
+          "relevance": 0.739112913608551
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 19,
+      "question": "What time does the Vega warehouse close?",
+      "category": "scan",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "page": 1,
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr"
+          },
+          "relevance": 0.7306529879570007
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 20,
+      "question": "What color safety helmet is required at Vega?",
+      "category": "scan",
+      "retrieval_hit": true,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [
+        {
+          "metadata": {
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1,
+            "document_id": "275035721585d26aaaedac9648436dde62811c0d1eb5a2b1eb9bc8d56c0549b0",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "relevance": 0.6468803882598877
+        }
+      ],
+      "empty_context": false
+    },
+    {
+      "id": 21,
+      "question": "What is the Vega emergency extension?",
+      "category": "scan",
+      "retrieval_hit": false,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    },
+    {
+      "id": 22,
+      "question": "CEO của Microsoft là ai?",
+      "category": "no_answer",
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    },
+    {
+      "id": 23,
+      "question": "What is the distance from Earth to Mars?",
+      "category": "no_answer",
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    },
+    {
+      "id": 24,
+      "question": "What is the Orion hotel Wi-Fi password?",
+      "category": "no_answer",
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    },
+    {
+      "id": 25,
+      "question": "Ai là giám đốc nhân sự An Bình?",
+      "category": "no_answer",
+      "retrieval_hit": null,
+      "answer_correct": null,
+      "no_answer_correct": null,
+      "retrieved": [],
+      "empty_context": true
+    }
+  ]
+}

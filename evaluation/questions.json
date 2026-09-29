@@ -1,0 +1,275 @@
+[
+  {
+    "id": 1,
+    "category": "pdf",
+    "question": "What is the Orion hotel allowance per night?",
+    "expected_keywords": [
+      "850"
+    ],
+    "expected_source": {
+      "filename": "travel.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 2,
+    "category": "pdf",
+    "question": "What is the daily Orion meal reimbursement limit?",
+    "expected_keywords": [
+      "95"
+    ],
+    "expected_source": {
+      "filename": "travel.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 3,
+    "category": "pdf",
+    "question": "Within how many days must Orion travel receipts be submitted?",
+    "expected_keywords": [
+      "14"
+    ],
+    "expected_source": {
+      "filename": "travel.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 4,
+    "category": "pdf",
+    "question": "What is the Orion mileage reimbursement per kilometer?",
+    "expected_keywords": [
+      "7"
+    ],
+    "expected_source": {
+      "filename": "travel.pdf",
+      "page": 2
+    }
+  },
+  {
+    "id": 5,
+    "category": "pdf",
+    "question": "What is the Orion travel approval code?",
+    "expected_keywords": [
+      "TR-2026"
+    ],
+    "expected_source": {
+      "filename": "travel.pdf",
+      "page": 2
+    }
+  },
+  {
+    "id": 6,
+    "category": "docx",
+    "question": "Một năm người lao động có bao nhiêu ngày phép?",
+    "expected_keywords": [
+      "12"
+    ],
+    "expected_source": {
+      "filename": "hr.docx"
+    }
+  },
+  {
+    "id": 7,
+    "category": "docx",
+    "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+    "expected_keywords": [
+      "60"
+    ],
+    "expected_source": {
+      "filename": "hr.docx"
+    }
+  },
+  {
+    "id": 8,
+    "category": "docx",
+    "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+    "expected_keywords": [
+      "2"
+    ],
+    "expected_source": {
+      "filename": "hr.docx"
+    }
+  },
+  {
+    "id": 9,
+    "category": "docx",
+    "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+    "expected_keywords": [
+      "3000000"
+    ],
+    "expected_source": {
+      "filename": "hr.docx"
+    }
+  },
+  {
+    "id": 10,
+    "category": "excel",
+    "question": "What is the revenue for Atlas Laptop?",
+    "expected_keywords": [
+      "150"
+    ],
+    "expected_source": {
+      "filename": "operations.xlsx",
+      "sheet": "Sales"
+    }
+  },
+  {
+    "id": 11,
+    "category": "excel",
+    "question": "What is the revenue for Nova Phone?",
+    "expected_keywords": [
+      "200"
+    ],
+    "expected_source": {
+      "filename": "operations.xlsx",
+      "sheet": "Sales"
+    }
+  },
+  {
+    "id": 12,
+    "category": "excel",
+    "question": "How many response hours does the Silver support plan allow?",
+    "expected_keywords": [
+      "24"
+    ],
+    "expected_source": {
+      "filename": "operations.xlsx",
+      "sheet": "Support"
+    }
+  },
+  {
+    "id": 13,
+    "category": "excel",
+    "question": "How many response hours does the Gold support plan allow?",
+    "expected_keywords": [
+      "4"
+    ],
+    "expected_source": {
+      "filename": "operations.xlsx",
+      "sheet": "Support"
+    }
+  },
+  {
+    "id": 14,
+    "category": "image",
+    "question": "What time does the Lyra workshop start?",
+    "expected_keywords": [
+      "09:30"
+    ],
+    "expected_source": {
+      "filename": "notice.png"
+    }
+  },
+  {
+    "id": 15,
+    "category": "image",
+    "question": "Which room hosts the Lyra workshop?",
+    "expected_keywords": [
+      "B204"
+    ],
+    "expected_source": {
+      "filename": "notice.png"
+    }
+  },
+  {
+    "id": 16,
+    "category": "image",
+    "question": "How many people can attend the Lyra workshop?",
+    "expected_keywords": [
+      "35"
+    ],
+    "expected_source": {
+      "filename": "notice.png"
+    }
+  },
+  {
+    "id": 17,
+    "category": "image",
+    "question": "When is the Lyra workshop registration deadline?",
+    "expected_keywords": [
+      "October",
+      "10"
+    ],
+    "expected_source": {
+      "filename": "notice.png"
+    }
+  },
+  {
+    "id": 18,
+    "category": "scan",
+    "question": "What time does the Vega warehouse open?",
+    "expected_keywords": [
+      "07:00"
+    ],
+    "expected_source": {
+      "filename": "warehouse_scan.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 19,
+    "category": "scan",
+    "question": "What time does the Vega warehouse close?",
+    "expected_keywords": [
+      "18:00"
+    ],
+    "expected_source": {
+      "filename": "warehouse_scan.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 20,
+    "category": "scan",
+    "question": "What color safety helmet is required at Vega?",
+    "expected_keywords": [
+      "yellow"
+    ],
+    "expected_source": {
+      "filename": "warehouse_scan.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 21,
+    "category": "scan",
+    "question": "What is the Vega emergency extension?",
+    "expected_keywords": [
+      "456"
+    ],
+    "expected_source": {
+      "filename": "warehouse_scan.pdf",
+      "page": 1
+    }
+  },
+  {
+    "id": 22,
+    "category": "no_answer",
+    "question": "CEO của Microsoft là ai?",
+    "expected_keywords": [],
+    "expected_source": null
+  },
+  {
+    "id": 23,
+    "category": "no_answer",
+    "question": "What is the distance from Earth to Mars?",
+    "expected_keywords": [],
+    "expected_source": null
+  },
+  {
+    "id": 24,
+    "category": "no_answer",
+    "question": "What is the Orion hotel Wi-Fi password?",
+    "expected_keywords": [],
+    "expected_source": null
+  },
+  {
+    "id": 25,
+    "category": "no_answer",
+    "question": "Ai là giám đốc nhân sự An Bình?",
+    "expected_keywords": [],
+    "expected_source": null
+  }
+]

@@ -1,0 +1,68 @@
+[
+  {
+    "chunk_size": 48,
+    "overlap": 8,
+    "chunks": 8,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  },
+  {
+    "chunk_size": 64,
+    "overlap": 11,
+    "chunks": 7,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  },
+  {
+    "chunk_size": 80,
+    "overlap": 14,
+    "chunks": 7,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  },
+  {
+    "chunk_size": 96,
+    "overlap": 16,
+    "chunks": 7,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  },
+  {
+    "chunk_size": 112,
+    "overlap": 19,
+    "chunks": 7,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  },
+  {
+    "chunk_size": 700,
+    "overlap": 120,
+    "chunks": 7,
+    "hits": 19,
+    "no_answer_empty": 4,
+    "misses": [
+      11,
+      21
+    ]
+  }
+]

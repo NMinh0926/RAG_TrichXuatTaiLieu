@@ -1,0 +1,79 @@
+{
+  "production_change": false,
+  "frozen_inputs_match": true,
+  "original_dataset_unchanged": true,
+  "models": {
+    "current": {
+      "model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "combined_separation_gap": -0.29893404245376587,
+      "combined_min_relevant": 0.23399996757507324,
+      "combined_max_no_answer": 0.5329340100288391,
+      "calibrated_evaluation": {
+        "threshold": 0.55,
+        "answerable_hit_count": 19,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9047619047619048,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      "calibrated_supplemental": {
+        "threshold": 0.55,
+        "answerable_hit_count": 0,
+        "answerable_count": 2,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 1,
+        "no_answer_empty": 1
+      }
+    },
+    "bge-m3": {
+      "model": "BAAI/bge-m3",
+      "combined_separation_gap": -0.043066322803497314,
+      "combined_min_relevant": 0.5175355672836304,
+      "combined_max_no_answer": 0.5606018900871277,
+      "calibrated_evaluation": {
+        "threshold": 0.57,
+        "answerable_hit_count": 21,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 1.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      "calibrated_supplemental": {
+        "threshold": 0.57,
+        "answerable_hit_count": 0,
+        "answerable_count": 2,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 1,
+        "no_answer_empty": 1
+      }
+    },
+    "e5-base": {
+      "model": "intfloat/multilingual-e5-base",
+      "combined_separation_gap": -0.023718416690826416,
+      "combined_min_relevant": 0.8105672597885132,
+      "combined_max_no_answer": 0.8342856764793396,
+      "calibrated_evaluation": {
+        "threshold": 0.84,
+        "answerable_hit_count": 20,
+        "answerable_count": 21,
+        "retrieval_hit_rate": 0.9523809523809523,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 4,
+        "no_answer_empty": 4
+      },
+      "calibrated_supplemental": {
+        "threshold": 0.84,
+        "answerable_hit_count": 0,
+        "answerable_count": 2,
+        "retrieval_hit_rate": 0.0,
+        "no_answer_false_positive": 0,
+        "no_answer_count": 1,
+        "no_answer_empty": 1
+      }
+    }
+  }
+}

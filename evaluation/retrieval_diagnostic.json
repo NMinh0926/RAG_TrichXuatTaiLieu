@@ -1,0 +1,1876 @@
+{
+  "embedding_model": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "top_k": 4,
+  "extracted": {
+    "hr.docx": {
+      "units": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "source_type": "text"
+          }
+        }
+      ],
+      "chunks": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "chunk_index": 0
+        }
+      ]
+    },
+    "notice.png": {
+      "units": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "filename": "notice.png",
+            "file_type": "image",
+            "source_type": "ocr"
+          }
+        }
+      ],
+      "chunks": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "filename": "notice.png",
+            "file_type": "image",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "chunk_index": 0
+        }
+      ]
+    },
+    "operations.xlsx": {
+      "units": [
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Sales",
+            "source_type": "text"
+          }
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Support",
+            "source_type": "text"
+          }
+        }
+      ],
+      "chunks": [
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Sales",
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "chunk_index": 0
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Support",
+            "source_type": "text",
+            "chunk_index": 1
+          },
+          "chunk_index": 1
+        }
+      ]
+    },
+    "travel.pdf": {
+      "units": [
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "text"
+          }
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2,
+            "source_type": "text"
+          }
+        }
+      ],
+      "chunks": [
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "text",
+            "chunk_index": 0
+          },
+          "chunk_index": 0
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2,
+            "source_type": "text",
+            "chunk_index": 1
+          },
+          "chunk_index": 1
+        }
+      ]
+    },
+    "warehouse_scan.pdf": {
+      "units": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "ocr"
+          }
+        }
+      ],
+      "chunks": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "chunk_index": 0
+        }
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": 1,
+      "category": "pdf",
+      "question": "What is the Orion hotel allowance per night?",
+      "expected_keywords": [
+        "850"
+      ],
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "page": 1,
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "source_type": "text"
+          },
+          "distance": 0.17063802480697632,
+          "relevance": 0.8293619751930237
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "page": 2,
+            "document_id": "travel.pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "chunk_index": 1,
+            "file_type": "pdf"
+          },
+          "distance": 0.36780261993408203,
+          "relevance": 0.632197380065918
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "document_id": "operations.xlsx",
+            "sheet": "Sales",
+            "chunk_index": 0,
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "file_type": "excel"
+          },
+          "distance": 0.7079364061355591,
+          "relevance": 0.2920635938644409
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "hr.docx",
+            "source_type": "text",
+            "filename": "hr.docx",
+            "file_type": "docx"
+          },
+          "distance": 0.7580112218856812,
+          "relevance": 0.24198877811431885
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "category": "pdf",
+      "question": "What is the daily Orion meal reimbursement limit?",
+      "expected_keywords": [
+        "95"
+      ],
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "travel.pdf",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "page": 1
+          },
+          "distance": 0.30329686403274536,
+          "relevance": 0.6967031359672546
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "source_type": "text",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "page": 2,
+            "chunk_index": 1
+          },
+          "distance": 0.3938431739807129,
+          "relevance": 0.6061568260192871
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "document_id": "operations.xlsx",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "sheet": "Support",
+            "file_type": "excel",
+            "chunk_index": 1
+          },
+          "distance": 0.7128521203994751,
+          "relevance": 0.2871478796005249
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "file_type": "excel",
+            "sheet": "Sales",
+            "chunk_index": 0,
+            "document_id": "operations.xlsx",
+            "filename": "operations.xlsx",
+            "source_type": "text"
+          },
+          "distance": 0.7240246534347534,
+          "relevance": 0.2759753465652466
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "category": "pdf",
+      "question": "Within how many days must Orion travel receipts be submitted?",
+      "expected_keywords": [
+        "14"
+      ],
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "source_type": "text",
+            "document_id": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2,
+            "filename": "travel.pdf",
+            "chunk_index": 1
+          },
+          "distance": 0.28093743324279785,
+          "relevance": 0.7190625667572021
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "page": 1
+          },
+          "distance": 0.2939472198486328,
+          "relevance": 0.7060527801513672
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "file_type": "docx",
+            "document_id": "hr.docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "hr.docx"
+          },
+          "distance": 0.6327981948852539,
+          "relevance": 0.3672018051147461
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "file_type": "excel",
+            "document_id": "operations.xlsx",
+            "sheet": "Support",
+            "chunk_index": 1,
+            "filename": "operations.xlsx",
+            "source_type": "text"
+          },
+          "distance": 0.7611382007598877,
+          "relevance": 0.2388617992401123
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "category": "pdf",
+      "question": "What is the Orion mileage reimbursement per kilometer?",
+      "expected_keywords": [
+        "7"
+      ],
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "source_type": "text",
+            "document_id": "travel.pdf",
+            "page": 2,
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "distance": 0.19206005334854126,
+          "relevance": 0.8079399466514587
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "page": 1,
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.35339516401290894,
+          "relevance": 0.6466048359870911
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "document_id": "operations.xlsx",
+            "sheet": "Sales",
+            "file_type": "excel",
+            "chunk_index": 0
+          },
+          "distance": 0.6565498113632202,
+          "relevance": 0.3434501886367798
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "document_id": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "source_type": "text"
+          },
+          "distance": 0.7277222871780396,
+          "relevance": 0.27227771282196045
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "category": "pdf",
+      "question": "What is the Orion travel approval code?",
+      "expected_keywords": [
+        "TR-2026"
+      ],
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "page": 2,
+            "chunk_index": 1,
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "file_type": "pdf",
+            "source_type": "text"
+          },
+          "distance": 0.20505905151367188,
+          "relevance": 0.7949409484863281
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "page": 1,
+            "source_type": "text",
+            "file_type": "pdf"
+          },
+          "distance": 0.3064112663269043,
+          "relevance": 0.6935887336730957
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Sales",
+            "document_id": "operations.xlsx",
+            "chunk_index": 0
+          },
+          "distance": 0.813587486743927,
+          "relevance": 0.186412513256073
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "document_id": "hr.docx",
+            "filename": "hr.docx",
+            "chunk_index": 0,
+            "file_type": "docx",
+            "source_type": "text"
+          },
+          "distance": 0.8304011821746826,
+          "relevance": 0.16959881782531738
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "category": "docx",
+      "question": "Một năm người lao động có bao nhiêu ngày phép?",
+      "expected_keywords": [
+        "12"
+      ],
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "raw_top_k": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "document_id": "hr.docx",
+            "source_type": "text",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "filename": "hr.docx"
+          },
+          "distance": 0.33957237005233765,
+          "relevance": 0.6604276299476624
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "source_type": "text",
+            "sheet": "Support",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "document_id": "operations.xlsx",
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.7479764223098755,
+          "relevance": 0.2520235776901245
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "source_type": "text",
+            "page": 1,
+            "document_id": "travel.pdf",
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "file_type": "pdf"
+          },
+          "distance": 0.8639345169067383,
+          "relevance": 0.13606548309326172
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "chunk_index": 0,
+            "source_type": "ocr",
+            "document_id": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "page": 1
+          },
+          "distance": 0.8657041788101196,
+          "relevance": 0.13429582118988037
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "category": "docx",
+      "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+      "expected_keywords": [
+        "60"
+      ],
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "raw_top_k": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "filename": "hr.docx",
+            "document_id": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0
+          },
+          "distance": 0.3479169011116028,
+          "relevance": 0.6520830988883972
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "document_id": "operations.xlsx",
+            "source_type": "text",
+            "file_type": "excel",
+            "sheet": "Support",
+            "chunk_index": 1,
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.7335596084594727,
+          "relevance": 0.26644039154052734
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "filename": "notice.png",
+            "source_type": "ocr",
+            "document_id": "notice.png",
+            "chunk_index": 0,
+            "file_type": "image"
+          },
+          "distance": 0.7390713691711426,
+          "relevance": 0.2609286308288574
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "chunk_index": 0,
+            "page": 1,
+            "document_id": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "source_type": "ocr",
+            "filename": "warehouse_scan.pdf"
+          },
+          "distance": 0.7614111304283142,
+          "relevance": 0.2385888695716858
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "category": "docx",
+      "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+      "expected_keywords": [
+        "2"
+      ],
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "raw_top_k": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "file_type": "docx",
+            "document_id": "hr.docx",
+            "source_type": "text",
+            "chunk_index": 0,
+            "filename": "hr.docx"
+          },
+          "distance": 0.2736254930496216,
+          "relevance": 0.7263745069503784
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "source_type": "text",
+            "document_id": "travel.pdf",
+            "page": 2,
+            "filename": "travel.pdf"
+          },
+          "distance": 0.7481098175048828,
+          "relevance": 0.2518901824951172
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "document_id": "warehouse_scan.pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "distance": 0.7828822135925293,
+          "relevance": 0.2171177864074707
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "page": 1,
+            "file_type": "pdf",
+            "source_type": "text",
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.7948527336120605,
+          "relevance": 0.20514726638793945
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "category": "docx",
+      "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+      "expected_keywords": [
+        "3000000"
+      ],
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "raw_top_k": [
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "document_id": "hr.docx",
+            "filename": "hr.docx"
+          },
+          "distance": 0.34863603115081787,
+          "relevance": 0.6513639688491821
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "page": 2,
+            "file_type": "pdf",
+            "chunk_index": 1,
+            "document_id": "travel.pdf",
+            "source_type": "text",
+            "filename": "travel.pdf"
+          },
+          "distance": 0.7393127679824829,
+          "relevance": 0.2606872320175171
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "text"
+          },
+          "distance": 0.7681819200515747,
+          "relevance": 0.2318180799484253
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "notice.png",
+            "file_type": "image",
+            "filename": "notice.png",
+            "chunk_index": 0
+          },
+          "distance": 0.7774913311004639,
+          "relevance": 0.22250866889953613
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "category": "excel",
+      "question": "What is the revenue for Atlas Laptop?",
+      "expected_keywords": [
+        "150"
+      ],
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "raw_top_k": [
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "document_id": "operations.xlsx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "sheet": "Sales",
+            "file_type": "excel"
+          },
+          "distance": 0.2664306163787842,
+          "relevance": 0.7335693836212158
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "source_type": "text",
+            "page": 1,
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf",
+            "file_type": "pdf"
+          },
+          "distance": 0.606550931930542,
+          "relevance": 0.393449068069458
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "page": 2,
+            "source_type": "text",
+            "chunk_index": 1,
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "distance": 0.6109364032745361,
+          "relevance": 0.38906359672546387
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "file_type": "image",
+            "chunk_index": 0,
+            "document_id": "notice.png",
+            "filename": "notice.png",
+            "source_type": "ocr"
+          },
+          "distance": 0.8349165916442871,
+          "relevance": 0.1650834083557129
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "category": "excel",
+      "question": "What is the revenue for Nova Phone?",
+      "expected_keywords": [
+        "200"
+      ],
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "raw_top_k": [
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "sheet": "Sales",
+            "file_type": "excel",
+            "source_type": "text",
+            "document_id": "operations.xlsx",
+            "filename": "operations.xlsx",
+            "chunk_index": 0
+          },
+          "distance": 0.49788665771484375,
+          "relevance": 0.5021133422851562
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "chunk_index": 1,
+            "source_type": "text",
+            "page": 2,
+            "document_id": "travel.pdf",
+            "filename": "travel.pdf",
+            "file_type": "pdf"
+          },
+          "distance": 0.7465409636497498,
+          "relevance": 0.25345903635025024
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "document_id": "travel.pdf",
+            "page": 1,
+            "chunk_index": 0,
+            "source_type": "text"
+          },
+          "distance": 0.760692834854126,
+          "relevance": 0.23930716514587402
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "chunk_index": 0,
+            "page": 1,
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "document_id": "warehouse_scan.pdf"
+          },
+          "distance": 0.866192102432251,
+          "relevance": 0.13380789756774902
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "category": "excel",
+      "question": "How many response hours does the Silver support plan allow?",
+      "expected_keywords": [
+        "24"
+      ],
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "raw_top_k": [
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "document_id": "operations.xlsx",
+            "chunk_index": 1,
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "sheet": "Support",
+            "file_type": "excel"
+          },
+          "distance": 0.3723587393760681,
+          "relevance": 0.6276412606239319
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "document_id": "hr.docx",
+            "filename": "hr.docx"
+          },
+          "distance": 0.559477686882019,
+          "relevance": 0.44052231311798096
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "page": 2,
+            "chunk_index": 1,
+            "source_type": "text",
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "distance": 0.6442165374755859,
+          "relevance": 0.35578346252441406
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "text",
+            "chunk_index": 0,
+            "filename": "travel.pdf",
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.6526789665222168,
+          "relevance": 0.3473210334777832
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "category": "excel",
+      "question": "How many response hours does the Gold support plan allow?",
+      "expected_keywords": [
+        "4"
+      ],
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "raw_top_k": [
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "chunk_index": 1,
+            "source_type": "text",
+            "file_type": "excel",
+            "sheet": "Support",
+            "document_id": "operations.xlsx",
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.3626534342765808,
+          "relevance": 0.6373465657234192
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "document_id": "hr.docx",
+            "chunk_index": 0
+          },
+          "distance": 0.5283651351928711,
+          "relevance": 0.4716348648071289
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "chunk_index": 1,
+            "source_type": "text",
+            "file_type": "pdf",
+            "filename": "travel.pdf",
+            "page": 2,
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.6395590305328369,
+          "relevance": 0.3604409694671631
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "chunk_index": 0,
+            "source_type": "text",
+            "document_id": "travel.pdf",
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 1
+          },
+          "distance": 0.6582985520362854,
+          "relevance": 0.3417014479637146
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "category": "image",
+      "question": "What time does the Lyra workshop start?",
+      "expected_keywords": [
+        "09:30"
+      ],
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "raw_top_k": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "chunk_index": 0,
+            "file_type": "image",
+            "source_type": "ocr",
+            "document_id": "notice.png",
+            "filename": "notice.png"
+          },
+          "distance": 0.1786658763885498,
+          "relevance": 0.8213341236114502
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "file_type": "docx",
+            "filename": "hr.docx",
+            "source_type": "text",
+            "chunk_index": 0,
+            "document_id": "hr.docx"
+          },
+          "distance": 0.6538981199264526,
+          "relevance": 0.34610188007354736
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1,
+            "chunk_index": 0
+          },
+          "distance": 0.6931763887405396,
+          "relevance": 0.30682361125946045
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "filename": "travel.pdf",
+            "source_type": "text",
+            "page": 1,
+            "file_type": "pdf",
+            "chunk_index": 0
+          },
+          "distance": 0.8460650444030762,
+          "relevance": 0.15393495559692383
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "category": "image",
+      "question": "Which room hosts the Lyra workshop?",
+      "expected_keywords": [
+        "B204"
+      ],
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "raw_top_k": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "filename": "notice.png",
+            "file_type": "image",
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "document_id": "notice.png"
+          },
+          "distance": 0.31346380710601807,
+          "relevance": 0.6865361928939819
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "warehouse_scan.pdf",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "page": 1,
+            "filename": "warehouse_scan.pdf"
+          },
+          "distance": 0.7939664125442505,
+          "relevance": 0.2060335874557495
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "chunk_index": 1,
+            "file_type": "excel",
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "sheet": "Support",
+            "document_id": "operations.xlsx"
+          },
+          "distance": 0.8485057353973389,
+          "relevance": 0.15149426460266113
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "document_id": "operations.xlsx",
+            "file_type": "excel",
+            "sheet": "Sales",
+            "chunk_index": 0
+          },
+          "distance": 0.8488621711730957,
+          "relevance": 0.1511378288269043
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "category": "image",
+      "question": "How many people can attend the Lyra workshop?",
+      "expected_keywords": [
+        "35"
+      ],
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "raw_top_k": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "source_type": "ocr",
+            "file_type": "image",
+            "chunk_index": 0,
+            "document_id": "notice.png",
+            "filename": "notice.png"
+          },
+          "distance": 0.3065321445465088,
+          "relevance": 0.6934678554534912
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "document_id": "hr.docx",
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "source_type": "text"
+          },
+          "distance": 0.723442554473877,
+          "relevance": 0.27655744552612305
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "sheet": "Support",
+            "document_id": "operations.xlsx",
+            "file_type": "excel",
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "chunk_index": 1
+          },
+          "distance": 0.8125731945037842,
+          "relevance": 0.18742680549621582
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "file_type": "excel",
+            "document_id": "operations.xlsx",
+            "filename": "operations.xlsx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "sheet": "Sales"
+          },
+          "distance": 0.8249874114990234,
+          "relevance": 0.17501258850097656
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "category": "image",
+      "question": "When is the Lyra workshop registration deadline?",
+      "expected_keywords": [
+        "October",
+        "10"
+      ],
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "raw_top_k": [
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "file_type": "image",
+            "document_id": "notice.png",
+            "filename": "notice.png",
+            "source_type": "ocr",
+            "chunk_index": 0
+          },
+          "distance": 0.17146319150924683,
+          "relevance": 0.8285368084907532
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "file_type": "docx",
+            "document_id": "hr.docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "hr.docx"
+          },
+          "distance": 0.6597923040390015,
+          "relevance": 0.34020769596099854
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "chunk_index": 0,
+            "document_id": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "page": 1,
+            "source_type": "ocr"
+          },
+          "distance": 0.7835601568222046,
+          "relevance": 0.2164398431777954
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "source_type": "text",
+            "file_type": "excel",
+            "sheet": "Support",
+            "chunk_index": 1,
+            "filename": "operations.xlsx",
+            "document_id": "operations.xlsx"
+          },
+          "distance": 0.8044037222862244,
+          "relevance": 0.19559627771377563
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "category": "scan",
+      "question": "What time does the Vega warehouse open?",
+      "expected_keywords": [
+        "07:00"
+      ],
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "page": 1,
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf"
+          },
+          "distance": 0.260887086391449,
+          "relevance": 0.739112913608551
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "file_type": "image",
+            "document_id": "notice.png",
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "filename": "notice.png"
+          },
+          "distance": 0.6100418567657471,
+          "relevance": 0.38995814323425293
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "document_id": "hr.docx",
+            "file_type": "docx"
+          },
+          "distance": 0.734874427318573,
+          "relevance": 0.265125572681427
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "source_type": "text",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "document_id": "travel.pdf",
+            "filename": "travel.pdf",
+            "page": 1
+          },
+          "distance": 0.8487564325332642,
+          "relevance": 0.15124356746673584
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "category": "scan",
+      "question": "What time does the Vega warehouse close?",
+      "expected_keywords": [
+        "18:00"
+      ],
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "document_id": "warehouse_scan.pdf",
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "source_type": "ocr",
+            "filename": "warehouse_scan.pdf",
+            "page": 1
+          },
+          "distance": 0.26934701204299927,
+          "relevance": 0.7306529879570007
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "source_type": "ocr",
+            "chunk_index": 0,
+            "filename": "notice.png",
+            "document_id": "notice.png",
+            "file_type": "image"
+          },
+          "distance": 0.6429265141487122,
+          "relevance": 0.35707348585128784
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "source_type": "text",
+            "chunk_index": 0,
+            "filename": "hr.docx",
+            "file_type": "docx",
+            "document_id": "hr.docx"
+          },
+          "distance": 0.6912134289741516,
+          "relevance": 0.3087865710258484
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "chunk_index": 1,
+            "document_id": "operations.xlsx",
+            "file_type": "excel",
+            "filename": "operations.xlsx",
+            "sheet": "Support",
+            "source_type": "text"
+          },
+          "distance": 0.8299835920333862,
+          "relevance": 0.17001640796661377
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "category": "scan",
+      "question": "What color safety helmet is required at Vega?",
+      "expected_keywords": [
+        "yellow"
+      ],
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "file_type": "pdf",
+            "document_id": "warehouse_scan.pdf",
+            "page": 1,
+            "chunk_index": 0
+          },
+          "distance": 0.3531196117401123,
+          "relevance": 0.6468803882598877
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "page": 2,
+            "source_type": "text",
+            "file_type": "pdf",
+            "chunk_index": 1,
+            "filename": "travel.pdf"
+          },
+          "distance": 0.8315182328224182,
+          "relevance": 0.1684817671775818
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "source_type": "text",
+            "page": 1,
+            "document_id": "travel.pdf",
+            "file_type": "pdf"
+          },
+          "distance": 0.842301607131958,
+          "relevance": 0.157698392868042
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "source_type": "text",
+            "document_id": "operations.xlsx",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "sheet": "Support",
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.871509850025177,
+          "relevance": 0.128490149974823
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "category": "scan",
+      "question": "What is the Vega emergency extension?",
+      "expected_keywords": [
+        "456"
+      ],
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "raw_top_k": [
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "filename": "warehouse_scan.pdf",
+            "document_id": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "file_type": "pdf",
+            "chunk_index": 0,
+            "page": 1
+          },
+          "distance": 0.4692784547805786,
+          "relevance": 0.5307215452194214
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "file_type": "docx",
+            "document_id": "hr.docx",
+            "filename": "hr.docx",
+            "chunk_index": 0,
+            "source_type": "text"
+          },
+          "distance": 0.85576331615448,
+          "relevance": 0.14423668384552002
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "chunk_index": 1,
+            "file_type": "excel",
+            "source_type": "text",
+            "document_id": "operations.xlsx",
+            "sheet": "Support",
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.8627182245254517,
+          "relevance": 0.13728177547454834
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "chunk_index": 1,
+            "source_type": "text",
+            "page": 2,
+            "file_type": "pdf",
+            "filename": "travel.pdf"
+          },
+          "distance": 0.9170207381248474,
+          "relevance": 0.08297926187515259
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "category": "no_answer",
+      "question": "CEO của Microsoft là ai?",
+      "expected_keywords": [],
+      "expected_source": null,
+      "raw_top_k": [
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "file_type": "excel",
+            "document_id": "operations.xlsx",
+            "chunk_index": 0,
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "sheet": "Sales"
+          },
+          "distance": 0.7704486846923828,
+          "relevance": 0.2295513153076172
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "chunk_index": 0,
+            "filename": "notice.png",
+            "file_type": "image",
+            "document_id": "notice.png",
+            "source_type": "ocr"
+          },
+          "distance": 0.8592739105224609,
+          "relevance": 0.14072608947753906
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "source_type": "ocr",
+            "document_id": "warehouse_scan.pdf",
+            "filename": "warehouse_scan.pdf",
+            "page": 1,
+            "file_type": "pdf",
+            "chunk_index": 0
+          },
+          "distance": 0.8811075687408447,
+          "relevance": 0.11889243125915527
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "chunk_index": 1,
+            "document_id": "operations.xlsx",
+            "file_type": "excel",
+            "source_type": "text",
+            "sheet": "Support"
+          },
+          "distance": 0.8875018954277039,
+          "relevance": 0.11249810457229614
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "category": "no_answer",
+      "question": "What is the distance from Earth to Mars?",
+      "expected_keywords": [],
+      "expected_source": null,
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "document_id": "travel.pdf",
+            "chunk_index": 1,
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2
+          },
+          "distance": 0.7378164529800415,
+          "relevance": 0.2621835470199585
+        },
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "file_type": "pdf",
+            "source_type": "text",
+            "document_id": "travel.pdf",
+            "chunk_index": 0,
+            "page": 1,
+            "filename": "travel.pdf"
+          },
+          "distance": 0.8153572082519531,
+          "relevance": 0.18464279174804688
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "filename": "operations.xlsx",
+            "document_id": "operations.xlsx",
+            "sheet": "Sales",
+            "source_type": "text",
+            "file_type": "excel",
+            "chunk_index": 0
+          },
+          "distance": 0.855908989906311,
+          "relevance": 0.14409101009368896
+        },
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "source_type": "text",
+            "file_type": "excel",
+            "chunk_index": 1,
+            "document_id": "operations.xlsx",
+            "sheet": "Support",
+            "filename": "operations.xlsx"
+          },
+          "distance": 0.8695537447929382,
+          "relevance": 0.13044625520706177
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "category": "no_answer",
+      "question": "What is the Orion hotel Wi-Fi password?",
+      "expected_keywords": [],
+      "expected_source": null,
+      "raw_top_k": [
+        {
+          "content": "Orion business travel policy.\nThe Orion hotel allowance is 850 credits per night.\nOrion meal reimbursement is limited to 95 credits per day.\nOrion travel receipts must be submitted within 14 days.",
+          "metadata": {
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "page": 1,
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.46706604957580566,
+          "relevance": 0.5329339504241943
+        },
+        {
+          "content": "Orion business travel policy continued.\nOrion mileage reimbursement is 7 credits per kilometer.\nThe Orion travel approval code is TR-2026.",
+          "metadata": {
+            "source_type": "text",
+            "filename": "travel.pdf",
+            "file_type": "pdf",
+            "page": 2,
+            "chunk_index": 1,
+            "document_id": "travel.pdf"
+          },
+          "distance": 0.5176272392272949,
+          "relevance": 0.4823727607727051
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "file_type": "excel",
+            "filename": "operations.xlsx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "sheet": "Sales",
+            "document_id": "operations.xlsx"
+          },
+          "distance": 0.7987774014472961,
+          "relevance": 0.20122259855270386
+        },
+        {
+          "content": "Vega warehouse instructions.\nThe Vega warehouse opens at 07:00.\nThe Vega warehouse closes at 18:00.\nThe Vega safety helmet color is yellow.\nThe Vega emergency extension is 456.",
+          "metadata": {
+            "document_id": "warehouse_scan.pdf",
+            "source_type": "ocr",
+            "page": 1,
+            "chunk_index": 0,
+            "file_type": "pdf",
+            "filename": "warehouse_scan.pdf"
+          },
+          "distance": 0.8514244556427002,
+          "relevance": 0.1485755443572998
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "category": "no_answer",
+      "question": "Ai là giám đốc nhân sự An Bình?",
+      "expected_keywords": [],
+      "expected_source": null,
+      "raw_top_k": [
+        {
+          "content": "Plan | ResponseHours\nPlan: Silver | ResponseHours: 24\nPlan: Gold | ResponseHours: 4",
+          "metadata": {
+            "chunk_index": 1,
+            "source_type": "text",
+            "filename": "operations.xlsx",
+            "sheet": "Support",
+            "document_id": "operations.xlsx",
+            "file_type": "excel"
+          },
+          "distance": 0.8262163400650024,
+          "relevance": 0.17378365993499756
+        },
+        {
+          "content": "Chính sách nhân sự An Bình.\nNhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm.\nThời gian thử việc tại An Bình là 60 ngày.\nNhân viên An Bình được làm việc từ xa tối đa 2 ngày mỗi tuần.\nNgân sách đào tạo tại An Bình là 3000000 đồng mỗi nhân viên mỗi năm.",
+          "metadata": {
+            "document_id": "hr.docx",
+            "file_type": "docx",
+            "chunk_index": 0,
+            "source_type": "text",
+            "filename": "hr.docx"
+          },
+          "distance": 0.8339217305183411,
+          "relevance": 0.16607826948165894
+        },
+        {
+          "content": "Lyra workshop notice.\nThe Lyra workshop starts at 09:30.\nThe Lyra workshop is in room B204.\nThe Lyra workshop capacity is 35 people.\nThe Lyra workshop registration deadline is October 10.",
+          "metadata": {
+            "chunk_index": 0,
+            "document_id": "notice.png",
+            "file_type": "image",
+            "source_type": "ocr",
+            "filename": "notice.png"
+          },
+          "distance": 0.8574342131614685,
+          "relevance": 0.1425657868385315
+        },
+        {
+          "content": "Product | Revenue\nProduct: Atlas Laptop | Revenue: 150\nProduct: Nova Phone | Revenue: 200",
+          "metadata": {
+            "file_type": "excel",
+            "chunk_index": 0,
+            "sheet": "Sales",
+            "filename": "operations.xlsx",
+            "source_type": "text",
+            "document_id": "operations.xlsx"
+          },
+          "distance": 0.8808364272117615,
+          "relevance": 0.11916357278823853
+        }
+      ]
+    }
+  ],
+  "sweep": [
+    {
+      "threshold": 0.4,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.41,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.42,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.43,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.44,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.45,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.46,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.47,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.48,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.49,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.5,
+      "hit_count": 21,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.51,
+      "hit_count": 20,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.52,
+      "hit_count": 20,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.53,
+      "hit_count": 20,
+      "no_answer_empty": 3
+    },
+    {
+      "threshold": 0.54,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.55,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.56,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.57,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.58,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.59,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    },
+    {
+      "threshold": 0.6,
+      "hit_count": 19,
+      "no_answer_empty": 4
+    }
+  ]
+}

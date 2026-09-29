@@ -1,0 +1,27 @@
+name: bai1-rag
+services:
+  api:
+    build: .
+    image: bai1-rag:local
+    init: true
+    env_file:
+      - .env
+    environment:
+      UPLOAD_DIR: /app/data/uploads
+      CHROMA_PATH: /app/data/chroma
+      HF_HOME: /app/.cache/huggingface
+      PADDLE_PDX_CACHE_HOME: /app/.cache/paddlex
+      PADDLE_HOME: /app/.cache/paddle
+    # Ollama runs on the Windows host, not in a container.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./data:/app/data
+      - model_cache:/app/.cache
+    restart: unless-stopped
+    shm_size: 1gb
+
+volumes:
+  model_cache:

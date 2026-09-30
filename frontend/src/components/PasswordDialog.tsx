@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { changePassword } from '../api/client';
 import { inputClass } from './LoginPage';
 import { Modal } from './Modal';
+import { PasswordInput } from './PasswordInput';
 import { ErrorBanner, primaryButton, Spinner } from './ui';
 
 const MIN_PASSWORD = 8;
@@ -46,8 +47,7 @@ export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () =
       ) : (
         <form onSubmit={submit} className="space-y-3">
           {error && <ErrorBanner message={error} />}
-          <input
-            type="password"
+          <PasswordInput
             className={inputClass}
             placeholder="Mật khẩu hiện tại"
             aria-label="Mật khẩu hiện tại"
@@ -56,8 +56,7 @@ export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () =
             onChange={(event) => setCurrent(event.target.value)}
             required
           />
-          <input
-            type="password"
+          <PasswordInput
             className={inputClass}
             placeholder={`Mật khẩu mới (ít nhất ${MIN_PASSWORD} ký tự)`}
             aria-label="Mật khẩu mới"
@@ -68,8 +67,7 @@ export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () =
             onChange={(event) => setNext(event.target.value)}
             required
           />
-          <input
-            type="password"
+          <PasswordInput
             className={inputClass}
             placeholder="Nhập lại mật khẩu mới"
             aria-label="Nhập lại mật khẩu mới"

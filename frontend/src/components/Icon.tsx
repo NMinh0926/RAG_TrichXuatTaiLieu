@@ -28,6 +28,8 @@ const PATHS = {
   lock: 'M6 11h12v10H6zM8 11V7a4 4 0 018 0v4',
   activity: 'M3 12h4l3 8 4-16 3 8h4',
   key: 'M15 7a4 4 0 11-3.9 5H3v3h3v3h3v-3h2.1A4 4 0 0115 7z',
+  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 100 6 3 3 0 000-6z',
+  eyeOff: 'M3 3l18 18M10.6 5.1A9.8 9.8 0 0112 5c6.5 0 10 7 10 7a17 17 0 01-3.2 4.2M6.6 6.6A17 17 0 002 12s3.5 7 10 7a9.6 9.6 0 005.4-1.6M9.9 9.9a3 3 0 004.2 4.2',
 } as const;
 
 export type IconName = keyof typeof PATHS;

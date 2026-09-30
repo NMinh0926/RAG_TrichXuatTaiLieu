@@ -1,7 +1,8 @@
 import uuid
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 from app.services.layout import Placed
 
@@ -183,9 +184,21 @@ class AnswerResponse(BaseModel):
 USERNAME_PATTERN = r'^[A-Za-z0-9._-]{3,64}$'
 
 
+def no_outer_whitespace(value: str) -> str:
+    # Sign-in strips pasted spaces/newlines, so passwords cannot start or end with whitespace.
+    if value != value.strip():
+        raise ValueError('Mật khẩu không được bắt đầu hoặc kết thúc bằng khoảng trắng.')
+    return value
+
+
+NewPassword = Annotated[str, Field(min_length=8, max_length=256), AfterValidator(no_outer_whitespace)]
+# A typed-in or pasted password: surrounding whitespace (e.g. a copied line break) is ignored.
+EnteredPassword = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=256)]
+
+
 class LoginRequest(BaseModel):
     username: str = Field(min_length=1, max_length=64)
-    password: str = Field(min_length=1, max_length=256)
+    password: EnteredPassword
 
 
 class UserOut(BaseModel):
@@ -207,16 +220,16 @@ class SessionOut(BaseModel):
 
 class UserCreate(BaseModel):
     username: str = Field(pattern=USERNAME_PATTERN)
-    password: str = Field(min_length=8, max_length=256)
+    password: NewPassword
     role: str = Field('user', pattern='^(admin|user)$')
 
 
 class UserUpdate(BaseModel):
-    password: str | None = Field(None, min_length=8, max_length=256)
+    password: NewPassword | None = None
     role: str | None = Field(None, pattern='^(admin|user)$')
     is_active: bool | None = None
 
 
 class PasswordChange(BaseModel):
-    current_password: str = Field(min_length=1, max_length=256)
-    new_password: str = Field(min_length=8, max_length=256)
+    current_password: EnteredPassword
+    new_password: NewPassword

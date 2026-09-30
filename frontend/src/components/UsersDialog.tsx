@@ -3,6 +3,7 @@ import { createUser, listUsers, updateUser } from '../api/client';
 import type { Role, User } from '../api/types';
 import { inputClass } from './LoginPage';
 import { Modal } from './Modal';
+import { PasswordInput } from './PasswordInput';
 import { ErrorBanner, ListSkeleton, primaryButton, secondaryButton, Spinner } from './ui';
 
 const MIN_PASSWORD = 8;
@@ -134,9 +135,9 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
         {resetTarget && (
           <form onSubmit={submitReset} className="flex flex-wrap items-center gap-2 rounded-lg bg-slate-100 p-2 dark:bg-slate-800">
             <span className="w-full font-medium sm:w-auto">Mật khẩu mới cho {resetTarget.username}</span>
-            <input
-              type="password"
-              className={`${inputClass} flex-1`}
+            <PasswordInput
+              className={inputClass}
+              wrapperClassName="flex-1"
               aria-label={`Mật khẩu mới cho ${resetTarget.username}`}
               autoComplete="new-password"
               minLength={MIN_PASSWORD}
@@ -166,8 +167,7 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
               onChange={(event) => setUsername(event.target.value)}
               required
             />
-            <input
-              type="password"
+            <PasswordInput
               className={inputClass}
               placeholder={`Mật khẩu (≥ ${MIN_PASSWORD} ký tự)`}
               aria-label="Mật khẩu cho tài khoản mới"

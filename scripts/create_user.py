@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from app.core.security import hash_password
 from app.db.models import Conversation, User, UserRole
 from app.db.repositories import UserRepository
-from app.models.schemas import USERNAME_PATTERN
+from app.models.schemas import USERNAME_PATTERN, no_outer_whitespace
 
 MIN_PASSWORD = 8
 
@@ -31,6 +31,7 @@ def create_or_reset(session: Session, username: str, password: str,
         raise ValueError('Username: 3-64 letters, digits, dot, underscore or hyphen.')
     if len(password) < MIN_PASSWORD:
         raise ValueError(f'Password must have at least {MIN_PASSWORD} characters.')
+    no_outer_whitespace(password)
     repository = UserRepository(session)
     first = repository.count() == 0
     user = repository.by_username(username)

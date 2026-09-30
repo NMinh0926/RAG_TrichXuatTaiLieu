@@ -514,3 +514,23 @@ def test_init_survives_invalid_first_admin(db_engine, db_session, monkeypatch):
     monkeypatch.setenv('INITIAL_ADMIN_PASSWORD', 'short')
     init_services.ensure_first_admin()
     assert db_session.query(User).count() == 0
+
+
+def test_pasted_whitespace_around_credentials_is_ignored(real_auth, db_session):
+    make_user(db_session, 'alice')
+    response = real_auth.post('/api/auth/login', json={'username': ' Alice\n', 'password': ' password-123\r\n'})
+    assert response.status_code == 200
+
+
+def test_new_passwords_cannot_have_outer_whitespace(real_auth, db_session):
+    root = make_user(db_session, 'root', UserRole.admin)
+    act_as(root)
+    assert real_auth.post('/api/users', json={'username': 'bob', 'password': ' password-123'}).status_code == 422
+    bob = make_user(db_session, 'bob')
+    assert real_auth.patch(f'/api/users/{bob.id}', json={'password': 'password-123 '}).status_code == 422
+    act_as(bob)
+    changed = real_auth.post('/api/auth/password', json={'current_password': 'password-123',
+                                                         'new_password': 'new-password\t'})
+    assert changed.status_code == 422
+    with pytest.raises(ValueError):
+        create_or_reset(db_session, 'carol', ' password-123')

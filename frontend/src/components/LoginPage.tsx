@@ -1,5 +1,6 @@
 import { useId, useState, type FormEvent } from 'react';
 import { Icon } from './Icon';
+import { PasswordInput } from './PasswordInput';
 import { ErrorBanner, primaryButton, Spinner } from './ui';
 
 interface LoginPageProps {
@@ -62,9 +63,8 @@ export function LoginPage({ expired, onLogin }: LoginPageProps) {
           <label htmlFor={passwordId} className="text-sm font-medium">
             Mật khẩu
           </label>
-          <input
+          <PasswordInput
             id={passwordId}
-            type="password"
             className={inputClass}
             value={password}
             onChange={(event) => setPassword(event.target.value)}

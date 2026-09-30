@@ -1,11 +1,13 @@
 import json
 import logging
 import time
+import unicodedata
 import uuid
 from collections.abc import Iterator
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, File, Query, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Query, Request, Response, UploadFile
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm import Session
@@ -31,8 +33,9 @@ logger = logging.getLogger(__name__)
 
 def read_upload(file: UploadFile, settings: Settings) -> tuple[str, bytes]:
     """Validate name/type/size/pages and read at most MAX_UPLOAD_MB into memory (never onto local disk)."""
-    # Both POSIX and Windows separators are stripped from the display filename.
-    filename = (file.filename or '').replace('\\', '/').rsplit('/', 1)[-1][:255]
+    # Both POSIX and Windows separators are stripped from the display filename; NFC so names uploaded from macOS
+    # (decomposed accents) are stored, listed and searched like the same name typed elsewhere.
+    filename = unicodedata.normalize('NFC', (file.filename or '').replace('\\', '/').rsplit('/', 1)[-1])[:255]
     if any(ord(char) < 32 for char in filename):
         raise PipelineError('invalid_filename', 'Tên file chứa ký tự không hợp lệ.', 400)
     validate_extension(filename)
@@ -105,16 +108,22 @@ def submit_document(file: UploadFile = File(...), settings: Settings = Depends(g
 
 
 @api_router.post('/upload', response_model=UploadResponse)
-def upload_document(file: UploadFile = File(...), settings: Settings = Depends(get_settings),
-                    service: DocumentService = Depends(get_document_service),
-                    user: User = Depends(get_current_user), limiter: RateLimiter = Depends(get_rate_limiter)):
-    """Synchronous upload kept for older clients: queues the job and waits until it finishes."""
-    filename, data = read_limited_upload(file, settings, user, limiter)
-    submission = service.submit(filename, data, user.id)
+async def upload_document(request: Request, file: UploadFile = File(...), settings: Settings = Depends(get_settings),
+                          service: DocumentService = Depends(get_document_service),
+                          user: User = Depends(get_current_user),
+                          limiter: RateLimiter = Depends(get_rate_limiter)):
+    """Synchronous upload kept for older clients: queues the job and waits until it finishes.
+
+    Async: the wait holds no worker thread (a few slow uploads cannot starve the API) and stops when the client
+    disconnects; the document keeps processing in the background either way.
+    """
+    filename, data = await run_in_threadpool(read_limited_upload, file, settings, user, limiter)
+    submission = await run_in_threadpool(service.submit, filename, data, user.id)
     if submission.job is not None and submission.job.status not in (JobStatus.succeeded,):
-        service.raise_for_failure(service.wait(submission.job.id, settings.ingest_wait_seconds))
-    document = service.repository.get(submission.document.id)
-    service.session.refresh(document)
+        job = await service.wait(submission.job.id, settings.ingest_wait_seconds, request.is_disconnected)
+        service.raise_for_failure(job)
+    document = await run_in_threadpool(service.repository.get, submission.document.id)
+    await run_in_threadpool(service.session.refresh, document)
     return UploadResponse(filename=document.filename, chunks_created=document.chunk_count,
                           document_id=document.id, duplicate=submission.duplicate)
 

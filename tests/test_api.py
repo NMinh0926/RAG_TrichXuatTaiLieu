@@ -169,7 +169,13 @@ def test_in_flight_duplicate_returns_the_running_job(documents_api, samples, db_
     session.commit()
     body = submit(client, 'again.pdf', data).json()
     assert body['duplicate'] is True and body['job']['id'] == str(job.id) and body['job']['progress'] == 40
-    assert client.delete(f'/api/documents/{document.id}').status_code == 409  # still processing
+    from sqlalchemy.orm import Session
+    from app.services.jobs import try_lock_document
+    with Session(session.get_bind()) as worker:  # a runner processing the document holds its lock
+        assert try_lock_document(worker, document.id)
+        assert client.delete(f'/api/documents/{document.id}').status_code == 409  # still processing
+    # The lock is gone (e.g. the worker crashed): the abandoned document can be deleted.
+    assert client.delete(f'/api/documents/{document.id}').status_code == 204
 
 
 def test_failed_job_marks_document_failed_and_retry_replaces_it(documents_api):

@@ -2,14 +2,19 @@
 
 Progress (percent + current step) and non-fatal per-page warnings are written to `ingest_jobs`,
 so any API process can report them (GET /api/jobs/{id}, SSE /api/jobs/{id}/events).
+
+A runner holds a PostgreSQL advisory lock on the document for the whole job. The lock makes a job delivered
+twice (several workers, recovery) run once, and tells the API and the worker's recovery which unfinished jobs
+are really being processed: PostgreSQL releases it when a crashed worker's connection closes.
 """
 import logging
 import time
 import uuid
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import datetime, timezone
 from typing import Protocol
 
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.core.errors import PipelineError
@@ -21,6 +26,36 @@ from app.storage.base import Storage
 logger = logging.getLogger(__name__)
 # Progress bands per step (percent at step start); extraction and embedding advance inside their band.
 STEPS = {'queued': 0, 'download': 2, 'extract': 5, 'chunk': 60, 'embed': 62, 'index': 96, 'done': 100}
+
+
+def document_lock_key(document_id: uuid.UUID) -> int:
+    """Advisory-lock key of a document: the first 64 bits of its UUID as a signed bigint."""
+    return int.from_bytes(document_id.bytes[:8], 'big', signed=True)
+
+
+def try_lock_document(session: Session, document_id: uuid.UUID) -> bool:
+    """Take the document's processing lock until the session's transaction ends; False if another runner holds it."""
+    return bool(session.scalar(text('SELECT pg_try_advisory_xact_lock(:key)'), {'key': document_lock_key(document_id)}))
+
+
+def locked_documents(session: Session, document_ids: Iterable[uuid.UUID]) -> set[uuid.UUID]:
+    """The documents a runner is processing right now. Reads pg_locks only, so it never takes a lock itself."""
+    wanted = {document_lock_key(document_id) & 0xFFFF_FFFF_FFFF_FFFF: document_id for document_id in document_ids}
+    if not wanted:
+        return set()
+    # A bigint advisory key is reported as classid (high 32 bits) and objid (low 32 bits) with objsubid 1.
+    rows = session.execute(text("SELECT classid::bigint, objid::bigint FROM pg_locks WHERE locktype = 'advisory' "
+                                'AND objsubid = 1 AND granted '
+                                'AND database = (SELECT oid FROM pg_database WHERE datname = current_database())'))
+    return {wanted[key] for high, low in rows if (key := high << 32 | low) in wanted}
+
+
+def mark_failed(job: IngestJob, code: str, message: str) -> None:
+    """Terminal failure of a job and of its document (the caller commits)."""
+    job.status, job.error_code, job.error_message = JobStatus.failed, code, message
+    job.finished_at = datetime.now(timezone.utc)
+    if job.document is not None:
+        job.document.status, job.document.error_message = DocumentStatus.failed, message
 
 
 class JobQueue(Protocol):
@@ -102,20 +137,48 @@ class IngestRunner:
         self.session_factory, self.storage, self.ingestion = session_factory, storage, ingestion
 
     def run(self, job_id: uuid.UUID) -> None:
-        """Process one job. Failures mark job and document failed and leave no vectors behind."""
+        """Process one queued job. Failures mark job and document failed and leave no vectors behind.
+
+        A job that is no longer queued (already run, superseded) is skipped. A job whose document another runner
+        holds stays queued, and the worker's recovery enqueues it again once the document is free. A database error
+        before the document is locked propagates and leaves the row queued for that recovery too.
+        """
         with self.session_factory() as session:
             job = session.get(IngestJob, job_id)
-            if job is None or job.status not in (JobStatus.queued, JobStatus.running):
-                logger.warning('ingest job skipped job_id=%s', job_id)
+            document_id = job.document_id if job is not None and job.status == JobStatus.queued else None
+        if document_id is None:
+            logger.warning('ingest job skipped job_id=%s', job_id)
+            return
+        # This session stays open, idle, for the whole job: closing it releases the lock.
+        with self.session_factory() as lock:
+            if not try_lock_document(lock, document_id):
+                logger.warning('ingest job deferred, document busy job_id=%s document_id=%s', job_id, document_id)
                 return
+            self._run_locked(job_id, document_id)
+
+    def _claim(self, job_id: uuid.UUID, progress: Progress) -> tuple[str, str] | None:
+        """queued -> running under a row lock. Returns (object_key, filename), or None if the job is not queued."""
+        with self.session_factory() as session:
+            job = session.scalar(select(IngestJob).where(IngestJob.id == job_id).with_for_update())
+            if job is None or job.status != JobStatus.queued:
+                return None
             document = job.document
-            document_id, object_key, filename = document.id, document.object_key, document.filename
             job.status, job.step, job.started_at = JobStatus.running, 'download', datetime.now(timezone.utc)
             document.status = DocumentStatus.processing
+            # Keeps earlier notes, e.g. that a worker died while processing this job.
+            progress.warnings.extend(job.warnings or [])
             session.commit()
+            return document.object_key, document.filename
+
+    def _run_locked(self, job_id: uuid.UUID, document_id: uuid.UUID) -> None:
         progress = Progress(self.session_factory, job_id)
         started = time.perf_counter()
         try:
+            claimed = self._claim(job_id, progress)
+            if claimed is None:
+                logger.warning('ingest job skipped job_id=%s', job_id)
+                return
+            object_key, filename = claimed
             progress('download')
             # Re-index jobs replace the previous vectors; for a new document this is a no-op.
             self.ingestion.store.delete_document(str(document_id))
@@ -155,14 +218,14 @@ class IngestRunner:
             self.ingestion.store.delete_document(str(document_id))
         except Exception:
             logger.warning('vector cleanup failed job_id=%s', job_id)
-        with self.session_factory() as session:
-            job = session.get(IngestJob, job_id)
-            if job is not None:
-                job.status, job.error_code, job.error_message = JobStatus.failed, code, message
-                job.warnings = progress.warnings or None
-                job.timings = progress.finish()
-                job.finished_at = datetime.now(timezone.utc)
-            document = session.get(Document, document_id)
-            if document is not None:
-                document.status, document.error_message = DocumentStatus.failed, message
-            session.commit()
+        try:
+            with self.session_factory() as session:
+                job = session.get(IngestJob, job_id)
+                if job is not None:
+                    mark_failed(job, code, message)
+                    job.warnings = progress.warnings or None
+                    job.timings = progress.finish()
+                session.commit()
+        except Exception:
+            # The job stays unfinished; the worker's recovery retries it once the database is reachable again.
+            logger.exception('cannot record ingest failure job_id=%s', job_id)

@@ -6,7 +6,7 @@ import uuid
 from sqlalchemy import ColumnElement, delete, func, or_, select, true
 from sqlalchemy.orm import Session
 
-from app.db.models import Chunk, Conversation, Document, DocumentStatus, Message, MessageRole, User
+from app.db.models import Chunk, Conversation, Document, DocumentStatus, DocumentSummary, Message, MessageRole, User
 
 
 def visible_to(user: User | None) -> ColumnElement[bool]:
@@ -59,7 +59,9 @@ class DocumentRepository:
         self.session.flush()
 
     def replace_chunks(self, document_id: uuid.UUID, chunks: list[Chunk]) -> None:
+        """New content (re-index) also invalidates the cached summary, which was built from the old chunks."""
         self.session.execute(delete(Chunk).where(Chunk.document_id == document_id))
+        self.session.execute(delete(DocumentSummary).where(DocumentSummary.document_id == document_id))
         self.session.add_all(chunks)
         self.session.flush()
 

@@ -3,17 +3,21 @@ import hashlib
 import logging
 import time
 import uuid
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
+import anyio
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.core.config import get_settings
 from app.core.errors import PipelineError
 from app.db.models import Document, DocumentStatus, IngestJob, JobStatus
 from app.db.repositories import DocumentRepository
 from app.services.file_router import content_type_for, extension_of
-from app.services.jobs import JobQueue
+from app.services.jobs import JobQueue, locked_documents, mark_failed
 from app.services.vector_store import VectorStore
 from app.storage.base import Storage
 
@@ -31,13 +35,34 @@ class Submission:
 
 
 class DocumentService:
-    def __init__(self, session: Session, storage: Storage, store: VectorStore, queue: JobQueue):
+    def __init__(self, session: Session, storage: Storage, store: VectorStore, queue: JobQueue,
+                 stale_after_seconds: float | None = None):
+        """`stale_after_seconds` (default INGEST_JOB_TIMEOUT_SECONDS): a job queued longer than this that no
+        worker has started no longer blocks deleting or re-indexing its document."""
         self.session, self.storage, self.store, self.queue = session, storage, store, queue
         self.repository = DocumentRepository(session)
+        self.stale_after_seconds = (get_settings().ingest_job_timeout_seconds if stale_after_seconds is None
+                                    else stale_after_seconds)
 
     def latest_job(self, document_id: uuid.UUID) -> IngestJob | None:
         return self.session.scalar(select(IngestJob).where(IngestJob.document_id == document_id)
                                    .order_by(IngestJob.created_at.desc()).limit(1))
+
+    def unfinished_jobs(self, document_id: uuid.UUID) -> list[IngestJob]:
+        return list(self.session.scalars(select(IngestJob).where(
+            IngestJob.document_id == document_id, IngestJob.status.in_([JobStatus.queued, JobStatus.running]))))
+
+    def busy(self, document: Document) -> bool:
+        """Whether the document is really in flight: a worker is processing it (holds its lock) or a job was queued
+        recently. A job left behind by a crashed worker, a lost queue entry or a database outage does not count, so
+        such a document can still be deleted or re-indexed."""
+        if document.status not in (DocumentStatus.pending, DocumentStatus.processing):
+            return False
+        if locked_documents(self.session, [document.id]):
+            return True
+        cutoff = datetime.now(timezone.utc) - timedelta(seconds=self.stale_after_seconds)
+        return any(job.status == JobStatus.queued and job.created_at > cutoff
+                   for job in self.unfinished_jobs(document.id))
 
     def submit(self, filename: str, data: bytes, owner_id: uuid.UUID | None = None) -> Submission:
         """Store the file and queue its processing. An identical file (same SHA-256) of the same owner is never
@@ -81,29 +106,59 @@ class DocumentService:
         return Submission(document, job, False)
 
     def reindex(self, document: Document) -> IngestJob:
-        """Queue re-extraction/re-embedding of a stored file with the current configuration."""
-        if document.status in (DocumentStatus.pending, DocumentStatus.processing):
+        """Queue re-extraction/re-embedding of a stored file with the current configuration.
+
+        Unfinished jobs of a stuck document (see `busy`) are failed first, so the worker never runs them. If the
+        queue is unavailable, the new job is removed and the document keeps its previous state.
+        """
+        if self.busy(document):
             raise PipelineError('document_processing', 'Tài liệu đang được xử lý.', 409)
+        for stale in self.unfinished_jobs(document.id):
+            mark_failed(stale, 'job_abandoned', 'Tác vụ xử lý bị bỏ dở (worker hoặc hàng đợi gặp sự cố).')
+        previous = document.status, document.error_message
         job = IngestJob(document_id=document.id)
         document.status, document.error_message = DocumentStatus.pending, None
         self.session.add(job)
         self.session.commit()
-        self.queue.enqueue(job.id)
+        try:
+            self.queue.enqueue(job.id)
+        except Exception:
+            self.session.rollback()
+            self.session.refresh(job)
+            if job.status == JobStatus.queued:  # never started (an inline job may already have failed)
+                self.session.delete(job)
+                self.session.refresh(document)
+                document.status, document.error_message = previous
+                self.session.commit()
+            raise
         return job
 
-    def wait(self, job_id: uuid.UUID, timeout_seconds: float, poll_seconds: float = 0.5) -> IngestJob:
-        """Block until the job finishes (for the synchronous legacy upload endpoint)."""
+    async def wait(self, job_id: uuid.UUID, timeout_seconds: float,
+                   disconnected: Callable[[], Awaitable[bool]] | None = None, poll_seconds: float = 1.0) -> IngestJob:
+        """Wait until the job finishes (synchronous legacy upload endpoint).
+
+        Async: between polls it holds neither a worker thread nor a database connection, and it stops as soon as
+        `disconnected()` reports that the client went away.
+        """
         deadline = time.monotonic() + timeout_seconds
         while True:
-            self.session.expire_all()
-            job = self.session.get(IngestJob, job_id)
-            if job is None:
-                raise PipelineError('job_not_found', 'Không tìm thấy tác vụ xử lý.', 404)
+            job = await anyio.to_thread.run_sync(self._poll, job_id)
             if job.status in (JobStatus.succeeded, JobStatus.failed):
                 return job
             if time.monotonic() > deadline:
                 raise PipelineError('ingest_timeout', 'Xử lý tài liệu quá thời gian chờ; tài liệu vẫn đang được xử lý.', 504)
-            time.sleep(poll_seconds)
+            if disconnected is not None and await disconnected():
+                raise PipelineError('client_disconnected', 'Kết nối đã đóng; tài liệu vẫn đang được xử lý.', 499)
+            await anyio.sleep(poll_seconds)
+
+    def _poll(self, job_id: uuid.UUID) -> IngestJob:
+        self.session.expire_all()
+        job = self.session.get(IngestJob, job_id)
+        # Ends the read transaction, which returns the connection to the pool until the next poll.
+        self.session.commit()
+        if job is None:
+            raise PipelineError('job_not_found', 'Không tìm thấy tác vụ xử lý.', 404)
+        return job
 
     def raise_for_failure(self, job: IngestJob) -> None:
         if job.status == JobStatus.failed:
@@ -113,9 +168,10 @@ class DocumentService:
     def delete(self, document: Document, force: bool = False) -> None:
         """Vectors first: a failure then leaves a visible document the user can delete again.
 
-        In-flight documents are refused unless `force` (maintenance scripts, no worker running on them).
+        In-flight documents (see `busy`) are refused unless `force` (maintenance scripts, no worker running on
+        them). Deleting one whose job is still queued is safe: the job row goes with it and the worker skips it.
         """
-        if not force and document.status in (DocumentStatus.pending, DocumentStatus.processing):
+        if not force and self.busy(document):
             raise PipelineError('document_processing', 'Tài liệu đang được xử lý; hãy xóa sau khi xử lý xong.', 409)
         self.store.delete_document(str(document.id))
         self.storage.delete(document.object_key)

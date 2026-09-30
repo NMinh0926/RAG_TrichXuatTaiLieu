@@ -39,7 +39,8 @@ class OCRService:
                                   input=buffer.getvalue(), capture_output=True, check=True,
                                   timeout=self.timeout_seconds, env={**os.environ, 'OMP_THREAD_LIMIT': '1'})
         except (OSError, subprocess.SubprocessError) as exc:
-            raise PipelineError('ocr_failure', 'OCR failed; check the Tesseract installation and server logs.', 503) from exc
+            raise PipelineError('ocr_failure', 'Không nhận dạng được chữ (OCR); kiểm tra cài đặt Tesseract và log '
+                                               'máy chủ.', 503) from exc
         words = []
         for row in csv.DictReader(io.StringIO(done.stdout.decode('utf-8')), delimiter='\t', quoting=csv.QUOTE_NONE):
             text = (row.get('text') or '').strip()

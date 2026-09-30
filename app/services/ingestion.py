@@ -8,10 +8,13 @@ from pathlib import Path
 from app.core.errors import PipelineError
 from app.models.schemas import Chunk, DocumentUnit, IngestionResponse
 from app.services.chunking import chunk_units
-from app.services.file_router import load_file, validate_extension
+from app.services.file_router import extension_of, load_file, validate_extension
 from app.services.text_cleaner import clean_text
 
 logger = logging.getLogger(__name__)
+# PDFs are limited by MAX_PDF_PAGES at upload; other formats get the same budget as text, at this many characters
+# per page, so one long DOCX/XLSX cannot hold the worker for up to the job timeout.
+CHARS_PER_PAGE = 5000
 
 
 @dataclass
@@ -39,9 +42,10 @@ class IngestionService:
         report = progress or (lambda step, fraction=0.0: None)
         validate_extension(filename)
         if not data:
-            raise PipelineError('empty_document', 'File is missing or empty.')
+            raise PipelineError('empty_document', 'File trống hoặc không tồn tại.')
         if len(data) > self.settings.max_upload_mb * 1024 * 1024:
-            raise PipelineError('file_too_large', 'File exceeds MAX_UPLOAD_MB.', 413)
+            raise PipelineError('file_too_large', f'File vượt quá giới hạn {self.settings.max_upload_mb} MB '
+                                                  '(MAX_UPLOAD_MB).', 413)
         report('extract', 0.0)
         try:
             units = load_file(data, filename, self.ocr, self.settings.pdf_min_text_chars,
@@ -50,7 +54,8 @@ class IngestionService:
         except PipelineError:
             raise
         except Exception as exc:
-            raise PipelineError('extraction_failure', 'Cannot extract file; it may be corrupt or encrypted.') from exc
+            raise PipelineError('extraction_failure', 'Không đọc được file; file có thể bị hỏng hoặc được đặt '
+                                                     'mật khẩu.') from exc
         pages = [unit.metadata['page'] for unit in units if isinstance(unit.metadata.get('page'), int)]
         logger.info('extracted units=%d filename=%r', len(units), filename)
         for unit in units:
@@ -60,13 +65,17 @@ class IngestionService:
                 unit.content, unit.layout = cleaned, None
         units = [unit for unit in units if any(char.isalnum() for char in unit.content)]
         if not units:
-            raise PipelineError('no_usable_text', 'No usable text found after extraction/OCR.')
+            raise PipelineError('no_usable_text', 'Không tìm thấy nội dung văn bản sau khi trích xuất/OCR.')
+        limit = self.settings.max_pdf_pages * CHARS_PER_PAGE
+        if extension_of(filename) != '.pdf' and (size := sum(len(unit.content) for unit in units)) > limit:
+            raise PipelineError('file_too_large', f'Tài liệu quá dài ({size} ký tự); giới hạn là {limit} ký tự, '
+                                                  'tương đương MAX_PDF_PAGES trang.', 413)
         report('chunk')
         model = self.embedding.model
         chunks = chunk_units(units, model.tokenizer, self.settings.chunk_size,
                              self.settings.chunk_overlap, model.max_seq_length)
         if not chunks:
-            raise PipelineError('no_usable_text', 'No usable text chunks found.')
+            raise PipelineError('no_usable_text', 'Không tạo được đoạn văn bản nào từ nội dung tài liệu.')
         report('embed', 0.0)
         embeddings = self.embedding.embed_documents([chunk.content for chunk in chunks],
                                                     progress=lambda fraction: report('embed', fraction))

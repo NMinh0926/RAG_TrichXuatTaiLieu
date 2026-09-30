@@ -35,7 +35,9 @@ def build_text(words: list[Word]) -> tuple[str, list[Placed]]:
     placed: list[Placed] = []
     position, previous = 0, None
     for word in words:
-        text = unicodedata.normalize('NFC', word.text).strip()
+        # Any whitespace inside a word (thin or narrow no-break spaces do not split MuPDF words) becomes one
+        # space, as clean_text would make it, so cleaning never shifts the character spans.
+        text = ' '.join(unicodedata.normalize('NFC', word.text).split())
         if not text:
             continue
         if previous is not None:

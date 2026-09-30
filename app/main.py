@@ -61,4 +61,5 @@ async def pipeline_error_handler(request: Request, exc: PipelineError):
 @app.exception_handler(Exception)
 async def unexpected_error_handler(request: Request, exc: Exception):
     log_failure(logger, 'internal_error', exc)
-    return JSONResponse(status_code=500, content={'error': 'internal_error', 'detail': 'Check server logs.'})
+    detail = 'Lỗi máy chủ không mong muốn; vui lòng thử lại hoặc báo quản trị viên.'
+    return JSONResponse(status_code=500, content={'error': 'internal_error', 'detail': detail})

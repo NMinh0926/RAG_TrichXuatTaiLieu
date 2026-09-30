@@ -45,7 +45,7 @@ def test_image_routing(samples, fake_ocr):
 
 
 def test_unsupported(samples):
-    with pytest.raises(PipelineError, match='Supported formats'):
+    with pytest.raises(PipelineError, match='Định dạng không được hỗ trợ'):
         validate_extension('test.exe')
 
 

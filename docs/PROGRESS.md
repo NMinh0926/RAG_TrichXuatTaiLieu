@@ -10,7 +10,7 @@
 | 3 — Tốc độ ingest | **Xong** (30/09/2026) — RQ worker, Tesseract, bbox |
 | 4 — Giao diện | **Xong** (30/09/2026) — React + TS + Tailwind, nginx trong compose |
 | 5 — Benchmark | **Xong** (30/09/2026) — [report.md](benchmarks/report.md) |
-| 6 — Hoàn thiện nội bộ | Chưa bắt đầu |
+| 6 — Hoàn thiện nội bộ | **Xong** (30/09/2026) — đăng nhập, chia sẻ, giới hạn, log JSON, trạng thái, README |
 
 ## Kiến trúc hiện tại (trước Giai đoạn 1)
 
@@ -156,6 +156,62 @@
   Chất lượng 7b: recall@1 = 100%, đúng 30/31, từ chối đúng 7/8 (39 câu).
 - Đề xuất đã áp dụng ở G6: `MAX_PDF_PAGES=300`, `MAX_UPLOAD_MB=100`.
 
+## Giai đoạn 6 — đã làm
+
+- **Tài khoản** (không thư viện mới): mật khẩu scrypt, token ký HMAC-SHA256 (`app/core/security.py`) trong cookie
+  `rag_session` HttpOnly + SameSite=Strict hoặc `Authorization: Bearer`; `token_version` tăng khi đổi mật khẩu/khóa
+  → thu hồi mọi token. API: `/api/auth/{login,logout,me,password}`, `/api/users` (admin). Tạo tài khoản:
+  `scripts/create_user.py` hoặc `INITIAL_ADMIN_USERNAME/PASSWORD` (service `init`, chỉ khi chưa có tài khoản).
+  Khóa ký: `AUTH_SECRET` hoặc tự sinh vào volume `app_secrets` (mode 600).
+- **Sở hữu & chia sẻ** (migration 0005, 0006): `documents.owner_id`, `is_shared`; tài liệu không chủ luôn là tài liệu chung.
+  Người dùng thấy tài liệu của mình + tài liệu chung; admin quản lý thêm tài liệu chung nhưng không xem tài liệu riêng
+  của người khác. Truy cập trái phép → 404. Trùng SHA-256 tính theo chủ sở hữu. Chat/truy xuất chỉ tìm trong
+  tài liệu được xem (danh sách rỗng → không tìm gì); hội thoại theo người dùng. `PATCH /api/documents/{id}` chia sẻ/bỏ chia sẻ.
+- **Giới hạn**: `MAX_UPLOAD_MB=100`, `MAX_PDF_PAGES=300` (từ benchmark), loại file theo phần mở rộng; rate limit Redis
+  theo người dùng (đăng nhập theo IP + tên, chat, upload; fail-open) + nginx `limit_req` theo IP; nginx `client_max_body_size 105m`.
+- **Log JSON** một dòng/sự kiện với `request_id` (nhận/đặt header `X-Request-ID`), access log có method/path/status/
+  thời gian/user_id; không ghi nội dung tài liệu, câu hỏi, mật khẩu. 4xx ghi warning, 5xx ghi vị trí stack.
+- **Health**: `/health` (liveness), `/health/ready` (PostgreSQL, S3, Chroma, Redis; 503 nếu lỗi; healthcheck của image),
+  `/health/llm` (không còn lộ base URL); `/api/system/status` (đăng nhập): thành phần, LLM, worker, hàng đợi, số tài liệu/job, cấu hình.
+- **Frontend**: trang đăng nhập, menu tài khoản (trạng thái hệ thống, quản lý người dùng cho admin, đổi mật khẩu, đăng xuất),
+  nút chia sẻ + nhãn "Chung" trong thư viện, ẩn thao tác khi không có quyền; 401 ở bất kỳ đâu → về trang đăng nhập.
+  Script theme đưa ra file để CSP cấm script inline. `pdfjs-dist` 5.7 → 6.3.289 (npm audit: lỗ hổng high GHSA-hq66-cqwq-w95j
+  "thực thi JS khi mở PDF độc hại"; bản vá cùng thư viện).
+- **nginx**: CSP, X-Frame-Options DENY, nosniff, Referrer-Policy, Permissions-Policy, `server_tokens off`, `X-Request-ID`.
+  `FRONTEND_BIND`/`FRONTEND_PORT` để mở cho mạng nội bộ khi cần (mặc định 127.0.0.1:8080).
+- Backup/restore dừng cả api và worker. README viết lại (yêu cầu máy, Ollama, .env, khởi động, tài khoản, backup/restore,
+  chuyển LLM, triển khai, bảo mật, sự cố). Báo cáo cũ ở gốc chuyển vào `docs/history/`.
+- Kiểm thử: backend **175 test** (27 test auth/phân quyền/rate limit/health/log/init/migration mới), frontend 35 test;
+  E2E thật qua nginx **28/28**: header bảo mật, 401, health, đăng nhập, upload riêng tư, cô lập tài liệu/hội thoại/job,
+  chat không thấy tài liệu riêng của người khác, chia sẻ, người khác không xóa/bỏ chia sẻ được (403), admin không tự đặt lại
+  mật khẩu, file không cache, rate limit đăng nhập, khóa tài khoản thu hồi phiên, đăng xuất.
+
+### Rà soát bảo mật (workflow nhiều agent + tự kiểm chứng)
+
+4 hướng rà soát song song (phân quyền/phạm vi dữ liệu, xác thực/phiên, input/hạ tầng, correctness), mỗi phát hiện có agent
+phản biện. Subagent hết hạn mức giữa chừng: hướng input/hạ tầng và correctness do tôi tự rà (thêm `alembic check`:
+không lệch model/migration; downgrade/upgrade 0004↔0006 chạy được). Đã sửa (kèm test):
+
+| Phát hiện | Mức | Sửa |
+|---|---|---|
+| Tài liệu không chủ (tạo bởi `migrate_legacy` sau 0005) thành riêng tư, không ai thấy | high | Migration 0006: ownerless ⇒ shared (CHECK constraint + default trong model + `visible_to`); FK chủ sở hữu RESTRICT (xóa user không biến tài liệu riêng thành chung) |
+| Giới hạn đăng nhập theo tên cho phép khóa tài khoản admin từ máy khác | medium | Chỉ đếm lần **sai** theo (tên, IP), chặn trước khi kiểm mật khẩu; mọi lần thử vẫn giới hạn theo IP |
+| Admin tự đặt lại mật khẩu mình qua `/api/users` không cần mật khẩu cũ | medium | 409 `use_password_change`; nút bị vô hiệu trên dòng của chính mình |
+| `/api/auth/password` đoán mật khẩu hiện tại không giới hạn | low | Rate limit theo người dùng |
+| `create_user` không `--admin` âm thầm hạ quyền admin | low | Giữ vai trò trừ khi có `--admin`/`--user` |
+| Username unique phân biệt hoa/thường, tra cứu thì không | low | Lưu chữ thường + unique index `lower(username)` |
+| Hai admin hạ quyền nhau cùng lúc → không còn admin | low | Khóa hàng (`FOR UPDATE`), luôn còn ≥ 1 admin hoạt động |
+| `INITIAL_ADMIN_*` sai làm init crash cả stack | low | Ghi log lỗi, stack vẫn chạy |
+| `/api/system/status` lộ số tài liệu/job riêng của người khác | low | Người dùng thường chỉ thấy số của tài liệu mình được xem |
+| SSE tiến độ job chỉ kiểm quyền lúc kết nối | low | Kiểm lại phiên + quyền xem mỗi lần poll |
+| File gốc được cache 5 phút trong trình duyệt | low | `Cache-Control: no-store` |
+| (tự rà) alembic ghi đè logging JSON của `init` | low | `configure_logger=False` khi gọi từ init |
+
+Rủi ro chấp nhận (ghi trong README "Bảo mật"): admin đặt lại mật khẩu người khác thì đăng nhập thay được (đã ghi log
+`changed=password`); đăng xuất không thu hồi token phía server (token nằm trong cookie HttpOnly, hết hạn sau `SESSION_HOURS`);
+`X-Real-IP` được tin khi gọi thẳng cổng API (chỉ mở trên 127.0.0.1); trích dẫn cũ vẫn nằm trong lịch sử hội thoại
+sau khi tài liệu bị bỏ chia sẻ (ảnh chụp tại thời điểm trả lời); log trong lúc stream SSE không mang `request_id`.
+
 ## Quyết định / ghi chú
 
 - **MinIO → SeaweedFS** (người dùng duyệt): MinIO không còn image Docker công khai (Docker Hub gỡ, quay/ghcr cần đăng nhập).
@@ -170,7 +226,12 @@
 
 ## Việc còn dở / đề xuất cho giai đoạn sau
 
-- README chưa viết lại theo kiến trúc mới (làm ở Giai đoạn 6); lệnh hiện hành nằm trong CLAUDE.md.
-- `.env` của người dùng vẫn đặt MiniLM / CHUNK 700/120 / TOP_K 4 (không được sửa .env): cần đổi theo `.env.example`
-  rồi chạy `scripts/reindex.py --drop-other-collections`.
-- Nút thắt ingest còn lại: embedding bge-m3 CPU (~0,6 chunk/s).
+- `.env` của người dùng (không được sửa) còn cấu hình cũ: MiniLM / CHUNK 700/120 / TOP_K 4 / `MAX_UPLOAD_MB=25`, biến
+  `OLLAMA_*`/`GEMINI_*` thừa; chưa có `INITIAL_ADMIN_*`. Cần đổi theo `.env.example` rồi
+  `docker compose stop worker; docker compose run --rm api python -m scripts.reindex --drop-other-collections; docker compose start worker`.
+- Tài khoản đã tạo trên máy dev: `admin` (mật khẩu ngẫu nhiên đã báo người dùng — nên đổi ngay), `e2e_user`, `e2e_other` (đã khóa, chỉ dùng kiểm thử).
+- Bộ 30–50 câu hỏi riêng của người dùng: chưa có; chạy theo mẫu `evaluation/custom_questions.example.json`.
+- Hiệu năng: LLM là nút thắt khi nhiều người hỏi (Ollama tuần tự, 7B không vừa GPU 4 GB); embedding CPU ~1,2 s/trang.
+  Hướng: GPU ≥ 8 GB hoặc server LLM riêng + `OLLAMA_NUM_PARALLEL`; torch CUDA cho worker khi có GPU riêng.
+- Chưa có: HTTPS (đặt sau reverse proxy + `COOKIE_SECURE=true`), đăng xuất mọi phiên (ngoài đổi mật khẩu), audit log riêng,
+  quét lỗ hổng Python (pip-audit chưa cài — cần hỏi trước khi thêm công cụ).

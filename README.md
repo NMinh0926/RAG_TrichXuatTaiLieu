@@ -1,440 +1,196 @@
-# Multi-modal RAG — Trợ lý truy xuất tài liệu
+# Trợ lý tài liệu nội bộ (RAG tiếng Việt)
 
-> Sinh câu trả lời bằng **Ollama chạy local** (mặc định `qwen2.5:7b`); không dùng API LLM đám mây.
-> `/api/questions/ask` gửi raw Top-K cho LLM để LLM tự quyết định tài liệu có đủ thông tin không
-> (xem [REPORT_RETRIEVAL_GATING.md](REPORT_RETRIEVAL_GATING.md)). Ollama lỗi → HTTP 5xx, không phải no-answer.
+Web app hỏi đáp trên tài liệu nội bộ: tải lên PDF (có text hoặc scan), DOCX, Excel, ảnh → hệ thống
+đọc/OCR, chia đoạn, tạo vector → người dùng hỏi bằng tiếng Việt, câu trả lời **chỉ dựa trên tài liệu**
+và có trích dẫn `[n]`; bấm trích dẫn để mở đúng trang PDF với đoạn nguồn được tô sáng.
 
-> A/B embedding local: [REPORT_EMBEDDING_AB.md](REPORT_EMBEDDING_AB.md).
-> Đã thử BGE-M3 và E5-base trong DB riêng, giữ cùng chunks/dataset. Chưa đổi
-> model hoặc threshold production; kết quả calibration không thay thế kiểm chứng thực tế.
+- Đăng nhập bằng tài khoản do quản trị viên tạo; mỗi người thấy tài liệu của mình và tài liệu được chia sẻ chung.
+- LLM gọi qua API tương thích OpenAI (`/v1/chat/completions`). Mặc định: **Ollama chạy trên máy host**
+  (`qwen2.5:7b`), tài liệu không rời khỏi máy. Không dùng dịch vụ AI của Google.
+- Toàn bộ chạy bằng một lệnh `docker compose up -d`; dữ liệu nằm trong Docker volume.
 
-Backend cho bài đánh giá AI Intern: đọc tài liệu nội bộ đa định dạng, trích chữ/OCR,
-lưu vector và trả lời dựa trên ngữ cảnh đã truy xuất. Frontend React có hai trang nạp
-tài liệu và hỏi đáp; không có chat history.
-Đây là bản phục vụ bài đánh giá, chưa được đánh giá cho môi trường production.
+Tài liệu khác: [docs/PROGRESS.md](docs/PROGRESS.md) (lịch sử các giai đoạn, quyết định),
+[docs/benchmarks/report.md](docs/benchmarks/report.md) (hiệu năng, giới hạn upload, cấu hình máy),
+[CLAUDE.md](CLAUDE.md) (lệnh cho người phát triển).
 
-## Bài toán và định dạng
-
-PDF có text, PDF scan, DOCX (paragraph + table), XLS/XLSX (từng sheet), PNG/JPG/JPEG.
-Mục tiêu: câu trả lời có căn cứ và metadata nguồn; không có thông tin thì từ chối trả lời.
-Mẫu và evaluation corpus trong repository đều là dữ liệu tổng hợp.
-
-## Kiến trúc và vai trò LLM
+## Kiến trúc
 
 ```text
-PDF / DOCX / Excel / Image / Scanned PDF
-  → Extract / PaddleOCR → DocumentUnit → Clean → token chunks + overlap
-  → SentenceTransformer → ChromaDB PersistentClient
-
-Question → cùng SentenceTransformer → raw Top-K candidates (không lọc 0.55)
-  ├─ không có candidate (collection rỗng) → "Tôi không tìm thấy thông tin này trong tài liệu đã tải lên."
-  └─ có candidates → Ollama POST /api/chat (stream=false)
-       ├─ trả lời + [Nguồn: file, trang N] → answer + sources của các chunk được trích
-       ├─ "Tài liệu không có đủ thông tin để trả lời câu hỏi này." → sources rỗng
-       └─ Ollama lỗi (không chạy / chưa pull model / timeout) → HTTP 5xx, KHÔNG phải no-answer
+Trình duyệt ──► frontend (nginx: giao diện React + reverse proxy /api, giới hạn request, security headers)
+                   │
+                   ▼
+                 api (FastAPI) ── đăng nhập, tài liệu, chat SSE, trạng thái hệ thống
+                   │   ├─► PostgreSQL   metadata: người dùng, tài liệu, chunk + vị trí, job, hội thoại
+                   │   ├─► SeaweedFS    file gốc (API S3; đổi sang S3/R2 chỉ bằng cấu hình)
+                   │   ├─► Chroma       vector (mỗi vector gắn document_id trong PostgreSQL)
+                   │   ├─► Redis        hàng đợi job nạp tài liệu + giới hạn tần suất
+                   │   └─► LLM          Ollama trên host (hoặc bất kỳ API tương thích OpenAI)
+                 worker (RQ) ── tải file → text layer / OCR Tesseract song song → chunk → embedding bge-m3 → Chroma
+                 init ── migration DB, kiểm tra storage, tạo khóa ký phiên, tạo admin đầu tiên
 ```
 
-Relevant và no-answer có cosine score chồng lấn (relevant thấp nhất 0.234, no-answer
-cao nhất 0.533 trên 39 câu đo), nên một ngưỡng similarity cố định không thể quyết định
-“tài liệu có hỗ trợ câu trả lời không”. Threshold chỉ còn dùng cho `/questions/search`.
+Luồng hỏi đáp: viết lại câu hỏi nối tiếp theo lịch sử → phân loại (hỏi đáp / tóm tắt) →
+lấy Top-K đoạn liên quan **trong phạm vi tài liệu người dùng được xem** (không chặn bằng ngưỡng điểm) →
+LLM trả lời có trích dẫn hoặc nói "Tài liệu không có đủ thông tin…". Tóm tắt toàn tài liệu dùng map-reduce
+và được cache.
 
-**LLM chỉ dùng cho answer generation**, chạy local qua Ollama; dữ liệu không rời máy.
-LLM nhận system prompt (`app/services/prompts.py`) và user message dạng:
+## Yêu cầu máy
 
-```text
-NGỮ CẢNH:
-[1] (<tên file>, trang <số trang>) <nội dung chunk>
-[2] ...
-CÂU HỎI: <câu hỏi>
-```
+Số đo chi tiết: [docs/benchmarks/report.md](docs/benchmarks/report.md).
 
-PDF có số trang; Excel dùng `sheet <tên sheet>`; DOCX và ảnh không có metadata trang nên
-chỉ ghi tên file. Nguồn trong response lấy từ metadata retrieval của các chunk mà câu trả lời
-trích `[Nguồn: ...]` (so khớp tên file và trang/sheet); không trích hợp lệ thì `sources` rỗng.
-Prompt giảm rủi ro suy diễn; không bảo đảm tuyệt đối mô hình không hallucinate.
+| | Tối thiểu | Khuyến nghị (máy đã đo) |
+|---|---|---|
+| CPU | 4 nhân / 8 luồng x86-64 | 8+ nhân (đã đo: Core i5-12500H, 16 luồng) |
+| RAM | 16 GB (Docker ≥ 6 GB + Ollama `qwen2.5:3b`) | 16–32 GB (Docker 8 GB + Ollama `qwen2.5:7b`) |
+| GPU | Không bắt buộc (LLM trên CPU chậm, ~vài token/giây) | NVIDIA ≥ 4 GB VRAM cho LLM 7B lượng tử hóa |
+| Ổ đĩa | 20 GB trống (image ~2 GB, model ~8 GB) + dữ liệu | SSD; dữ liệu sinh ra ≈ 1,05–1,4 × dung lượng file tải lên |
+| Phần mềm | Windows 10/11 hoặc Linux, Docker Desktop / Docker Engine + Compose v2, Ollama ≥ 0.5 | |
 
-## Tech stack
+## Cài đặt
 
-Python 3.11, FastAPI, PyMuPDF, python-docx, pandas/openpyxl/xlrd, Pillow, PaddleOCR 3.2,
-sentence-transformers, ChromaDB PersistentClient, httpx (gọi Ollama HTTP API), pytest.
-LLM: [Ollama](https://ollama.com) trên máy host, model mặc định `qwen2.5:7b`.
+### 1. Ollama (trên máy host)
 
-## Cấu trúc
-
-```text
-app/main.py                 FastAPI + error handlers + /health, /health/ollama
-frontend/                   React + Vite: /documents và /ask
-app/api/                    upload, ask và endpoint phase 1
-app/core/                   config, dependencies, logging, errors
-app/models/schemas.py       DocumentUnit, Chunk và API schemas
-app/services/               loaders, OCR, cleaning, chunking, embedding,
-                            vector_store, ingestion, retrieval, answering,
-                            generation (Ollama), ollama_client, prompts
-scripts/create_samples.py   mẫu cơ bản phase 1
-scripts/create_evaluation_data.py
-scripts/evaluate.py         đánh giá retrieval / Ollama thật
-scripts/check_ollama.py     kiểm tra Ollama + model + hành vi grounded
-tests/                      unit, integration, E2E (Ollama được mock)
-sample_data/                mẫu cơ bản
-evaluation/documents/       5 tài liệu được đánh giá + ảnh nguồn tạo scan
-evaluation/questions.json  25 câu hỏi có kỳ vọng rõ ràng
-data/uploads/               file nạp local, tên UUID
-data/chroma/                vector persistent
-```
-
-## Cài Ollama trên Windows
-
-1. Tải và cài từ https://ollama.com/download/windows (Ollama chạy nền, lắng nghe cổng 11434).
-2. Mở PowerShell, tải model:
-
+1. Tải và cài từ <https://ollama.com/download> (chạy nền, cổng 11434).
+2. Đặt ngữ cảnh 8192 token cho Ollama (Windows PowerShell), rồi **khởi động lại Ollama**:
    ```powershell
-   ollama pull qwen2.5:7b     # cần khoảng 5 GB RAM trống
-   # Máy yếu: ollama pull qwen2.5:3b   rồi đặt OLLAMA_MODEL=qwen2.5:3b trong .env
-   ollama list                # kiểm tra model đã có
+   [Environment]::SetEnvironmentVariable('OLLAMA_CONTEXT_LENGTH', '8192', 'User')
+   ```
+3. Tải model:
+   ```powershell
+   ollama pull qwen2.5:7b     # trả lời (≈ 4,7 GB)
+   ollama pull qwen2.5:3b     # khuyến nghị cho bước tóm tắt từng phần (LLM_SUMMARY_MODEL), máy yếu dùng làm model chính
+   ollama list
    ```
 
-3. Kiểm tra server: `curl.exe http://localhost:11434/api/tags`.
+Container gọi Ollama qua `http://host.docker.internal:11434/v1` (đã ánh xạ trong `compose.yaml`).
 
-Ollama chạy **trên host**, không trong container. `compose.yaml` ánh xạ
-`host.docker.internal:host-gateway` để container gọi được host qua
-`OLLAMA_BASE_URL=http://host.docker.internal:11434`.
-
-## Cài đặt bằng Docker
-
-Cần Docker Desktop chạy Linux containers. Không cần Python/pip/venv trên host.
+### 2. Cấu hình `.env`
 
 ```powershell
-if (!(Test-Path .env)) { Copy-Item .env.example .env }
-docker compose up -d --build
-docker compose ps
-docker compose logs --tail=50 api
+Copy-Item .env.example .env
+notepad .env
 ```
 
-Dừng: `docker compose down`; khởi động lại: `docker compose up -d`.
-Sau khi sửa mã hoặc requirements: `docker compose up -d --build`.
-Sau khi sửa `.env`: `docker compose up -d --force-recreate`.
+Bắt buộc sửa trước khi dùng chung:
 
-Dockerfile dùng Python 3.11, PyTorch CPU, dependencies khóa phiên bản và user không
-phải root. `.env` chỉ nạp lúc chạy; `.dockerignore` không cho `.env`/data/cache vào image.
-`data/` bind mount giữ uploads/Chroma. Volume `bai1-rag_model_cache` giữ model OCR và
-embedding. Không dùng `docker compose down -v` nếu muốn giữ cache model.
-Lần đầu cần mạng để tải image/model. PaddleOCR 3.2 có thể kiểm tra host dù có cache.
+| Biến | Ý nghĩa |
+|---|---|
+| `POSTGRES_PASSWORD`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | Mật khẩu nội bộ giữa các container; đặt giá trị ngẫu nhiên, dài. |
+| `INITIAL_ADMIN_USERNAME`, `INITIAL_ADMIN_PASSWORD` | Tài khoản admin đầu tiên, chỉ được tạo khi chưa có tài khoản nào. Xóa mật khẩu khỏi `.env` sau lần chạy đầu. |
+| `AUTH_SECRET` | Khóa ký phiên đăng nhập (≥ 32 ký tự). Để trống: service `init` tự sinh và lưu trong volume `app_secrets`. |
+| `FRONTEND_BIND` | `127.0.0.1` (chỉ máy này) hoặc `0.0.0.0` (cho máy khác trong mạng nội bộ truy cập). |
 
-## Environment variables
+Các biến khác (model, chunk, giới hạn upload, rate limit, log) có chú thích trong `.env.example`.
+`.env` không bao giờ được commit.
 
-Cấu hình trong `.env` (không commit). Không có API key/secret nào cho LLM.
-
-| Biến | Mặc định/mẫu | Ý nghĩa |
-|---|---|---|
-| OLLAMA_BASE_URL | http://host.docker.internal:11434 | Địa chỉ Ollama; chạy backend ngoài Docker dùng http://localhost:11434 |
-| OLLAMA_MODEL | qwen2.5:7b | Model đã `ollama pull`; máy yếu dùng qwen2.5:3b |
-| OLLAMA_TIMEOUT_SECONDS | 120 | Timeout mỗi request (lần đầu model phải nạp vào RAM) |
-| OLLAMA_TEMPERATURE | 0.2 | Temperature khi sinh câu trả lời |
-| OLLAMA_NUM_CTX | 8192 | Context window (token) gửi cho Ollama |
-| FRONTEND_ORIGINS | http://localhost:5173,http://127.0.0.1:5173 | CORS cho frontend local, không credentials |
-| UPLOAD_DIR | ./data/uploads | Lưu file upload |
-| CHROMA_PATH | ./data/chroma | Vector persistent |
-| EMBEDDING_MODEL | sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 | Embedding local |
-| CHUNK_SIZE / CHUNK_OVERLAP | 700 / 120 | Kích thước trần và overlap mong muốn |
-| TOP_K | 4 | Tối đa chunk trả về |
-| RETRIEVAL_THRESHOLD | 0.55 | Chỉ cho `/questions/search` (legacy); không quyết định no-answer của `/api/questions/ask` |
-| CANDIDATE_MIN_RELEVANCE | -1 (tắt) | Sàn loại nhiễu cho candidates gửi LLM; đo trên 39 câu không có sàn nào có lợi |
-| OCR_LANG | vi | Ngôn ngữ PaddleOCR |
-| PDF_MIN_TEXT_CHARS | 20 | Heuristic chuyển trang PDF sang OCR |
-| MAX_UPLOAD_MB | 25 | Giới hạn file upload |
-| HF_HOME / PADDLE_PDX_CACHE_HOME / PADDLE_HOME | ./.cache/... | Cache model local |
-
-Đổi `.env` cần `docker compose up -d --force-recreate` để nạp lại biến môi trường.
-Compose đặt đường dẫn uploads/Chroma dưới `/app/data` và cache dưới `/app/.cache`,
-tương ứng bind mount và volume đã khai báo. Upload/retrieval không cần Ollama.
-
-## Chạy backend
+### 3. Khởi động
 
 ```powershell
-docker compose up -d
+docker compose up -d --build     # lần đầu: build image, tải model embedding (~2,3 GB) khi worker khởi động
+docker compose ps                # mọi service "healthy"; init "exited (0)"
 ```
 
-Swagger: http://127.0.0.1:8000/docs. Chỉ mở cổng trên localhost.
-
-- `GET /health`: liveness của API, không gọi Ollama.
-- `GET /health/ollama`: gọi `GET {OLLAMA_BASE_URL}/api/tags` và xác nhận `OLLAMA_MODEL` đã được pull.
-  200 → `{"status":"ok","model":"qwen2.5:7b","model_available":true,...}`;
-  503 → `ollama_unavailable` (Ollama không chạy) hoặc `ollama_model_missing` (chưa pull).
+Mở <http://localhost:8080> và đăng nhập. Kiểm tra nhanh:
 
 ```powershell
-curl.exe http://127.0.0.1:8000/health/ollama
+curl.exe http://localhost:8080/health/ready    # PostgreSQL, S3, Chroma, Redis
+curl.exe http://localhost:8080/health/llm      # Ollama + model
 ```
 
-## Upload API
+Trong giao diện: menu tài khoản → **Trạng thái hệ thống** (mọi thành phần, worker, hàng đợi, cấu hình).
 
-`POST /api/documents/upload`, multipart field `file`.
+Dừng: `docker compose down` (dữ liệu giữ nguyên trong volume). **Không** dùng `docker compose down -v`
+(xóa toàn bộ dữ liệu).
 
-```json
-{"status":"success","filename":"sample.docx","chunks_created":1}
-```
+### Tài khoản
 
-Lưu file → ingestion → extraction/OCR → cleaning/chunking → embedding → Chroma.
-File lỗi được dọn; tên gốc đã loại đường dẫn được giữ trong metadata.
+- Tạo admin/người dùng bằng lệnh (hỏi mật khẩu, không hiện trên màn hình):
+  ```powershell
+  docker compose run --rm -it api python -m scripts.create_user <tên> [--admin | --user]
+  ```
+  Chạy lại với tên đã có = đặt lại mật khẩu (và mở khóa), giữ nguyên vai trò nếu không truyền `--admin`/`--user`.
+  Tên đăng nhập không phân biệt hoa/thường.
+- Admin quản lý người dùng trong giao diện: menu tài khoản → **Quản lý người dùng** (tạo, đặt lại mật khẩu,
+  đổi vai trò, khóa). Khóa tài khoản hoặc đổi mật khẩu sẽ đăng xuất mọi phiên của người đó.
+- Tài liệu mới tải lên là **riêng tư**; chủ sở hữu bấm biểu tượng chia sẻ để mọi người cùng xem và hỏi đáp.
+  Admin quản lý (xóa, bỏ chia sẻ) được các tài liệu chung. Tài liệu có từ trước khi có tài khoản là tài liệu chung.
 
-## Ask API
-
-`POST /api/questions/ask`, JSON `question`, tùy chọn `top_k` (1–100).
-Question trắng/rỗng bị từ chối 422.
-
-```json
-{"question":"Một năm người lao động có bao nhiêu ngày phép?"}
-```
-
-Ví dụ hình dạng response (minh họa):
-
-```json
-{"answer":"Nhân viên được hưởng 12 ngày nghỉ phép mỗi năm [Nguồn: sample.docx].","sources":[{"filename":"sample.docx"}]}
-```
-
-Tài liệu không đủ thông tin (LLM quyết định) / chưa có tài liệu nào trong DB:
-
-```json
-{"answer":"Tài liệu không có đủ thông tin để trả lời câu hỏi này.","sources":[]}
-{"answer":"Tôi không tìm thấy thông tin này trong tài liệu đã tải lên.","sources":[]}
-```
-
-Endpoint phase 1 vẫn giữ: `POST /documents/ingest`, `POST /questions/search`.
-Không lưu câu hỏi/câu trả lời hoặc hội thoại.
-
-## Năm ví dụ API request
-
-Dùng các file đã có trong `sample_data/`:
+## Sao lưu và khôi phục
 
 ```powershell
-# 1. Upload PDF text
-curl.exe -X POST http://127.0.0.1:8000/api/documents/upload -F "file=@sample_data/sample.pdf"
-# 2. Upload DOCX
-curl.exe -X POST http://127.0.0.1:8000/api/documents/upload -F "file=@sample_data/sample.docx"
-# 3. Upload Excel (ảnh/scan dùng cùng endpoint)
-curl.exe -X POST http://127.0.0.1:8000/api/documents/upload -F "file=@sample_data/sample.xlsx"
-# 4. Ask câu có trong tài liệu
-$body = @{question='Một năm người lao động có bao nhiêu ngày phép?'} | ConvertTo-Json
-Invoke-RestMethod http://127.0.0.1:8000/api/questions/ask -Method Post -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($body))
-# 5. Ask ngoài phạm vi
-$body = @{question='CEO của Microsoft là ai?'} | ConvertTo-Json
-Invoke-RestMethod http://127.0.0.1:8000/api/questions/ask -Method Post -ContentType 'application/json; charset=utf-8' -Body ([Text.Encoding]::UTF8.GetBytes($body))
+powershell -ExecutionPolicy Bypass -File scripts\backup.ps1                          # → backups\<thời điểm>\
+powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 -From backups\<thời điểm>
 ```
 
-## OCR và RAG pipeline
+Bản sao lưu gồm: dump PostgreSQL, mọi file gốc (qua API S3), volume Chroma. API và worker được dừng trong
+lúc sao lưu để ba phần nhất quán, rồi tự khởi động lại. Nên chép thư mục `backups\` sang ổ khác/máy khác.
+Khóa ký phiên không cần sao lưu (mất khóa chỉ làm mọi người phải đăng nhập lại).
 
-PDF đọc từng trang bằng PyMuPDF. Khi text có dưới 20 ký tự chữ/số mới render ảnh rồi
-OCR; trang có text đủ dùng không OCR lại. Image đi qua Pillow và cùng OCRService.
-DOCX giữ thứ tự paragraph/table trong body. Excel lấy hàng không rỗng đầu tiên làm
-header, serialize từng row thành `Column: value`, tách riêng từng sheet.
+## Chuyển LLM sang server khác / API tương thích OpenAI
 
-Clean NFC/whitespace, không xóa số/ký hiệu. Chunk dùng tokenizer và lát cắt text gốc.
-[Model embedding mặc định](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
-có max_seq_length=128: chunker giới hạn theo budget còn lại sau special tokens, giữ
- tỷ lệ overlap 120/700 (thường 126 token nội dung và 22 overlap). Không để mất đuôi
-của chunk 700 token do model tự truncate.
+Ứng dụng chỉ dùng `/v1/chat/completions` và `/v1/models`, nên đổi nhà cung cấp chỉ bằng `.env`:
 
-Cosine `relevance=1-distance`, không phải xác suất.
-ID dựa trên hash tên file + bytes và chunk index: nạp lại cùng file không tăng vector.
-Collection tách theo model/cấu hình chunk; đổi cấu hình cần nạp lại. File có nội dung
-mới được coi là tài liệu mới; không có CRUD/quản lý phiên bản.
+| Trường hợp | Cấu hình |
+|---|---|
+| Ollama trên máy khác trong mạng | `LLM_BASE_URL=http://<ip-may-gpu>:11434/v1` (trên máy đó đặt `OLLAMA_HOST=0.0.0.0`) |
+| vLLM / LM Studio / llama.cpp server | `LLM_BASE_URL=http://<host>:<port>/v1`, `LLM_MODEL=<tên model server báo>` |
+| API trả phí tương thích OpenAI | `LLM_BASE_URL=https://<nhà cung cấp>/v1`, `LLM_API_KEY=<khóa>`, `LLM_MODEL=<model>` |
 
-## Error handling và logging
+Sau đó chỉnh `LLM_CONTEXT_TOKENS` theo ngữ cảnh thật của model và chạy
+`docker compose up -d --force-recreate api worker`, kiểm tra `curl.exe http://localhost:8080/health/llm`.
+Lưu ý: dùng API bên ngoài nghĩa là đoạn trích tài liệu được gửi ra khỏi máy — cần được phép trước.
 
-415 unsupported format; 413 quá kích thước; 422 invalid input/file hỏng/không có chữ;
-503 upload/OCR/embedding/Chroma/retrieval. Lỗi Ollama trả thông báo tiếng Việt:
+Đổi model **embedding** hoặc kích thước chunk thì phải lập chỉ mục lại toàn bộ:
+`docker compose stop worker; docker compose run --rm api python -m scripts.reindex --drop-other-collections; docker compose start worker`.
 
-| Tình huống | HTTP | `error` | `detail` |
-|---|---|---|---|
-| Không kết nối được Ollama | 503 | `ollama_unavailable` | Không kết nối được Ollama tại {url}. Hãy kiểm tra Ollama đang chạy. |
-| Model chưa pull (Ollama 404) | 503 | `ollama_model_missing` | Model {model} chưa được tải. Chạy: ollama pull {model} |
-| Quá thời gian | 504 | `ollama_timeout` | Gợi ý tăng OLLAMA_TIMEOUT_SECONDS hoặc dùng model nhỏ hơn |
-| Lỗi HTTP khác / nội dung rỗng/sai | 502 | `ollama_error`, `ollama_empty_response`, `ollama_invalid_response` | |
+## Triển khai sau này
 
-Frontend hiển thị `detail` của lỗi, không biến lỗi thành câu no-answer.
-Server log chi tiết lỗi Ollama (URL, model, status, trích body lỗi), số context/top score,
-LLM called/skipped; không log nội dung tài liệu hoặc câu hỏi đầy đủ. Không trả stack trace qua API.
+- Đặt sau reverse proxy có HTTPS, rồi `COOKIE_SECURE=true`.
+- File gốc lên S3/R2: đặt `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET`, `S3_REGION`; chép dữ liệu cũ bằng
+  `python -m scripts.objects_transfer`.
+- PostgreSQL/Redis/Chroma được quản lý: đổi `DATABASE_URL`, `REDIS_URL`, `CHROMA_HOST/PORT`.
+- Nhiều worker: `docker compose up -d --scale worker=2` (mỗi worker giữ một bản model embedding ~2 GB RAM).
+- Log dạng JSON một dòng (`LOG_FORMAT=json`), mỗi request có `request_id` (cũng trả về ở header `X-Request-ID`).
 
-## Tests trong Docker
+## Bảo mật (đã rà soát ở Giai đoạn 6)
+
+- Giới hạn đăng nhập tính số lần **sai** theo (tên đăng nhập, IP) nên không ai khóa được tài khoản người khác từ máy mình.
+- Mật khẩu băm scrypt; phiên là token ký HMAC trong cookie `HttpOnly; SameSite=Strict` (hoặc header
+  `Authorization: Bearer` cho script), hết hạn sau `SESSION_HOURS`; đổi mật khẩu/khóa tài khoản thu hồi mọi token.
+- Phân quyền kiểm tra ở mọi endpoint và ở bước truy xuất vector: tài liệu không được xem thì không bao giờ
+  lọt vào ngữ cảnh LLM; truy cập tài liệu của người khác trả 404.
+- Giới hạn: kích thước và số trang upload, loại file theo phần mở rộng, độ dài câu hỏi, số request (nginx theo IP,
+  Redis theo người dùng: đăng nhập, chat, upload).
+- Secret chỉ qua biến môi trường / `.env`; log không ghi nội dung tài liệu, câu hỏi hay mật khẩu; lỗi 500 không trả chi tiết.
+- Chỉ nginx được publish (mặc định chỉ trên localhost); PostgreSQL, Redis, Chroma, SeaweedFS không mở cổng ra ngoài.
+  Cổng API 8000 chỉ mở trên `127.0.0.1` cho quản trị/tài liệu OpenAPI (`/docs`).
+- Content-Security-Policy chặn script inline/bên ngoài; markdown câu trả lời không render HTML thô.
+- Rủi ro đã biết và chấp nhận cho môi trường nội bộ:
+  - Admin đặt lại mật khẩu của người khác thì có thể đăng nhập thay họ (mọi thay đổi tài khoản đều ghi log, kèm trường đã đổi).
+  - Đăng xuất xóa cookie nhưng không thu hồi token phía server; token hết hạn sau `SESSION_HOURS`. Muốn chấm dứt mọi phiên: đổi mật khẩu.
+  - Gọi thẳng cổng API 8000 (chỉ mở trên máy chủ) có thể giả `X-Real-IP` để né giới hạn theo IP.
+  - Trích dẫn trong lịch sử hội thoại là bản chụp lúc trả lời, vẫn còn sau khi tài liệu bị bỏ chia sẻ hoặc xóa.
+
+## Phát triển
+
+Lệnh test, benchmark, migration, đánh giá: xem [CLAUDE.md](CLAUDE.md). Tóm tắt:
 
 ```powershell
-# Toàn bộ, gồm OCR/embedding/Chroma thật; Ollama luôn được mock (không gọi thật)
-docker compose run --rm api python -m pytest -v -p no:cacheprovider
-# Unit/API tests nhanh
-docker compose run --rm api python -m pytest -v -m 'not integration' -p no:cacheprovider
+docker compose run --rm -v "${PWD}:/app" api python -m pytest -q -p no:cacheprovider          # backend
+docker run --rm -v "${PWD}/frontend:/workspace" -w /workspace node:22-alpine sh -c "npm ci && npm run typecheck && npm run test && npm run build"
 ```
 
-HTTP tới Ollama được mock bằng `httpx.MockTransport` (`tests/test_generation.py`): trả lời
-thành công, Ollama không chạy, model chưa pull, timeout, không có chunk nào vượt ngưỡng
-nhưng vẫn tới LLM, không có candidate thì không gọi LLM. Kiểm tra Ollama thật dùng
-`scripts.check_ollama`. Persistence được kiểm tra qua hai tiến trình riêng.
+Bộ câu hỏi đánh giá riêng (30–50 câu có đáp án): chép `evaluation/custom_questions.example.json` thành
+`evaluation/custom/questions.json`, đặt tài liệu vào `evaluation/custom/` (không commit), chạy
+`docker compose run --rm -v "${PWD}:/app" api python -m scripts.evaluate --extra-cases evaluation/custom/questions.json`.
 
-## Evaluation
+## Xử lý sự cố
 
-25 câu: PDF 5, DOCX 4, Excel 4, image OCR 4, scanned PDF 4, no-answer 4.
-Mỗi case có question, expected_keywords, source, page/sheet khi có.
-Tài liệu tại `evaluation/documents/`; database evaluation tách biệt trong cache volume của Docker.
-
-```powershell
-# Dataset đã có trong evaluation/, không cần tạo lại.
-# Retrieval thật, không gọi Ollama; answer/no-answer accuracy để null
-docker compose run --rm --volume "${PWD}/evaluation:/app/evaluation" api python -m scripts.evaluate --retrieval-only
-# Toàn pipeline với Ollama thật (Ollama phải đang chạy và đã pull model)
-docker compose run --rm --volume "${PWD}/evaluation:/app/evaluation" api python -m scripts.evaluate
-```
-
-`retrieval_ranking`: Hit@1/Hit@3/Hit@4, MRR trên raw Top-K **trước threshold**, phân phối
-score relevant vs no-answer và sweep candidate floor. `metrics.retrieval_hit_rate` là metric
-cũ (sau threshold), chỉ để so sánh. `answering`: answer accuracy trên câu có đáp án và
-unsupported accuracy trên câu no-answer, qua đúng luồng candidates → LLM của API.
-`--extra-cases file.json` thêm tài liệu/câu hỏi local (ví dụ PDF người dùng) mà không sửa dataset.
-Relevant chunk: đúng source/location và keyword trong cùng chunk. Mẫu số là 21 câu có đáp án,
-loại 4 câu no-answer. Answer correctness dùng keyword + source, mẫu số 25; lỗi được tính
-không đúng. No-answer accuracy tính riêng 4 câu no-answer (chấp nhận cả hai câu từ chối).
-Đây là kiểm tra keyword đơn giản, không thay thế chấm bởi con người.
-Không dùng LLM giả để tạo metrics. Kết quả từng câu được ghi JSON.
-
-Kết quả retrieval: `evaluation/results_retrieval.json`. Các `REPORT*.md` là lịch sử (thời dùng Gemini).
-
-## Known limitations
-
-- Prompt grounding không bảo đảm tuyệt đối; model local nhỏ có thể bỏ trích nguồn hoặc diễn đạt
-  sai câu từ chối — khi đó `sources` rỗng hoặc câu trả lời được hiển thị nguyên văn.
-- Chất lượng/tốc độ phụ thuộc model và phần cứng; 7B trên CPU có thể mất hàng chục giây/câu.
-- OCR phụ thuộc chất lượng scan; mẫu OCR đánh giá hiện là tiếng Anh rõ nét.
-- Chưa đọc hiểu biểu đồ/hình ảnh, tái dựng layout bảng scan, OCR ảnh nhúng DOCX,
-  header/footer Word hay tính công thức Excel. `.xls` có nhánh xlrd nhưng fixture là XLSX.
-- DOCX và ảnh không có số trang trong metadata; nguồn chỉ ghi tên file.
-- Câu hỏi rất dài có thể bị model embedding truncate; nên hỏi ngắn, một vấn đề mỗi lần.
-- Chưa benchmark tải đồng thời. Tải model ban đầu tốn thời gian/dung lượng.
-
-## Chuyển đổi và dọn dẹp
-
-Xem `DOCKER_MIGRATION.md` cho kết quả kiểm chứng và danh sách đã dọn.
-Báo cáo giai đoạn 1/2 là lịch sử; lệnh chạy hiện tại ở README này.
-
-## Frontend
-
-React + Vite, chỉ hai trang:
-
-- `/documents`: chọn file, nạp tài liệu, hiển thị filename và `chunks_created`.
-- `/ask`: gửi câu hỏi, hiển thị câu trả lời và nguồn filename/page/sheet, no-answer
-  hoặc thông báo lỗi backend. Mỗi lần chỉ giữ một câu trả lời trong bộ nhớ trang.
-
-Không có danh sách tài liệu persistent, CRUD hoặc lịch sử hội thoại.
-
-## Run Frontend
-
-Cần Node.js 22.12+ và npm. Trong terminal riêng:
-
-```powershell
-cd frontend
-npm install
-npm run dev
-# Kiểm tra production build
-npm run build
-```
-
-Mở http://localhost:5173/documents hoặc http://localhost:5173/ask.
-Project không khai báo lint script. Lockfile npm được giữ để tái lập dependencies.
-
-Máy chỉ có Docker có thể chạy frontend bằng image Node (không cần Dockerfile frontend):
-
-```powershell
-docker run --rm -v "${PWD}/frontend:/workspace" -w /workspace node:22-alpine npm ci
-docker run --rm -p 127.0.0.1:5173:5173 -v "${PWD}/frontend:/workspace" -w /workspace node:22-alpine npm run dev
-```
-
-Chạy hai lệnh Docker trên từ thư mục gốc project. Trong phiên hoàn thiện đã dùng
-container `bai1-rag-frontend-demo`; dừng bằng `docker stop bai1-rag-frontend-demo`,
-chạy lại bằng `docker start bai1-rag-frontend-demo`.
-
-## Frontend environment
-
-`frontend/.env.example`:
-
-```dotenv
-VITE_API_URL=http://127.0.0.1:8000
-```
-
-Đây cũng là giá trị mặc định cho demo local. Khi cần đổi, tạo `frontend/.env` từ
-file mẫu và sửa URL backend. Khởi động lại Vite sau khi đổi cấu hình; build lại nếu
-dùng bản build. Đổi port/origin frontend cần cập nhật `FRONTEND_ORIGINS` ở backend.
-
-## Chạy backend local không Docker
-
-Docker vẫn là môi trường đã kiểm chứng trên máy này. Nếu có Python 3.11
-(đặt `OLLAMA_BASE_URL=http://localhost:11434` trong `.env`):
-
-```powershell
-py -3.11 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.lock.txt
-if (!(Test-Path .env)) { Copy-Item .env.example .env }
-.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-.\.venv\Scripts\python.exe -m pytest -q
-.\.venv\Scripts\python.exe -m scripts.evaluate --retrieval-only
-.\.venv\Scripts\python.exe -m scripts.check_ollama
-```
-
-## Ollama diagnostic
-
-```powershell
-docker compose run --rm api python -m scripts.check_ollama
-```
-
-Script chỉ dùng text tổng hợp (“Dự án Orion có mã nội bộ ZXQ-91827.”), không gửi tài liệu người dùng:
-
-1. `GET /api/tags`, xác nhận `OLLAMA_MODEL` đã pull → `OLLAMA HEALTH PASS`.
-2. Câu hỏi có trong ngữ cảnh → câu trả lời chứa ZXQ-91827.
-3. Câu hỏi không có trong ngữ cảnh → đúng câu “Tài liệu không có đủ thông tin…”.
-   Cả hai đạt → `OLLAMA GROUNDED BEHAVIOR PASS`, exit 0.
-
-## Demo Flow
-
-1. Bật Ollama trên Windows, `ollama pull qwen2.5:7b`.
-2. Tại thư mục gốc: `docker compose up -d --build`; kiểm tra `/health` và `/health/ollama` trả `ok`.
-3. Chạy frontend bằng lệnh ở trên, mở `http://localhost:5173/documents`.
-4. Chọn `sample_data/sample.docx`, bấm **Nạp tài liệu**, xem số chunk thành công.
-5. Chuyển sang **Hỏi tài liệu**, hỏi: `Một năm người lao động có bao nhiêu ngày phép?`
-   → câu trả lời kèm nguồn `sample.docx`.
-6. Hỏi `What is the distance from Earth to Mars?` → “Tài liệu không có đủ thông tin…”.
-7. Tắt Ollama rồi hỏi lại → UI hiện lỗi “Không kết nối được Ollama…”, không phải no-answer.
-
-## Security
-
-- `.env` và `frontend/.env` được ignore, chỉ `.env.example` được chia sẻ.
-- Không có API key LLM; Ollama chạy local, tài liệu không gửi ra ngoài máy.
-- Frontend chỉ gọi FastAPI, không gọi Ollama trực tiếp.
-- Nếu `.env` cũ còn `GEMINI_API_KEY`, có thể xóa dòng đó (backend bỏ qua) và nên thu hồi key trong Google AI Studio.
-
-Đóng gói source và dữ liệu tổng hợp bằng Python, không đưa runtime data/key vào ZIP:
-
-```powershell
-python -m scripts.package_submission
-# Hoặc từ thư mục gốc, dùng Python trong Docker:
-docker compose run --rm --no-deps --volume "${PWD}:/submission-work" --workdir /submission-work api python -m scripts.package_submission
-```
-
-Kết quả: `submission/bai1-rag.zip`. Script dùng danh sách thư mục cho phép, loại `.env`,
-node_modules, build, cache, data/uploads, data/chroma, secret files và kiểm tra key
-trước khi ghi archive. Không xóa `.env` hoặc dữ liệu local.
-
-## Retrieval audit
-
-`evaluation/results_baseline.json` và `results_retrieval.json` giữ số đo trước/sau.
-`retrieval_diagnostic.json` chứa text/OCR/chunks, raw Top-K và threshold sweep trên
-corpus tổng hợp. `chunk_sweep.json` ghi thử nghiệm kích thước chunk.
-Raw ranking: Hit@3 = Hit@4 = 100%; nhiều chunk đúng có score dưới 0.55, nên `/ask`
-không dùng threshold để từ chối (chi tiết trong REPORT_RETRIEVAL_GATING.md).
-
-## Diagnostic upload → retrieval (local, không gọi LLM)
-
-```powershell
-docker compose run --rm api python -m scripts.diagnose_upload
-docker compose run --rm api python -m scripts.diagnose_upload --file /app/sample_data/sample.pdf --question "How many days of annual leave do employees receive?"
-```
-
-Script dùng production services trong DB riêng, đo count trước/sau, readback, vector
-shape/finite/norm, raw/filtered retrieval và context nhận bởi `/ask`. Generation được
-thay bằng context spy có ghi nhãn; đây không phải live LLM test. Mặc định không
-in text tài liệu; `--preview` chủ động bật đoạn đầu tối đa 100 ký tự/chunk.
-DB diagnostic ở cache, không đụng Chroma đang phục vụ người dùng.
+| Hiện tượng | Cách xử lý |
+|---|---|
+| `/health/llm` báo `llm_unavailable` | Ollama chưa chạy trên host: mở Ollama, `ollama list`. |
+| `llm_model_missing` | `ollama pull <LLM_MODEL>`. |
+| Tài liệu đứng ở "Đang chờ" | Trạng thái hệ thống → Worker; `docker compose logs --tail=100 worker`. |
+| Không đăng nhập được lần đầu | Chưa có tài khoản: đặt `INITIAL_ADMIN_*` rồi `docker compose up -d`, hoặc chạy `scripts.create_user`. |
+| Upload bị từ chối 413 | File vượt `MAX_UPLOAD_MB` hoặc PDF vượt `MAX_PDF_PAGES` — tách file. |
+| Trả lời rất chậm | LLM đang chạy CPU hoặc nhiều người hỏi cùng lúc (Ollama xử lý tuần tự); xem báo cáo benchmark. |

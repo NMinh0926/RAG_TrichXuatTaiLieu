@@ -2,7 +2,9 @@
 
 ## Dự án
 Hệ thống RAG hỏi đáp tài liệu tiếng Việt.
-Luồng hiện tại: upload PDF → đọc text / OCR (PaddleOCR) nếu trang không có text → chunk → embedding (sentence-transformers) → ChromaDB → LLM sinh câu trả lời có trích dẫn nguồn.
+Luồng hiện tại: đăng nhập → upload (PDF/DOCX/Excel/ảnh) → worker: text layer / OCR Tesseract nếu trang không có text
+→ chunk (kèm bounding box) → embedding bge-m3 → Chroma; file gốc ở S3 (SeaweedFS), metadata ở PostgreSQL
+→ chat SSE: Top-K trong phạm vi tài liệu người dùng được xem → LLM (API tương thích OpenAI, Ollama) trả lời có trích dẫn [n].
 
 ## Mục tiêu
 Nâng cấp từ bản demo thành web app hoàn thiện, thân thiện với người dùng, dùng NỘI BỘ trước.
@@ -51,7 +53,9 @@ Chạy từ thư mục gốc project bằng PowerShell. Python chỉ chạy tron
     biến môi trường user `OLLAMA_CONTEXT_LENGTH=8192`.
   - Toàn bộ (postgres, seaweedfs, chroma, redis, init, api, worker, frontend): `docker compose up -d --build`
     → giao diện http://localhost:8080 ; API http://127.0.0.1:8000/docs ;
-    kiểm tra `curl.exe http://127.0.0.1:8000/health` và `curl.exe http://127.0.0.1:8000/health/llm`.
+    kiểm tra `curl.exe http://127.0.0.1:8000/health/ready` và `curl.exe http://127.0.0.1:8000/health/llm`.
+  - Tài khoản: `docker compose run --rm -it api python -m scripts.create_user <tên> [--admin | --user]` (đặt lại mật khẩu giữ vai trò nếu không truyền cờ)
+    (hoặc `INITIAL_ADMIN_USERNAME/PASSWORD` trong `.env` khi chưa có tài khoản nào).
   - Frontend dev (hot reload): `cd frontend; npm run dev` (proxy tới :8000) hoặc qua node:22-alpine.
 - Chạy test (dùng source hiện tại, không cần build lại image):
   - Toàn bộ: `docker compose run --rm -v "${PWD}:/app" api python -m pytest -q -p no:cacheprovider`
@@ -63,12 +67,18 @@ Chạy từ thư mục gốc project bằng PowerShell. Python chỉ chạy tron
 - Chuyển dữ liệu cũ `./data`: `docker compose run --rm -v "${PWD}/data:/legacy:ro" api python -m scripts.migrate_legacy --uploads /legacy/uploads --chroma /legacy/chroma`
 - Backup / restore: `powershell -ExecutionPolicy Bypass -File scripts\backup.ps1` ;
   `powershell -ExecutionPolicy Bypass -File scripts\restore.ps1 -From backups\<timestamp>`
-- Benchmark (DB `<db>_scratch`, bucket `-scratch`, Chroma local; không đụng dữ liệu thật, job chạy inline):
+- Benchmark (DB `<db>_scratch`, bucket `-scratch`, Chroma local; không đụng dữ liệu thật, job chạy inline,
+  request đóng vai user `benchmark`, không rate limit). Thêm `-e EMBEDDING_MODEL=BAAI/bge-m3 ...` nếu `.env` còn cấu hình cũ:
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.make_test_pdf`
+  - Bộ file 1–100 MB: `... python -m scripts.benchmark.make_corpus` rồi `... python -m scripts.benchmark.bench_corpus`
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.bench_ingest`
   - `docker compose run --rm -v "${PWD}:/app" api python -m scripts.benchmark.bench_qa`
+  - Đồng thời 1/5/10 người: `... python -m scripts.benchmark.bench_load` ; biểu đồ: `... python -m scripts.benchmark.charts`
 - Kiểm tra LLM: `curl.exe http://127.0.0.1:8000/health/llm` ; `docker compose run --rm api python -m scripts.check_llm`
 - Re-index toàn bộ (sau khi đổi embedding/chunk/OCR): `docker compose stop worker` rồi
   `docker compose run --rm api python -m scripts.reindex --drop-other-collections` rồi `docker compose start worker`
 - A/B retrieval: `docker compose run --rm --no-deps -v "${PWD}:/app" api python -m scripts.ab_retrieval`
 - Evaluation retrieval: `docker compose run --rm -v "${PWD}:/app" api python -m scripts.evaluate --retrieval-only`
+  (bỏ `--retrieval-only` để chấm câu trả lời với LLM thật; `--extra-cases evaluation/custom/questions.json` cho bộ câu hỏi riêng)
+- Log JSON: `docker compose logs -f api worker` ; trạng thái: giao diện → menu tài khoản → Trạng thái hệ thống
+  hoặc `GET /api/system/status` (cần đăng nhập).

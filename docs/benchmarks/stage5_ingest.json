@@ -1,0 +1,366 @@
+{
+  "python": "3.11.16",
+  "cpu_count": 16,
+  "torch": "2.14.0+cpu",
+  "embedding_device": "cpu",
+  "config": {
+    "embedding_model": "BAAI/bge-m3",
+    "chunk_size": 512,
+    "chunk_overlap": 64,
+    "ocr_lang": "vi",
+    "ocr_workers": 4
+  },
+  "files": [
+    {
+      "file": "text_1mb.pdf",
+      "kind": "text",
+      "target_mb": 1,
+      "bytes": 1043041,
+      "pages": 7,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 8.6,
+      "steps": {
+        "chunk": 0.01,
+        "embed": 8.33,
+        "index": 0.02,
+        "extract": 0.06,
+        "download": 0.03
+      },
+      "pages_ingested": 7,
+      "chunks": 7,
+      "warnings": 0,
+      "pages_per_second": 0.82,
+      "megabytes_per_minute": 7.3,
+      "peak_memory_mb": 1096,
+      "cpu_cores_average": 7.65,
+      "cpu_cores_peak": 8.89,
+      "storage_bytes": {
+        "postgres": 0,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 0,
+          "ingest_jobs": 0
+        },
+        "object_storage": 1043041,
+        "chroma": 637092
+      }
+    },
+    {
+      "file": "scan_1mb.pdf",
+      "kind": "scan",
+      "target_mb": 1,
+      "bytes": 1211173,
+      "pages": 2,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 4.2,
+      "steps": {
+        "chunk": 0.01,
+        "embed": 1.6,
+        "index": 0.01,
+        "extract": 2.44,
+        "download": 0.02
+      },
+      "pages_ingested": 2,
+      "chunks": 2,
+      "warnings": 0,
+      "pages_per_second": 0.48,
+      "megabytes_per_minute": 17.5,
+      "peak_memory_mb": 1198,
+      "cpu_cores_average": 4.13,
+      "cpu_cores_peak": 7.99,
+      "storage_bytes": {
+        "postgres": 0,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 0,
+          "ingest_jobs": 0
+        },
+        "object_storage": 1211173,
+        "chroma": 45056
+      }
+    },
+    {
+      "file": "text_5mb.pdf",
+      "kind": "text",
+      "target_mb": 5,
+      "bytes": 5009640,
+      "pages": 51,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 62.5,
+      "steps": {
+        "chunk": 0.07,
+        "embed": 61.91,
+        "index": 0.03,
+        "extract": 0.35,
+        "download": 0.02
+      },
+      "pages_ingested": 51,
+      "chunks": 51,
+      "warnings": 0,
+      "pages_per_second": 0.82,
+      "megabytes_per_minute": 4.8,
+      "peak_memory_mb": 1597,
+      "cpu_cores_average": 7.89,
+      "cpu_cores_peak": 8.72,
+      "storage_bytes": {
+        "postgres": 0,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 0,
+          "ingest_jobs": 0
+        },
+        "object_storage": 5009640,
+        "chroma": 1359872
+      }
+    },
+    {
+      "file": "scan_5mb.pdf",
+      "kind": "scan",
+      "target_mb": 5,
+      "bytes": 5458543,
+      "pages": 9,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 14.0,
+      "steps": {
+        "chunk": 0.01,
+        "embed": 6.51,
+        "index": 0.01,
+        "extract": 7.38,
+        "download": 0.02
+      },
+      "pages_ingested": 9,
+      "chunks": 9,
+      "warnings": 0,
+      "pages_per_second": 0.64,
+      "megabytes_per_minute": 23.3,
+      "peak_memory_mb": 1637,
+      "cpu_cores_average": 5.17,
+      "cpu_cores_peak": 7.95,
+      "storage_bytes": {
+        "postgres": 0,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 0,
+          "ingest_jobs": 0
+        },
+        "object_storage": 5458543,
+        "chroma": 335872
+      }
+    },
+    {
+      "file": "text_10mb.pdf",
+      "kind": "text",
+      "target_mb": 10,
+      "bytes": 10011932,
+      "pages": 107,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 129.4,
+      "steps": {
+        "chunk": 0.15,
+        "embed": 128.26,
+        "index": 0.05,
+        "extract": 0.71,
+        "download": 0.03
+      },
+      "pages_ingested": 107,
+      "chunks": 107,
+      "warnings": 0,
+      "pages_per_second": 0.83,
+      "megabytes_per_minute": 4.6,
+      "peak_memory_mb": 1790,
+      "cpu_cores_average": 7.93,
+      "cpu_cores_peak": 8.74,
+      "storage_bytes": {
+        "postgres": 131072,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 131072,
+          "ingest_jobs": 0
+        },
+        "object_storage": 10011932,
+        "chroma": 2670592
+      }
+    },
+    {
+      "file": "scan_10mb.pdf",
+      "kind": "scan",
+      "target_mb": 10,
+      "bytes": 10338945,
+      "pages": 17,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 26.6,
+      "steps": {
+        "chunk": 0.02,
+        "embed": 14.06,
+        "index": 0.02,
+        "extract": 12.27,
+        "download": 0.02
+      },
+      "pages_ingested": 17,
+      "chunks": 17,
+      "warnings": 0,
+      "pages_per_second": 0.64,
+      "megabytes_per_minute": 23.3,
+      "peak_memory_mb": 1776,
+      "cpu_cores_average": 5.74,
+      "cpu_cores_peak": 8.76,
+      "storage_bytes": {
+        "postgres": 32768,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 32768,
+          "ingest_jobs": 0
+        },
+        "object_storage": 10338945,
+        "chroma": 430080
+      }
+    },
+    {
+      "file": "text_50mb.pdf",
+      "kind": "text",
+      "target_mb": 50,
+      "bytes": 49691464,
+      "pages": 550,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 677.6,
+      "steps": {
+        "chunk": 0.72,
+        "embed": 671.27,
+        "index": 0.18,
+        "extract": 4.18,
+        "download": 0.37
+      },
+      "pages_ingested": 550,
+      "chunks": 550,
+      "warnings": 0,
+      "pages_per_second": 0.81,
+      "megabytes_per_minute": 4.4,
+      "peak_memory_mb": 2363,
+      "cpu_cores_average": 7.92,
+      "cpu_cores_peak": 8.9,
+      "storage_bytes": {
+        "postgres": 999424,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 999424,
+          "ingest_jobs": 0
+        },
+        "object_storage": 49691464,
+        "chroma": 14028800
+      }
+    },
+    {
+      "file": "scan_50mb.pdf",
+      "kind": "scan",
+      "target_mb": 50,
+      "bytes": 50317320,
+      "pages": 83,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 120.1,
+      "steps": {
+        "chunk": 0.11,
+        "embed": 67.56,
+        "index": 0.03,
+        "extract": 51.62,
+        "download": 0.09
+      },
+      "pages_ingested": 83,
+      "chunks": 83,
+      "warnings": 0,
+      "pages_per_second": 0.69,
+      "megabytes_per_minute": 25.1,
+      "peak_memory_mb": 2301,
+      "cpu_cores_average": 6.12,
+      "cpu_cores_peak": 8.8,
+      "storage_bytes": {
+        "postgres": 114688,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 114688,
+          "ingest_jobs": 0
+        },
+        "object_storage": 50317320,
+        "chroma": 1531904
+      }
+    },
+    {
+      "file": "text_100mb.pdf",
+      "kind": "text",
+      "target_mb": 100,
+      "bytes": 99302765,
+      "pages": 1102,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 1374.1,
+      "steps": {
+        "chunk": 1.68,
+        "embed": 1357.92,
+        "index": 3.91,
+        "extract": 8.09,
+        "download": 0.46
+      },
+      "pages_ingested": 1102,
+      "chunks": 1102,
+      "warnings": 0,
+      "pages_per_second": 0.8,
+      "megabytes_per_minute": 4.3,
+      "peak_memory_mb": 2882,
+      "cpu_cores_average": 7.89,
+      "cpu_cores_peak": 8.95,
+      "storage_bytes": {
+        "postgres": 1916928,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 1916928,
+          "ingest_jobs": 0
+        },
+        "object_storage": 99302765,
+        "chroma": 36437236
+      }
+    },
+    {
+      "file": "scan_100mb.pdf",
+      "kind": "scan",
+      "target_mb": 100,
+      "bytes": 100531628,
+      "pages": 166,
+      "status": "succeeded",
+      "error_code": null,
+      "seconds": 247.8,
+      "steps": {
+        "chunk": 0.21,
+        "embed": 135.86,
+        "index": 0.05,
+        "extract": 105.82,
+        "download": 0.5
+      },
+      "pages_ingested": 166,
+      "chunks": 166,
+      "warnings": 0,
+      "pages_per_second": 0.67,
+      "megabytes_per_minute": 24.3,
+      "peak_memory_mb": 3035,
+      "cpu_cores_average": 6.01,
+      "cpu_cores_peak": 8.86,
+      "storage_bytes": {
+        "postgres": 237568,
+        "postgres_by_table": {
+          "documents": 0,
+          "chunks": 237568,
+          "ingest_jobs": 0
+        },
+        "object_storage": 100531628,
+        "chroma": 0
+      }
+    }
+  ],
+  "model_load_seconds": 22.3
+}

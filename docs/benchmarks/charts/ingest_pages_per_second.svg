@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="sans-serif" font-size="12"><rect width="100%" height="100%" fill="#fff"/>
+<text x="360.0" y="22" text-anchor="middle" font-size="15" font-weight="bold">Tốc độ nạp</text>
+<line x1="70" x2="700" y1="300.0" y2="300.0" stroke="#e5e7eb"/><text x="64" y="304.0" text-anchor="end">0</text>
+<line x1="70" x2="700" y1="237.5" y2="237.5" stroke="#e5e7eb"/><text x="64" y="241.5" text-anchor="end">0.25</text>
+<line x1="70" x2="700" y1="175.0" y2="175.0" stroke="#e5e7eb"/><text x="64" y="179.0" text-anchor="end">0.5</text>
+<line x1="70" x2="700" y1="112.5" y2="112.5" stroke="#e5e7eb"/><text x="64" y="116.5" text-anchor="end">0.75</text>
+<line x1="70" x2="700" y1="50.0" y2="50.0" stroke="#e5e7eb"/><text x="64" y="54.0" text-anchor="end">1</text>
+<text x="14" y="175.0" transform="rotate(-90 14 175.0)" text-anchor="middle">trang/giây</text>
+<rect x="82.6" y="95.0" width="48.4" height="205.0" fill="#2563eb"><title>PDF có text 1 MB: 0.82 trang/giây</title></rect><text x="106.8" y="91.0" text-anchor="middle" font-size="10">0.82</text>
+<rect x="133.0" y="180.0" width="48.4" height="120.0" fill="#f59e0b"><title>PDF scan 1 MB: 0.48 trang/giây</title></rect><text x="157.2" y="176.0" text-anchor="middle" font-size="10">0.48</text>
+<text x="133.0" y="318" text-anchor="middle">1 MB</text>
+<rect x="208.6" y="95.0" width="48.4" height="205.0" fill="#2563eb"><title>PDF có text 5 MB: 0.82 trang/giây</title></rect><text x="232.8" y="91.0" text-anchor="middle" font-size="10">0.82</text>
+<rect x="259.0" y="140.0" width="48.4" height="160.0" fill="#f59e0b"><title>PDF scan 5 MB: 0.64 trang/giây</title></rect><text x="283.2" y="136.0" text-anchor="middle" font-size="10">0.64</text>
+<text x="259.0" y="318" text-anchor="middle">5 MB</text>
+<rect x="334.6" y="92.5" width="48.4" height="207.5" fill="#2563eb"><title>PDF có text 10 MB: 0.83 trang/giây</title></rect><text x="358.8" y="88.5" text-anchor="middle" font-size="10">0.83</text>
+<rect x="385.0" y="140.0" width="48.4" height="160.0" fill="#f59e0b"><title>PDF scan 10 MB: 0.64 trang/giây</title></rect><text x="409.2" y="136.0" text-anchor="middle" font-size="10">0.64</text>
+<text x="385.0" y="318" text-anchor="middle">10 MB</text>
+<rect x="460.6" y="97.5" width="48.4" height="202.5" fill="#2563eb"><title>PDF có text 50 MB: 0.81 trang/giây</title></rect><text x="484.8" y="93.5" text-anchor="middle" font-size="10">0.81</text>
+<rect x="511.0" y="127.5" width="48.4" height="172.5" fill="#f59e0b"><title>PDF scan 50 MB: 0.69 trang/giây</title></rect><text x="535.2" y="123.5" text-anchor="middle" font-size="10">0.69</text>
+<text x="511.0" y="318" text-anchor="middle">50 MB</text>
+<rect x="586.6" y="100.0" width="48.4" height="200.0" fill="#2563eb"><title>PDF có text 100 MB: 0.8 trang/giây</title></rect><text x="610.8" y="96.0" text-anchor="middle" font-size="10">0.8</text>
+<rect x="637.0" y="132.5" width="48.4" height="167.5" fill="#f59e0b"><title>PDF scan 100 MB: 0.67 trang/giây</title></rect><text x="661.2" y="128.5" text-anchor="middle" font-size="10">0.67</text>
+<text x="637.0" y="318" text-anchor="middle">100 MB</text>
+<rect x="70" y="338" width="12" height="12" fill="#2563eb"/><text x="88" y="348">PDF có text</text>
+<rect x="240" y="338" width="12" height="12" fill="#f59e0b"/><text x="258" y="348">PDF scan</text>
+</svg>

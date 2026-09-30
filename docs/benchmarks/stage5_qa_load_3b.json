@@ -1,0 +1,222 @@
+{
+  "llm_model": "qwen2.5:3b",
+  "llm_base_url_host": "host.docker.internal",
+  "embedding_model": "BAAI/bge-m3",
+  "top_k": 6,
+  "llm_max_tokens": 2048,
+  "levels": [
+    {
+      "users": 1,
+      "requests": 3,
+      "wall_seconds": 4.7,
+      "errors": 0,
+      "ttft_seconds": {
+        "median": 1.55,
+        "p95": 1.7,
+        "max": 1.7
+      },
+      "total_seconds": {
+        "median": 1.76,
+        "p95": 1.97,
+        "max": 1.97
+      },
+      "tokens_per_second_per_user": {
+        "median": 73.5,
+        "p95": 74.4,
+        "max": 74.4
+      },
+      "aggregate_tokens_per_second": 12.0,
+      "results": [
+        {
+          "ttft_seconds": 0.58,
+          "total_seconds": 0.92,
+          "tokens": 23,
+          "tokens_per_second": 74.4,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.55,
+          "total_seconds": 1.76,
+          "tokens": 14,
+          "tokens_per_second": 72.3,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.7,
+          "total_seconds": 1.97,
+          "tokens": 19,
+          "tokens_per_second": 73.5,
+          "error": null
+        }
+      ],
+      "api_container": {
+        "peak_memory_mb": 850,
+        "cpu_cores_average": 1.41,
+        "cpu_cores_peak": 6.42
+      }
+    },
+    {
+      "users": 5,
+      "requests": 5,
+      "wall_seconds": 7.9,
+      "errors": 0,
+      "ttft_seconds": {
+        "median": 1.8,
+        "p95": 4.1,
+        "max": 4.1
+      },
+      "total_seconds": {
+        "median": 2.03,
+        "p95": 7.89,
+        "max": 7.89
+      },
+      "tokens_per_second_per_user": {
+        "median": 74.6,
+        "p95": 75.3,
+        "max": 75.3
+      },
+      "aggregate_tokens_per_second": 45.0,
+      "results": [
+        {
+          "ttft_seconds": 0.96,
+          "total_seconds": 1.28,
+          "tokens": 23,
+          "tokens_per_second": 75.3,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.8,
+          "total_seconds": 2.03,
+          "tokens": 15,
+          "tokens_per_second": 73.3,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.39,
+          "total_seconds": 1.67,
+          "tokens": 19,
+          "tokens_per_second": 72.9,
+          "error": null
+        },
+        {
+          "ttft_seconds": 2.79,
+          "total_seconds": 3.06,
+          "tokens": 18,
+          "tokens_per_second": 74.8,
+          "error": null
+        },
+        {
+          "ttft_seconds": 4.1,
+          "total_seconds": 7.89,
+          "tokens": 282,
+          "tokens_per_second": 74.6,
+          "error": null
+        }
+      ],
+      "api_container": {
+        "peak_memory_mb": 852,
+        "cpu_cores_average": 0.69,
+        "cpu_cores_peak": 7.28
+      }
+    },
+    {
+      "users": 10,
+      "requests": 10,
+      "wall_seconds": 7.8,
+      "errors": 0,
+      "ttft_seconds": {
+        "median": 2.83,
+        "p95": 7.53,
+        "max": 7.53
+      },
+      "total_seconds": {
+        "median": 3.16,
+        "p95": 7.74,
+        "max": 7.74
+      },
+      "tokens_per_second_per_user": {
+        "median": 73.75,
+        "p95": 75.9,
+        "max": 75.9
+      },
+      "aggregate_tokens_per_second": 47.8,
+      "results": [
+        {
+          "ttft_seconds": 1.51,
+          "total_seconds": 1.85,
+          "tokens": 23,
+          "tokens_per_second": 73.2,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.14,
+          "total_seconds": 1.35,
+          "tokens": 14,
+          "tokens_per_second": 74.8,
+          "error": null
+        },
+        {
+          "ttft_seconds": 2.61,
+          "total_seconds": 2.93,
+          "tokens": 23,
+          "tokens_per_second": 73.0,
+          "error": null
+        },
+        {
+          "ttft_seconds": 1.98,
+          "total_seconds": 2.24,
+          "tokens": 18,
+          "tokens_per_second": 73.1,
+          "error": null
+        },
+        {
+          "ttft_seconds": 3.48,
+          "total_seconds": 6.25,
+          "tokens": 205,
+          "tokens_per_second": 74.6,
+          "error": null
+        },
+        {
+          "ttft_seconds": 7.53,
+          "total_seconds": 7.74,
+          "tokens": 15,
+          "tokens_per_second": 75.9,
+          "error": null
+        },
+        {
+          "ttft_seconds": 3.05,
+          "total_seconds": 3.38,
+          "tokens": 23,
+          "tokens_per_second": 74.3,
+          "error": null
+        },
+        {
+          "ttft_seconds": 6.35,
+          "total_seconds": 6.56,
+          "tokens": 14,
+          "tokens_per_second": 73.1,
+          "error": null
+        },
+        {
+          "ttft_seconds": 6.67,
+          "total_seconds": 6.95,
+          "tokens": 19,
+          "tokens_per_second": 72.5,
+          "error": null
+        },
+        {
+          "ttft_seconds": 2.24,
+          "total_seconds": 2.49,
+          "tokens": 18,
+          "tokens_per_second": 74.7,
+          "error": null
+        }
+      ],
+      "api_container": {
+        "peak_memory_mb": 865,
+        "cpu_cores_average": 1.35,
+        "cpu_cores_peak": 8.58
+      }
+    }
+  ]
+}

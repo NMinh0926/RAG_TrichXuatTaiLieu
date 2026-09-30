@@ -1,0 +1,469 @@
+{
+  "mode": "real_llm",
+  "created_at": "2026-09-30T00:39:58.888621+00:00",
+  "embedding_model": "BAAI/bge-m3",
+  "llm_model": "qwen2.5:7b",
+  "top_k": 6,
+  "candidate_min_relevance": -1.0,
+  "retrieval_ranking": {
+    "answerable": 31,
+    "no_answer": 8,
+    "top_k": 6,
+    "hit@1": 1.0,
+    "hit@3": 1.0,
+    "hit@5": 1.0,
+    "hit@6": 1.0,
+    "hit@10": 1.0,
+    "mrr": 1.0,
+    "misses": [],
+    "relevant_chunk_relevance": {
+      "n": 31,
+      "min": 0.473709,
+      "median": 0.700411,
+      "max": 0.77093
+    },
+    "answerable_top1_relevance": {
+      "n": 31,
+      "min": 0.473709,
+      "median": 0.700411,
+      "max": 0.77093
+    },
+    "no_answer_top1_relevance": {
+      "n": 8,
+      "min": 0.335771,
+      "median": 0.518029,
+      "max": 0.560602
+    },
+    "relevant_vs_no_answer_overlap": true,
+    "legacy_threshold": 0.55,
+    "legacy_threshold_hit_rate": 0.8387096774193549,
+    "candidate_floor_sweep": [
+      {
+        "floor": 0.0,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.05,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.1,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.15,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.2,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.25,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.3,
+        "relevant_kept": 31,
+        "no_answer_emptied": 0
+      },
+      {
+        "floor": 0.35,
+        "relevant_kept": 31,
+        "no_answer_emptied": 2
+      },
+      {
+        "floor": 0.4,
+        "relevant_kept": 31,
+        "no_answer_emptied": 2
+      },
+      {
+        "floor": 0.45,
+        "relevant_kept": 31,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.5,
+        "relevant_kept": 30,
+        "no_answer_emptied": 3
+      },
+      {
+        "floor": 0.55,
+        "relevant_kept": 26,
+        "no_answer_emptied": 6
+      },
+      {
+        "floor": 0.6,
+        "relevant_kept": 22,
+        "no_answer_emptied": 8
+      }
+    ]
+  },
+  "answering": {
+    "answer_accuracy_answerable": 0.967741935483871,
+    "unsupported_accuracy_no_answer": 0.875,
+    "error_codes": []
+  },
+  "metrics": {
+    "total_questions": 39,
+    "answerable_questions": 31,
+    "retrieval_hit_count": 26,
+    "retrieval_hit_rate": 0.8387096774193549,
+    "correct_answer_count": 37,
+    "answer_accuracy": 0.9487179487179487,
+    "no_answer_total": 8,
+    "no_answer_correct_count": 7,
+    "no_answer_accuracy": 0.875,
+    "error_count": 0
+  },
+  "note": "Includes 10 questions on a private user document; their text and answers are kept only locally (evaluation/custom/).",
+  "private_cases": {
+    "count": 14,
+    "answer_correct": 12,
+    "relevant_ranks": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "cases": [
+    {
+      "id": 1,
+      "category": "pdf",
+      "question": "What is the Orion hotel allowance per night?",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The Orion hotel allowance is 850 credits per night. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 2,
+      "category": "pdf",
+      "question": "What is the daily Orion meal reimbursement limit?",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The daily Orion meal reimbursement limit is 95 credits per day. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 3,
+      "category": "pdf",
+      "question": "Within how many days must Orion travel receipts be submitted?",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "Orion travel receipts must be submitted within 14 days. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 4,
+      "category": "pdf",
+      "question": "What is the Orion mileage reimbursement per kilometer?",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "relevant_rank": 1,
+      "answer": "The Orion mileage reimbursement is 7 credits per kilometer. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 5,
+      "category": "pdf",
+      "question": "What is the Orion travel approval code?",
+      "expected_source": {
+        "filename": "travel.pdf",
+        "page": 2
+      },
+      "relevant_rank": 1,
+      "answer": "The Orion travel approval code is TR-2026. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 6,
+      "category": "docx",
+      "question": "Một năm người lao động có bao nhiêu ngày phép?",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "answer": "Theo chính sách nhân sự An Bình, nhân viên chính thức được hưởng 12 ngày nghỉ phép mỗi năm [1].",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 7,
+      "category": "docx",
+      "question": "Thời gian thử việc tại An Bình kéo dài bao nhiêu ngày?",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "answer": "Thời gian thử việc tại An Bình kéo dài 60 ngày, theo chính sách nhân sự An Bình [1].",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 8,
+      "category": "docx",
+      "question": "Nhân viên An Bình được làm từ xa mấy ngày một tuần?",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "answer": "Nhân viên An Bình được làm từ xa tối đa 2 ngày mỗi tuần. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 9,
+      "category": "docx",
+      "question": "Ngân sách đào tạo mỗi nhân viên An Bình mỗi năm là bao nhiêu?",
+      "expected_source": {
+        "filename": "hr.docx"
+      },
+      "relevant_rank": 1,
+      "answer": "Theo chính sách nhân sự An Bình, ngân sách đào tạo cho mỗi nhân viên mỗi năm là 3000000 đồng. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 10,
+      "category": "excel",
+      "question": "What is the revenue for Atlas Laptop?",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "relevant_rank": 1,
+      "answer": "The revenue for Atlas Laptop is 150 [1].",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 11,
+      "category": "excel",
+      "question": "What is the revenue for Nova Phone?",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Sales"
+      },
+      "relevant_rank": 1,
+      "answer": "The revenue for Nova Phone is 200 [1].",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 12,
+      "category": "excel",
+      "question": "How many response hours does the Silver support plan allow?",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "relevant_rank": 1,
+      "answer": "The Silver support plan allows 24 response hours. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 13,
+      "category": "excel",
+      "question": "How many response hours does the Gold support plan allow?",
+      "expected_source": {
+        "filename": "operations.xlsx",
+        "sheet": "Support"
+      },
+      "relevant_rank": 1,
+      "answer": "The Gold support plan allows 4 response hours. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 14,
+      "category": "image",
+      "question": "What time does the Lyra workshop start?",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "answer": "The Lyra workshop starts at 09:30 [1].",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 15,
+      "category": "image",
+      "question": "Which room hosts the Lyra workshop?",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "answer": "Room B204 hosts the Lyra workshop. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 16,
+      "category": "image",
+      "question": "How many people can attend the Lyra workshop?",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "answer": "The Lyra workshop can accommodate 35 people. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 17,
+      "category": "image",
+      "question": "When is the Lyra workshop registration deadline?",
+      "expected_source": {
+        "filename": "notice.png"
+      },
+      "relevant_rank": 1,
+      "answer": "The Lyra workshop registration deadline is October 10. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 18,
+      "category": "scan",
+      "question": "What time does the Vega warehouse open?",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The Vega warehouse opens at 07:00. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 19,
+      "category": "scan",
+      "question": "What time does the Vega warehouse close?",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The Vega warehouse closes at 18:00. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 20,
+      "category": "scan",
+      "question": "What color safety helmet is required at Vega?",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The safety helmet color required at Vega is yellow. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 21,
+      "category": "scan",
+      "question": "What is the Vega emergency extension?",
+      "expected_source": {
+        "filename": "warehouse_scan.pdf",
+        "page": 1
+      },
+      "relevant_rank": 1,
+      "answer": "The Vega emergency extension is 456. [1]",
+      "answer_correct": true,
+      "no_answer_correct": null
+    },
+    {
+      "id": 22,
+      "category": "no_answer",
+      "question": "CEO của Microsoft là ai?",
+      "expected_source": null,
+      "relevant_rank": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "answer_correct": true,
+      "no_answer_correct": true
+    },
+    {
+      "id": 23,
+      "category": "no_answer",
+      "question": "What is the distance from Earth to Mars?",
+      "expected_source": null,
+      "relevant_rank": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "answer_correct": true,
+      "no_answer_correct": true
+    },
+    {
+      "id": 24,
+      "category": "no_answer",
+      "question": "What is the Orion hotel Wi-Fi password?",
+      "expected_source": null,
+      "relevant_rank": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "answer_correct": true,
+      "no_answer_correct": true
+    },
+    {
+      "id": 25,
+      "category": "no_answer",
+      "question": "Ai là giám đốc nhân sự An Bình?",
+      "expected_source": null,
+      "relevant_rank": null,
+      "answer": "Tài liệu không có đủ thông tin để trả lời câu hỏi này.",
+      "answer_correct": true,
+      "no_answer_correct": true
+    }
+  ],
+  "llm_comparison": {
+    "qwen2.5:3b": {
+      "answering": {
+        "answer_accuracy_answerable": 0.6451612903225806,
+        "unsupported_accuracy_no_answer": 0.875,
+        "error_codes": []
+      },
+      "correct_answer_count": 27,
+      "private_cases_correct": 5,
+      "public_failures": [
+        9,
+        11,
+        20
+      ]
+    }
+  }
+}

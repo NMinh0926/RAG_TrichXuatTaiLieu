@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="sans-serif" font-size="12"><rect width="100%" height="100%" fill="#fff"/>
+<text x="360.0" y="22" text-anchor="middle" font-size="15" font-weight="bold">RAM đỉnh của container khi nạp</text>
+<line x1="70" x2="700" y1="300.0" y2="300.0" stroke="#e5e7eb"/><text x="64" y="304.0" text-anchor="end">0</text>
+<line x1="70" x2="700" y1="237.5" y2="237.5" stroke="#e5e7eb"/><text x="64" y="241.5" text-anchor="end">1.25</text>
+<line x1="70" x2="700" y1="175.0" y2="175.0" stroke="#e5e7eb"/><text x="64" y="179.0" text-anchor="end">2.5</text>
+<line x1="70" x2="700" y1="112.5" y2="112.5" stroke="#e5e7eb"/><text x="64" y="116.5" text-anchor="end">3.75</text>
+<line x1="70" x2="700" y1="50.0" y2="50.0" stroke="#e5e7eb"/><text x="64" y="54.0" text-anchor="end">5</text>
+<text x="14" y="175.0" transform="rotate(-90 14 175.0)" text-anchor="middle">GB</text>
+<rect x="82.6" y="246.5" width="48.4" height="53.5" fill="#2563eb"><title>PDF có text 1 MB: 1.07 GB</title></rect><text x="106.8" y="242.5" text-anchor="middle" font-size="10">1.07</text>
+<rect x="133.0" y="241.5" width="48.4" height="58.5" fill="#f59e0b"><title>PDF scan 1 MB: 1.17 GB</title></rect><text x="157.2" y="237.5" text-anchor="middle" font-size="10">1.17</text>
+<text x="133.0" y="318" text-anchor="middle">1 MB</text>
+<rect x="208.6" y="222.0" width="48.4" height="78.0" fill="#2563eb"><title>PDF có text 5 MB: 1.56 GB</title></rect><text x="232.8" y="218.0" text-anchor="middle" font-size="10">1.56</text>
+<rect x="259.0" y="220.0" width="48.4" height="80.0" fill="#f59e0b"><title>PDF scan 5 MB: 1.6 GB</title></rect><text x="283.2" y="216.0" text-anchor="middle" font-size="10">1.6</text>
+<text x="259.0" y="318" text-anchor="middle">5 MB</text>
+<rect x="334.6" y="212.5" width="48.4" height="87.5" fill="#2563eb"><title>PDF có text 10 MB: 1.75 GB</title></rect><text x="358.8" y="208.5" text-anchor="middle" font-size="10">1.75</text>
+<rect x="385.0" y="213.5" width="48.4" height="86.5" fill="#f59e0b"><title>PDF scan 10 MB: 1.73 GB</title></rect><text x="409.2" y="209.5" text-anchor="middle" font-size="10">1.73</text>
+<text x="385.0" y="318" text-anchor="middle">10 MB</text>
+<rect x="460.6" y="184.5" width="48.4" height="115.5" fill="#2563eb"><title>PDF có text 50 MB: 2.31 GB</title></rect><text x="484.8" y="180.5" text-anchor="middle" font-size="10">2.31</text>
+<rect x="511.0" y="187.5" width="48.4" height="112.5" fill="#f59e0b"><title>PDF scan 50 MB: 2.25 GB</title></rect><text x="535.2" y="183.5" text-anchor="middle" font-size="10">2.25</text>
+<text x="511.0" y="318" text-anchor="middle">50 MB</text>
+<rect x="586.6" y="159.5" width="48.4" height="140.5" fill="#2563eb"><title>PDF có text 100 MB: 2.81 GB</title></rect><text x="610.8" y="155.5" text-anchor="middle" font-size="10">2.81</text>
+<rect x="637.0" y="152.0" width="48.4" height="148.0" fill="#f59e0b"><title>PDF scan 100 MB: 2.96 GB</title></rect><text x="661.2" y="148.0" text-anchor="middle" font-size="10">2.96</text>
+<text x="637.0" y="318" text-anchor="middle">100 MB</text>
+<rect x="70" y="338" width="12" height="12" fill="#2563eb"/><text x="88" y="348">PDF có text</text>
+<rect x="240" y="338" width="12" height="12" fill="#f59e0b"/><text x="258" y="348">PDF scan</text>
+</svg>

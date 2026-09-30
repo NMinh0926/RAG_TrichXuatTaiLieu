@@ -1,0 +1,14 @@
+{
+  "_readme": "Copy to evaluation/custom/questions.json, put the documents in evaluation/custom/ (git-ignored) and run: docker compose run --rm -v \"${PWD}:/app\" api python -m scripts.evaluate --extra-cases evaluation/custom/questions.json --output docs/benchmarks/stage5_quality_custom.json . expected_keywords must all appear in the answer (case-insensitive; 1.000 = 1000); expected_source is the file (and page/sheet) that holds the answer; use null for questions the documents cannot answer (the correct answer is then a refusal).",
+  "documents": [
+    {"path": "evaluation/custom/quy_che_noi_bo.pdf", "filename": "quy_che_noi_bo.pdf"}
+  ],
+  "cases": [
+    {"id": 1, "category": "fact", "question": "Thời gian thử việc của kỹ sư là bao lâu?",
+     "expected_keywords": ["45"], "expected_source": {"filename": "quy_che_noi_bo.pdf", "page": 4}},
+    {"id": 2, "category": "table", "question": "Phụ cấp ăn trưa mỗi tháng là bao nhiêu?",
+     "expected_keywords": ["850000"], "expected_source": {"filename": "quy_che_noi_bo.pdf", "page": 18}},
+    {"id": 3, "category": "no_answer", "question": "Công ty có bao nhiêu nhân viên?",
+     "expected_keywords": [], "expected_source": null}
+  ]
+}

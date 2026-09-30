@@ -18,3 +18,4 @@
 **/__pycache__/
 **/*.pyc
 evaluation/results*.json
+evaluation/custom/

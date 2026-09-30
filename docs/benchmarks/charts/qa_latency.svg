@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" font-family="sans-serif" font-size="12"><rect width="100%" height="100%" fill="#fff"/>
+<text x="360.0" y="22" text-anchor="middle" font-size="15" font-weight="bold">Hỏi đáp đồng thời (median)</text>
+<line x1="70" x2="700" y1="300.0" y2="300.0" stroke="#e5e7eb"/><text x="64" y="304.0" text-anchor="end">0</text>
+<line x1="70" x2="700" y1="237.5" y2="237.5" stroke="#e5e7eb"/><text x="64" y="241.5" text-anchor="end">50</text>
+<line x1="70" x2="700" y1="175.0" y2="175.0" stroke="#e5e7eb"/><text x="64" y="179.0" text-anchor="end">100</text>
+<line x1="70" x2="700" y1="112.5" y2="112.5" stroke="#e5e7eb"/><text x="64" y="116.5" text-anchor="end">150</text>
+<line x1="70" x2="700" y1="50.0" y2="50.0" stroke="#e5e7eb"/><text x="64" y="54.0" text-anchor="end">200</text>
+<text x="14" y="175.0" transform="rotate(-90 14 175.0)" text-anchor="middle">giây</text>
+<rect x="91.0" y="294.4" width="54.0" height="5.6" fill="#2563eb"><title>Chữ đầu tiên 1 người: 4.47 giây</title></rect><text x="118.0" y="290.4" text-anchor="middle" font-size="10">4.47</text>
+<rect x="147.0" y="288.9" width="54.0" height="11.1" fill="#f59e0b"><title>Hoàn tất 1 người: 8.84 giây</title></rect><text x="174.0" y="284.9" text-anchor="middle" font-size="10">8.84</text>
+<rect x="203.0" y="287.8" width="54.0" height="12.2" fill="#10b981"><title>Hoàn tất p95 1 người: 9.74 giây</title></rect><text x="230.0" y="283.8" text-anchor="middle" font-size="10">9.74</text>
+<text x="175.0" y="318" text-anchor="middle">1 người</text>
+<rect x="301.0" y="286.9" width="54.0" height="13.1" fill="#2563eb"><title>Chữ đầu tiên 5 người: 10.47 giây</title></rect><text x="328.0" y="282.9" text-anchor="middle" font-size="10">10.47</text>
+<rect x="357.0" y="282.4" width="54.0" height="17.6" fill="#f59e0b"><title>Hoàn tất 5 người: 14.12 giây</title></rect><text x="384.0" y="278.4" text-anchor="middle" font-size="10">14.12</text>
+<rect x="413.0" y="185.3" width="54.0" height="114.7" fill="#10b981"><title>Hoàn tất p95 5 người: 91.76 giây</title></rect><text x="440.0" y="181.3" text-anchor="middle" font-size="10">91.76</text>
+<text x="385.0" y="318" text-anchor="middle">5 người</text>
+<rect x="511.0" y="268.1" width="54.0" height="31.9" fill="#2563eb"><title>Chữ đầu tiên 10 người: 25.53 giây</title></rect><text x="538.0" y="264.1" text-anchor="middle" font-size="10">25.53</text>
+<rect x="567.0" y="261.2" width="54.0" height="38.8" fill="#f59e0b"><title>Hoàn tất 10 người: 31.06 giây</title></rect><text x="594.0" y="257.2" text-anchor="middle" font-size="10">31.06</text>
+<rect x="623.0" y="149.0" width="54.0" height="151.0" fill="#10b981"><title>Hoàn tất p95 10 người: 120.81 giây</title></rect><text x="650.0" y="145.0" text-anchor="middle" font-size="10">120.81</text>
+<text x="595.0" y="318" text-anchor="middle">10 người</text>
+<rect x="70" y="338" width="12" height="12" fill="#2563eb"/><text x="88" y="348">Chữ đầu tiên</text>
+<rect x="240" y="338" width="12" height="12" fill="#f59e0b"/><text x="258" y="348">Hoàn tất</text>
+<rect x="410" y="338" width="12" height="12" fill="#10b981"/><text x="428" y="348">Hoàn tất p95</text>
+</svg>

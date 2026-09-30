@@ -22,3 +22,6 @@ submission/
 *.zip
 *.log
 backups/
+
+# Local evaluation documents and questions (may be confidential)
+evaluation/custom/

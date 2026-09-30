@@ -25,6 +25,8 @@ from app.services.answering import answer_from_contexts
 
 
 NO_ANSWERS = (NO_CONTEXT_ANSWER, INSUFFICIENT_ANSWER)
+# Ranking depth for recall@k; one relevant chunk per question, so hit@k == recall@k.
+RANK_DEPTH = 10
 
 
 def contains_keywords(text, keywords):
@@ -56,7 +58,7 @@ def ranking_metrics(rows, top_k, threshold):
     unanswerable = [row for row in rows if not row['expected_source'] and 'raw_top_k' in row]
     ranks = [row['relevant_rank'] for row in answerable]
     hit_at = {f'hit@{k}': sum(r is not None and r <= k for r in ranks) / len(ranks) if ranks else None
-              for k in sorted({1, 3, top_k})}
+              for k in sorted({1, 3, 5, top_k, RANK_DEPTH})}
     relevant_scores = [row['relevant_relevance'] for row in answerable if row['relevant_relevance'] is not None]
     no_answer_top1 = [row['raw_top_k'][0]['relevance'] for row in unanswerable if row['raw_top_k']]
     answerable_top1 = [row['raw_top_k'][0]['relevance'] for row in answerable if row['raw_top_k']]
@@ -70,7 +72,7 @@ def ranking_metrics(rows, top_k, threshold):
     return {
         'answerable': len(answerable), 'no_answer': len(unanswerable), 'top_k': top_k, **hit_at,
         'mrr': sum(1 / r for r in ranks if r) / len(ranks) if ranks else None,
-        'misses': [row['id'] for row in answerable if row['relevant_rank'] is None],
+        'misses': [row['id'] for row in answerable if row['relevant_rank'] is None or row['relevant_rank'] > top_k],
         'relevant_chunk_relevance': distribution(relevant_scores),
         'answerable_top1_relevance': distribution(answerable_top1),
         'no_answer_top1_relevance': distribution(no_answer_top1),
@@ -114,8 +116,8 @@ def evaluate(root: Path, output: Path, retrieval_only=False, extra: Path | None 
                'expected_source': case['expected_source'], 'relevant_rank': None, 'relevant_relevance': None,
                'retrieval_hit': None, 'answer_correct': None, 'no_answer_correct': None}
         try:
-            # Ranking uses the unfiltered Top-K; the candidate floor applies only to answering, as in /ask.
-            hits = retrieval.raw_search(case['question'])
+            # Ranking looks RANK_DEPTH deep (recall@k); the LLM gets the unfiltered Top-K as in /ask.
+            hits = retrieval.raw_search(case['question'], max(RANK_DEPTH, settings.top_k))
             row['raw_top_k'] = [{'rank': rank, 'metadata': hit.metadata, 'relevance': round(hit.relevance, 6),
                                  'preview': hit.content[:80]} for rank, hit in enumerate(hits, 1)]
             if case['expected_source']:
@@ -126,9 +128,9 @@ def evaluate(root: Path, output: Path, retrieval_only=False, extra: Path | None 
                 row['retrieval_hit'] = any(hit.relevance >= settings.retrieval_threshold and
                                            source_matches(hit.metadata, case['expected_source']) and
                                            contains_keywords(hit.content, case['expected_keywords'])
-                                           for hit in hits)
+                                           for hit in hits[:settings.top_k])
             if not retrieval_only:
-                candidates = [hit for hit in hits if hit.relevance >= settings.candidate_min_relevance]
+                candidates = [hit for hit in hits[:settings.top_k] if hit.relevance >= settings.candidate_min_relevance]
                 response = answer_from_contexts(case['question'], candidates, generation)
                 row['answer'] = response.answer
                 row['sources'] = [source.model_dump(exclude_none=True) for source in response.sources]

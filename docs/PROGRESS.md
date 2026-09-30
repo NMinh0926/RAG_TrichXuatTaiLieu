@@ -9,7 +9,7 @@
 | 2 — Chất lượng câu trả lời | **Xong** (30/09/2026) — bge-m3, map-reduce, SSE, hội thoại |
 | 3 — Tốc độ ingest | **Xong** (30/09/2026) — RQ worker, Tesseract, bbox |
 | 4 — Giao diện | **Xong** (30/09/2026) — React + TS + Tailwind, nginx trong compose |
-| 5 — Benchmark | Chưa bắt đầu |
+| 5 — Benchmark | **Xong** (30/09/2026) — [report.md](benchmarks/report.md) |
 | 6 — Hoàn thiện nội bộ | Chưa bắt đầu |
 
 ## Kiến trúc hiện tại (trước Giai đoạn 1)
@@ -140,6 +140,21 @@
   viewer PDF bên phải có highlight bbox khi bấm `[n]`, upload kéo thả nhiều file với tiến độ thời gian thực,
   phạm vi hỏi, gợi ý nhanh, dark/light, responsive. 30 unit test (SSE parser, citation, bbox).
 - Chạy bằng service `frontend` (nginx, cổng 127.0.0.1:8080, proxy `/api` + `/health`, SSE không buffer).
+
+## Giai đoạn 5 — đã làm
+
+- Scripts: `make_corpus` (PDF text/scan ~1/5/10/50/100 MB, cố định), `bench_corpus` (upload thật → job, thời gian từng bước,
+  RAM/CPU container từ cgroup, dung lượng PostgreSQL/S3/Chroma), `bench_load` (1/5/10 người chat SSE đồng thời),
+  `charts` (SVG không cần thư viện), `resources` (lấy mẫu cgroup). `evaluate` thêm recall@1/3/5/K/10.
+  GPU lấy mẫu bằng `nvidia-smi` trên host trong lúc đo.
+- Báo cáo [benchmarks/report.md](benchmarks/report.md) + JSON `stage5_*.json` + `charts/*.svg`. Mẫu bộ câu hỏi riêng:
+  `evaluation/custom_questions.example.json` (tài liệu/câu hỏi riêng để trong `evaluation/custom/`, không commit).
+- Số liệu chính: ingest **~1,25 s/trang PDF text** (embedding bge-m3 CPU chiếm ~99%), **~1,5 s/trang PDF scan**;
+  100 MB text (1 102 trang) 22,9 ph, 100 MB scan (166 trang) 4,1 ph; RAM đỉnh ≤ 3,0 GB; dữ liệu sinh ra ≈ 1,05–1,4 × file.
+  Hỏi đáp `qwen2.5:7b`: 1 người TTFT 4,5 s; 10 người TTFT median 25,5 s / p95 46 s (Ollama tuần tự, ~6 token/s, model
+  không vừa 4 GB VRAM). `qwen2.5:3b`: 10 người TTFT 2,8 s nhưng đúng 64,5% so với 96,8% → giữ 7b.
+  Chất lượng 7b: recall@1 = 100%, đúng 30/31, từ chối đúng 7/8 (39 câu).
+- Đề xuất đã áp dụng ở G6: `MAX_PDF_PAGES=300`, `MAX_UPLOAD_MB=100`.
 
 ## Quyết định / ghi chú
 

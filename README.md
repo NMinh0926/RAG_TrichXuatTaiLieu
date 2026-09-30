@@ -148,7 +148,8 @@ Lưu ý: dùng API bên ngoài nghĩa là đoạn trích tài liệu được g�
 - Đặt sau reverse proxy có HTTPS, rồi `COOKIE_SECURE=true`.
 - File gốc lên S3/R2: đặt `S3_ENDPOINT`, `S3_ACCESS_KEY`, `S3_SECRET_KEY`, `S3_BUCKET`, `S3_REGION`; chép dữ liệu cũ bằng
   `python -m scripts.objects_transfer`.
-- PostgreSQL/Redis/Chroma được quản lý: đổi `DATABASE_URL`, `REDIS_URL`, `CHROMA_HOST/PORT`.
+- PostgreSQL/Redis/Chroma được quản lý: đổi `POSTGRES_HOST`/`POSTGRES_PORT` (cùng `POSTGRES_USER/PASSWORD/DB`),
+  `REDIS_URL`, `CHROMA_HOST/PORT` trong `.env`. `DATABASE_URL` chỉ dùng khi chạy backend ngoài Docker; các container bỏ qua nó.
 - Nhiều worker: `docker compose up -d --scale worker=2` (mỗi worker giữ một bản model embedding ~2 GB RAM).
 - Log dạng JSON một dòng (`LOG_FORMAT=json`), mỗi request có `request_id` (cũng trả về ở header `X-Request-ID`).
 

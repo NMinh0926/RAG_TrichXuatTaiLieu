@@ -1,21 +1,33 @@
 name: bai1-rag
 
-# Credentials come from .env. The fallbacks below exist only so a fresh local checkout starts;
-# services are not published outside localhost. Set real values in .env for any shared machine.
+# Settings and credentials come from .env (copy .env.example; needs Compose >= 2.24 for the optional env_file).
+# Without .env the stack still starts on the fallbacks below, which are fit for a first local try only; services
+# are not published outside localhost. Set real values in .env for any shared machine.
+# Endpoints default to the services in this file; set S3_ENDPOINT, DATABASE_URL, REDIS_URL or CHROMA_HOST/PORT
+# in .env to use external or managed ones instead.
 x-app: &app
   image: bai1-rag:local
   init: true
   env_file:
-    - .env
+    - path: .env
+      required: false
   environment:
-    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-rag}:${POSTGRES_PASSWORD:-rag_dev_password}@postgres:5432/${POSTGRES_DB:-rag}
-    S3_ENDPOINT: http://seaweedfs:8333
+    # Inside Docker the database URL is always built from these parts (any password character is escaped).
+    # A DATABASE_URL left in .env for running outside Docker (often pointing at localhost) is ignored here;
+    # for an external/managed PostgreSQL set POSTGRES_HOST / POSTGRES_PORT (and the credentials) in .env.
+    DATABASE_URL: ""
+    POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+    POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+    POSTGRES_USER: ${POSTGRES_USER:-rag}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-rag_dev_password}
+    POSTGRES_DB: ${POSTGRES_DB:-rag}
+    S3_ENDPOINT: ${S3_ENDPOINT:-http://seaweedfs:8333}
     S3_ACCESS_KEY: ${S3_ACCESS_KEY:-rag_dev_access}
     S3_SECRET_KEY: ${S3_SECRET_KEY:-rag_dev_secret_change_me}
     S3_BUCKET: ${S3_BUCKET:-documents}
-    CHROMA_HOST: chroma
-    CHROMA_PORT: "8000"
-    REDIS_URL: redis://redis:6379/0
+    CHROMA_HOST: ${CHROMA_HOST:-chroma}
+    CHROMA_PORT: ${CHROMA_PORT:-8000}
+    REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
     HF_HOME: /app/.cache/huggingface
   # Ollama runs on the Windows host, not in a container.
   extra_hosts:

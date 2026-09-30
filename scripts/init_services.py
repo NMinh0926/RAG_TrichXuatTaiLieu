@@ -7,6 +7,9 @@ import sys
 
 from alembic import command
 from alembic.config import Config
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import OperationalError
 
 from app.core.config import Settings, get_settings
 from app.core.logging import configure_logging
@@ -53,9 +56,34 @@ def ensure_first_admin() -> None:
     logger.info('first admin account created')
 
 
+def check_database(settings: Settings) -> bool:
+    """Connect once before migrating so a wrong password or host fails with an actionable message."""
+    url = make_url(settings.database_url)
+    engine = create_engine(url, pool_pre_ping=True)
+    try:
+        with engine.connect() as connection:
+            connection.execute(text('SELECT 1'))
+    except OperationalError as exc:
+        if 'password authentication failed' in str(exc):
+            # The postgres image stores POSTGRES_PASSWORD only when the pg_data volume is first created.
+            logger.error('PostgreSQL rejected the password for user %s. POSTGRES_PASSWORD in .env probably changed '
+                         'after the first start; set it back, or change it in the database first: '
+                         'docker compose exec postgres psql -U %s -d %s -c "ALTER USER %s PASSWORD \'<new>\'" '
+                         '(see README, section .env).', url.username, url.username, url.database, url.username)
+        else:
+            logger.error('cannot connect to PostgreSQL at %s:%s/%s (%s); check DATABASE_URL / POSTGRES_* in .env',
+                         url.host, url.port, url.database, type(exc.orig).__name__)
+        return False
+    finally:
+        engine.dispose()
+    return True
+
+
 def main() -> int:
     configure_logging()
     settings = get_settings()
+    if not check_database(settings):
+        return 1
     config = Config('alembic.ini')
     config.attributes['configure_logger'] = False  # keep the JSON logging configured above
     command.upgrade(config, 'head')

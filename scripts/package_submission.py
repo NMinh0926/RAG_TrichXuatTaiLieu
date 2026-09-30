@@ -1,20 +1,30 @@
-"""Build a source-only ZIP; reject secret material before writing the archive."""
+"""Build a source-only ZIP that starts with `docker compose up -d --build` once unpacked (after creating .env).
+
+Secret material is rejected before the archive is written. Local-only evaluation data is never packed.
+"""
 import argparse
 import re
+from collections.abc import Iterator
+from fnmatch import fnmatch
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORIES = {'app', 'tests', 'scripts', 'sample_data', 'evaluation', 'frontend'}
-ROOT_FILES = {'.env.example', '.gitignore', '.dockerignore', 'Dockerfile', 'compose.yaml',
-              'pytest.ini', 'requirements.txt', 'requirements.lock.txt'}
+# Everything the Dockerfiles and compose.yaml need (alembic.ini, migrations/, docker/), plus tests and docs.
+DIRECTORIES = {'app', 'tests', 'scripts', 'sample_data', 'evaluation', 'frontend', 'migrations', 'docker', 'docs'}
+ROOT_FILES = {'.env.example', '.gitattributes', '.gitignore', '.dockerignore', 'Dockerfile', 'compose.yaml',
+              'alembic.ini', 'pytest.ini', 'requirements.txt', 'requirements.lock.txt'}
 EXCLUDED = {'node_modules', 'dist', '.git', '.venv', '.cache', '__pycache__', '.pytest_cache'}
+# The user's own documents, questions and answers (kept local, as in .gitignore / .dockerignore).
+PRIVATE = ('evaluation/custom/*', 'evaluation/results*.json')
 
 
-def submission_files(root):
+def submission_files(root: Path) -> Iterator[Path]:
     for path in sorted(root.rglob('*')):
         rel = path.relative_to(root)
         if not path.is_file() or path.is_symlink() or any(part in EXCLUDED for part in rel.parts):
+            continue
+        if any(fnmatch(rel.as_posix(), pattern) for pattern in PRIVATE):
             continue
         if any(part.startswith('.env') and part != '.env.example' for part in rel.parts):
             continue
@@ -30,7 +40,7 @@ def submission_files(root):
         yield path
 
 
-def package(root, output):
+def package(root: Path, output: Path) -> int:
     keys = []
     for env in (root / '.env', root / 'frontend' / '.env'):
         if env.is_file():

@@ -8,7 +8,7 @@ from sqlalchemy import func, select, text
 
 from app.core.auth import get_current_user
 from app.core.config import get_settings
-from app.core.dependencies import get_job_queue, get_llm, get_services, get_storage
+from app.core.dependencies import get_job_queue, get_llm, get_services, get_storage, get_summary_llm
 from app.core.errors import PipelineError
 from app.db.models import Document, IngestJob, User, UserRole
 from app.db.repositories import visible_to
@@ -59,10 +59,23 @@ def ready():
 
 
 @health_router.get('/health/llm')
-def llm_health(llm=Depends(get_llm)):
-    """GET {LLM_BASE_URL}/models and confirm LLM_MODEL is available; failures return 503."""
+def llm_health(llm=Depends(get_llm), summary_llm=Depends(get_summary_llm)):
+    """GET {LLM_BASE_URL}/models and confirm LLM_MODEL is available; failures return 503. When LLM_SUMMARY_MODEL is
+    set it is looked up in the same model list: questions still work without it, so a missing summary model only
+    turns the status to 'degraded' (whole-document summaries would fail)."""
     result = llm.health()
-    return {'status': result['status'], 'model': result['model'], 'model_available': result['model_available']}
+    response = {'status': result['status'], 'model': result['model'], 'model_available': result['model_available']}
+    if summary_llm is not None:
+        available = model_listed(summary_llm.model, result.get('models', []))
+        response.update(summary_model=summary_llm.model, summary_model_available=available)
+        if not available:
+            response['status'] = 'degraded'
+    return response
+
+
+def model_listed(model: str, models: list[str]) -> bool:
+    """Same rule as LLMClient.health: an untagged name also matches its ':latest' tag."""
+    return model in models or (':' not in model and f'{model}:latest' in models)
 
 
 def worker_status() -> dict:
@@ -78,7 +91,17 @@ def status(user: User = Depends(get_current_user)):
     Admins get whole-library counts; other users only counts of documents they may read."""
     settings = get_settings()
     checks = dependency_checks()
-    checks['llm'] = probe(lambda: get_llm().health())
+    models: list[str] = []
+    checks['llm'] = probe(lambda: models.extend(get_llm().health().get('models', [])))
+    summary_llm = get_summary_llm()
+    if summary_llm is not None:
+        # Same server as LLM_MODEL: reuse its model list instead of a second request.
+        if not checks['llm']['ok']:
+            checks['llm_summary'] = dict(checks['llm'])
+        elif model_listed(summary_llm.model, models):
+            checks['llm_summary'] = {'ok': True}
+        else:
+            checks['llm_summary'] = {'ok': False, 'error': 'llm_model_missing'}
     worker = None
     if checks['queue']['ok']:
         try:

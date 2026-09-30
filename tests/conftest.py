@@ -75,8 +75,15 @@ def real_ocr():
 def _test_database_url() -> str:
     import os
     from app.core.config import Settings
-    from scripts.isolation import scratch_database_url
-    return os.environ.get('TEST_DATABASE_URL') or scratch_database_url(Settings().database_url, '_test')
+    from scripts.isolation import ensure_database, scratch_database_url
+    if os.environ.get('TEST_DATABASE_URL'):
+        return os.environ['TEST_DATABASE_URL']
+    # TEST_DB_SUFFIX (e.g. "_test_ui") gives parallel test runs their own database, created on demand.
+    suffix = os.environ.get('TEST_DB_SUFFIX', '_test')
+    url = scratch_database_url(Settings().database_url, suffix)
+    if suffix != '_test':
+        ensure_database(url)
+    return url
 
 
 @pytest.fixture(scope='session')

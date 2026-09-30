@@ -4,6 +4,7 @@ from pathlib import Path
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from dotenv import load_dotenv
+from sqlalchemy import URL
 
 # Model libraries read cache variables directly from os.environ.
 load_dotenv(override=False)
@@ -11,8 +12,14 @@ load_dotenv(override=False)
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8', extra='ignore')
-    # Metadata database (documents, chunks, jobs, conversations).
-    database_url: str = 'postgresql+psycopg://rag:rag@localhost:5432/rag'
+    # Metadata database (documents, chunks, jobs, conversations). DATABASE_URL wins when set (managed PostgreSQL);
+    # otherwise the URL is built from the POSTGRES_* parts, so any password character is escaped correctly.
+    database_url: str = ''
+    postgres_user: str = 'rag'
+    postgres_password: SecretStr = SecretStr('rag')
+    postgres_db: str = 'rag'
+    postgres_host: str = 'localhost'
+    postgres_port: int = Field(5432, ge=1, le=65535)
     # Original files: any S3-compatible storage (SeaweedFS in compose, S3/R2 in deployment).
     s3_endpoint: str = 'http://localhost:8333'
     s3_access_key: SecretStr = SecretStr('')
@@ -88,6 +95,15 @@ class Settings(BaseSettings):
     def validate_overlap(self):
         if self.chunk_overlap >= self.chunk_size:
             raise ValueError('CHUNK_OVERLAP must be smaller than CHUNK_SIZE')
+        return self
+
+    @model_validator(mode='after')
+    def build_database_url(self):
+        if not self.database_url.strip():
+            self.database_url = URL.create(
+                'postgresql+psycopg', username=self.postgres_user, password=self.postgres_password.get_secret_value(),
+                host=self.postgres_host, port=self.postgres_port, database=self.postgres_db,
+            ).render_as_string(hide_password=False)
         return self
 
 

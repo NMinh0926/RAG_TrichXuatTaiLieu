@@ -1,9 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { Page } from '../api/types';
-
-export type PageFetcher<T> = (page: number, pageSize: number) => Promise<Page<T>>;
-
-const MAX_PAGE_SIZE = 100;
+import { fetchFirst, type PageFetcher } from '../lib/paging';
 
 export interface PagedList<T> {
   items: T[];
@@ -47,8 +43,8 @@ export function usePagedList<T extends { id: string }>(fetchPage: PageFetcher<T>
           const known = new Set(loaded.map((item) => item.id));
           apply([...loaded, ...result.items.filter((item) => !known.has(item.id))], result.total);
         } else {
-          const size = mode === 'refresh' ? Math.min(MAX_PAGE_SIZE, Math.max(pageSize, loaded.length)) : pageSize;
-          const result = await fetchPage(1, size);
+          const size = mode === 'refresh' ? Math.max(pageSize, loaded.length) : pageSize;
+          const result = await fetchFirst(fetchPage, size);
           if (request !== requestRef.current) return;
           apply(result.items, result.total);
         }

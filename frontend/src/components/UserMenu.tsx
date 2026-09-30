@@ -15,16 +15,20 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
 
   useEffect(() => {
     if (!open) return;
-    const close = (event: MouseEvent | KeyboardEvent) => {
-      if (event instanceof KeyboardEvent ? event.key === 'Escape' : !container.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
+    const onPointer = (event: MouseEvent) => {
+      if (!container.current?.contains(event.target as Node)) setOpen(false);
     };
-    document.addEventListener('mousedown', close);
-    document.addEventListener('keydown', close);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      // Handled here: other Escape listeners (the document viewer) must not act on it too.
+      event.preventDefault();
+      setOpen(false);
+    };
+    document.addEventListener('mousedown', onPointer);
+    document.addEventListener('keydown', onKey);
     return () => {
-      document.removeEventListener('mousedown', close);
-      document.removeEventListener('keydown', close);
+      document.removeEventListener('mousedown', onPointer);
+      document.removeEventListener('keydown', onKey);
     };
   }, [open]);
 

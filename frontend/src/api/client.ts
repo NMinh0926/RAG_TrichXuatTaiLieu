@@ -1,4 +1,5 @@
 /** Typed client for the backend API (same origin). Every HTTP call goes through `request()`. */
+import { validationMessage } from '../lib/errors';
 import { readSse } from '../lib/sse';
 import type {
   ChatEvent,
@@ -37,6 +38,7 @@ const STATUS_MESSAGES: Record<number, string> = {
   415: 'Định dạng file không được hỗ trợ.',
   422: 'Dữ liệu gửi lên không hợp lệ.',
   429: 'Quá nhiều yêu cầu; vui lòng thử lại sau ít phút.',
+  500: 'Lỗi máy chủ (500). Vui lòng thử lại hoặc báo quản trị viên.',
   503: 'Dịch vụ tạm thời không sẵn sàng.',
 };
 
@@ -48,8 +50,10 @@ async function errorFromResponse(response: Response): Promise<ApiError> {
     if (body && typeof body === 'object') {
       const { error, detail } = body as { error?: unknown; detail?: unknown };
       if (typeof error === 'string') code = error;
-      // Our API errors carry a Vietnamese `detail`; FastAPI's own errors ("Not Found", validation lists) do not.
-      if (typeof detail === 'string' && typeof error === 'string') message = detail;
+      // Our API errors carry a Vietnamese `detail`, except the catch-all 500 whose detail is meant for operators.
+      // FastAPI's own errors ("Not Found", validation lists) have no `error` key.
+      if (typeof detail === 'string' && typeof error === 'string' && error !== 'internal_error') message = detail;
+      else if (response.status === 422) message = validationMessage(detail) ?? message;
     }
   } catch {
     // Non-JSON body (e.g. a proxy error page): keep the status-based message.

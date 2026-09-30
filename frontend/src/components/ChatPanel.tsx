@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import type { Source } from '../api/types';
 import type { Chat } from '../hooks/useChat';
+import type { ScopedDocument } from '../lib/scope';
 import { ChatMessageView } from './ChatMessageView';
 import { Icon } from './Icon';
-import { ScopeSelector, type ScopedDocument } from './ScopeSelector';
+import { ScopeSelector } from './ScopeSelector';
 import { ErrorBanner, Skeleton, Spinner } from './ui';
 
 const QUICK_PROMPTS = ['Tóm tắt tài liệu', 'Liệt kê ý chính'];
@@ -46,7 +47,7 @@ export function ChatPanel({ chat, scope, onScopeChange, onOpenSource }: ChatPane
     const text = question.trim();
     if (!text || !canSend) return;
     stickToBottom.current = true;
-    chat.send(text, scope.selectAll ? [] : scope.selected.map((document) => document.id));
+    chat.send(text, scope.selectAll ? [] : scope.selected);
     setDraft('');
   };
 

@@ -1,9 +1,15 @@
-import { memo, useMemo } from 'react';
+import { memo, useMemo, type ReactNode } from 'react';
 import Markdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { Source } from '../api/types';
 import { linkifyCitations, parseCitationHref } from '../lib/citations';
 import { sourceLocation } from '../lib/format';
+import { linkAddressNote } from '../lib/links';
+
+function textOf(node: ReactNode): string {
+  if (typeof node === 'string' || typeof node === 'number') return String(node);
+  return Array.isArray(node) ? node.map(textOf).join('') : '';
+}
 
 interface AnswerMarkdownProps {
   content: string;
@@ -11,7 +17,7 @@ interface AnswerMarkdownProps {
   onCite: (source: Source) => void;
 }
 
-/** Markdown answer (GFM) whose [n] markers become buttons opening the cited source. */
+/** Markdown answer (GFM) whose [n] markers become buttons opening the cited source; other links stay plain text. */
 export const AnswerMarkdown = memo(function AnswerMarkdown({ content, sources, onCite }: AnswerMarkdownProps) {
   const sourceCount = sources.reduce((max, source) => Math.max(max, source.n), 0);
   const markdown = useMemo(() => linkifyCitations(content, sourceCount), [content, sourceCount]);
@@ -21,10 +27,12 @@ export const AnswerMarkdown = memo(function AnswerMarkdown({ content, sources, o
       a({ href, children }) {
         const n = parseCitationHref(href);
         if (n === null) {
+          const note = linkAddressNote(href, textOf(children));
           return (
-            <a href={href} target="_blank" rel="noopener noreferrer">
+            <span className="break-words" title="Liên kết trong câu trả lời không được mở trực tiếp">
               {children}
-            </a>
+              {note && <span className="break-all text-slate-500 dark:text-slate-400"> ({note})</span>}
+            </span>
           );
         }
         const source = sources.find((item) => item.n === n);
@@ -40,6 +48,16 @@ export const AnswerMarkdown = memo(function AnswerMarkdown({ content, sources, o
           >
             {n}
           </button>
+        );
+      },
+      // Images would be fetched automatically (with the session cookie for same-origin URLs): show them as text.
+      img({ src, alt }) {
+        const address = typeof src === 'string' ? src : '';
+        return (
+          <span className="break-all text-slate-500 dark:text-slate-400">
+            [Hình: {alt || 'không có mô tả'}
+            {address && ` (${address})`}]
+          </span>
         );
       },
       table({ children }) {

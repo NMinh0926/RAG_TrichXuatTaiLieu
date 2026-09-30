@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { createUser, listUsers, updateUser } from '../api/client';
 import type { Role, User } from '../api/types';
+import { MAX_PASSWORD, MIN_PASSWORD, newPasswordProblem } from '../lib/password';
 import { inputClass } from './LoginPage';
 import { Modal } from './Modal';
 import { PasswordInput } from './PasswordInput';
 import { ErrorBanner, ListSkeleton, primaryButton, secondaryButton, Spinner } from './ui';
-
-const MIN_PASSWORD = 8;
 
 function message(caught: unknown): string {
   return caught instanceof Error ? caught.message : String(caught);
@@ -47,8 +46,18 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
       .finally(() => setBusy(false));
   };
 
+  const refuse = (password: string): boolean => {
+    const problem = newPasswordProblem(password);
+    if (problem) {
+      setNotice(null);
+      setError(problem);
+    }
+    return problem !== null;
+  };
+
   const create = (event: FormEvent) => {
     event.preventDefault();
+    if (refuse(password)) return;
     run(createUser(username.trim(), password, role), (user) => {
       setUsers((current) => [...(current ?? []), user].sort((a, b) => a.username.localeCompare(b.username)));
       setNotice(`Đã tạo tài khoản ${user.username}.`);
@@ -60,7 +69,7 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
 
   const submitReset = (event: FormEvent) => {
     event.preventDefault();
-    if (!resetTarget) return;
+    if (!resetTarget || refuse(resetPassword)) return;
     run(updateUser(resetTarget.id, { password: resetPassword }), (updated) => {
       replace(updated);
       setNotice(`Đã đặt lại mật khẩu cho ${updated.username}; các phiên cũ bị đăng xuất.`);
@@ -141,7 +150,7 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
               aria-label={`Mật khẩu mới cho ${resetTarget.username}`}
               autoComplete="new-password"
               minLength={MIN_PASSWORD}
-              maxLength={256}
+              maxLength={MAX_PASSWORD}
               value={resetPassword}
               onChange={(event) => setResetPassword(event.target.value)}
               required
@@ -173,6 +182,7 @@ export function UsersDialog({ open, onClose, currentUserId }: { open: boolean; o
               aria-label="Mật khẩu cho tài khoản mới"
               autoComplete="new-password"
               minLength={MIN_PASSWORD}
+              maxLength={MAX_PASSWORD}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required

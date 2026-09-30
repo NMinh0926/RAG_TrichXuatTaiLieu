@@ -1,11 +1,10 @@
 import { useState, type FormEvent } from 'react';
 import { changePassword } from '../api/client';
+import { MAX_PASSWORD, MIN_PASSWORD, newPasswordProblem } from '../lib/password';
 import { inputClass } from './LoginPage';
 import { Modal } from './Modal';
 import { PasswordInput } from './PasswordInput';
 import { ErrorBanner, primaryButton, Spinner } from './ui';
-
-const MIN_PASSWORD = 8;
 
 export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [current, setCurrent] = useState('');
@@ -26,8 +25,9 @@ export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () =
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (next !== repeat) {
-      setError('Mật khẩu mới nhập lại không khớp.');
+    const problem = newPasswordProblem(next) ?? (next !== repeat ? 'Mật khẩu mới nhập lại không khớp.' : null);
+    if (problem) {
+      setError(problem);
       return;
     }
     setBusy(true);
@@ -62,7 +62,7 @@ export function PasswordDialog({ open, onClose }: { open: boolean; onClose: () =
             aria-label="Mật khẩu mới"
             autoComplete="new-password"
             minLength={MIN_PASSWORD}
-            maxLength={256}
+            maxLength={MAX_PASSWORD}
             value={next}
             onChange={(event) => setNext(event.target.value)}
             required

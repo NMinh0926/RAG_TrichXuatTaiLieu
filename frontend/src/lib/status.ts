@@ -8,6 +8,7 @@ export const CHECK_LABELS: Record<string, string> = {
   queue: 'Hàng đợi (Redis)',
   worker: 'Worker xử lý tài liệu',
   llm: 'Mô hình ngôn ngữ (LLM)',
+  llm_summary: 'Mô hình tóm tắt (LLM_SUMMARY_MODEL)',
 };
 
 const ERROR_LABELS: Record<string, string> = {

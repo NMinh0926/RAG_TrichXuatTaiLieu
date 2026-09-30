@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { documentFileUrl, getDocument } from '../api/client';
 import type { Bbox, DocumentInfo } from '../api/types';
 import { fileKind, formatBytes, formatDate, STATUS_LABELS } from '../lib/format';
+import { isUnhandledEscape } from '../lib/keyboard';
 import { Icon } from './Icon';
 import { ErrorBanner, iconButton, Skeleton, StatusBadge } from './ui';
 
@@ -78,9 +79,7 @@ export function ViewerPanel({ target, onClose }: { target: ViewerTarget; onClose
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      // Escape inside a dialog or popover closes that one, not the viewer.
-      const inDialog = event.target instanceof Element && event.target.closest('dialog, [role="dialog"]');
-      if (event.key === 'Escape' && !inDialog) onClose();
+      if (isUnhandledEscape(event)) onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

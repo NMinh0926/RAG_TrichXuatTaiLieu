@@ -1,13 +1,11 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { listDocuments } from '../api/client';
 import type { DocumentInfo } from '../api/types';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { usePagedList } from '../hooks/usePagedList';
+import { MAX_SCOPE_DOCUMENTS, scopeFull, toggleScoped, type ScopedDocument } from '../lib/scope';
 import { Icon } from './Icon';
-import { ErrorBanner, iconButton, ListSkeleton } from './ui';
-
-export interface ScopedDocument {
-  id: string;
-  filename: string;
-}
+import { ErrorBanner, iconButton, ListSkeleton, secondaryButton, Spinner } from './ui';
 
 interface ScopeSelectorProps {
   selectAll: boolean;
@@ -16,26 +14,16 @@ interface ScopeSelectorProps {
   onChange: (selectAll: boolean, selected: ScopedDocument[]) => void;
 }
 
-// Ready documents offered in the picker (the API's maximum page size).
-const PICKER_LIMIT = 100;
+// The API's maximum page size; the name filter is applied by the server so older documents stay reachable.
+const PICKER_PAGE_SIZE = 100;
 
 function DocumentPicker({ selected, onToggle }: { selected: ScopedDocument[]; onToggle: (document: DocumentInfo) => void }) {
-  const [documents, setDocuments] = useState<DocumentInfo[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('');
-
-  useEffect(() => {
-    let cancelled = false;
-    listDocuments(1, PICKER_LIMIT)
-      .then((page) => !cancelled && setDocuments(page.items.filter((document) => document.status === 'ready')))
-      .catch((caught: unknown) => !cancelled && setError(caught instanceof Error ? caught.message : String(caught)));
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const needle = filter.trim().toLowerCase();
-  const visible = documents?.filter((document) => document.filename.toLowerCase().includes(needle)) ?? [];
+  const q = useDebouncedValue(filter.trim(), 300);
+  const fetchPage = useCallback((page: number, pageSize: number) => listDocuments(page, pageSize, q), [q]);
+  const documents = usePagedList(fetchPage, PICKER_PAGE_SIZE);
+  const visible = documents.items.filter((document) => document.status === 'ready');
+  const full = scopeFull(selected);
 
   return (
     <div
@@ -48,28 +36,55 @@ function DocumentPicker({ selected, onToggle }: { selected: ScopedDocument[]; on
         autoFocus
         value={filter}
         onChange={(event) => setFilter(event.target.value)}
-        placeholder="Lọc theo tên…"
-        aria-label="Lọc tài liệu"
+        placeholder="Tìm theo tên file…"
+        aria-label="Tìm tài liệu để chọn"
         className="mb-2 w-full rounded-lg border border-slate-300 bg-transparent px-3 py-1.5 text-sm dark:border-slate-700"
       />
-      {error && <ErrorBanner message={error} />}
-      {!documents && !error && <ListSkeleton rows={3} label="Đang tải tài liệu" />}
-      {documents && visible.length === 0 && <p className="py-3 text-center text-sm text-slate-500">Không có tài liệu sẵn sàng.</p>}
-      <ul className="max-h-60 space-y-0.5 overflow-y-auto">
-        {visible.map((document) => (
-          <li key={document.id}>
-            <label className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-100 dark:hover:bg-slate-800">
-              <input
-                type="checkbox"
-                className="accent-brand-600"
-                checked={selected.some((item) => item.id === document.id)}
-                onChange={() => onToggle(document)}
-              />
-              <span className="truncate">{document.filename}</span>
-            </label>
-          </li>
-        ))}
-      </ul>
+      {documents.error && <ErrorBanner message={documents.error} onRetry={documents.refresh} />}
+      <p className={`mb-1 px-2 text-xs ${full ? 'text-amber-700 dark:text-amber-400' : 'text-slate-500 dark:text-slate-400'}`} aria-live="polite">
+        Đã chọn {selected.length}/{MAX_SCOPE_DOCUMENTS}
+        {full && ` · Tối đa ${MAX_SCOPE_DOCUMENTS} tài liệu cho một câu hỏi`}
+      </p>
+      {documents.loading ? (
+        <ListSkeleton rows={3} label="Đang tải tài liệu" />
+      ) : (
+        <div className="max-h-60 overflow-y-auto">
+          {visible.length === 0 && !documents.error && (
+            <p className="py-3 text-center text-sm text-slate-500">{q ? 'Không tìm thấy tài liệu sẵn sàng phù hợp.' : 'Không có tài liệu sẵn sàng.'}</p>
+          )}
+          <ul className="space-y-0.5">
+            {visible.map((document) => {
+              const checked = selected.some((item) => item.id === document.id);
+              return (
+                <li key={document.id}>
+                  <label
+                    className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm ${
+                      checked || !full ? 'cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800' : 'cursor-not-allowed opacity-50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      className="accent-brand-600"
+                      checked={checked}
+                      disabled={!checked && full}
+                      onChange={() => onToggle(document)}
+                    />
+                    <span className="min-w-0 truncate" title={document.filename}>
+                      {document.filename}
+                    </span>
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+          {documents.items.length < documents.total && (
+            <button type="button" className={`${secondaryButton} mt-1 w-full`} onClick={documents.loadMore} disabled={documents.loadingMore}>
+              {documents.loadingMore && <Spinner />}
+              Tải thêm
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -85,7 +100,12 @@ export function ScopeSelector({ selectAll, selected, disabled, onChange }: Scope
     const onPointer = (event: PointerEvent) => {
       if (!root.current?.contains(event.target as Node)) setPicking(false);
     };
-    const onKey = (event: KeyboardEvent) => event.key === 'Escape' && setPicking(false);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      // Handled here: other Escape listeners (the document viewer) must not act on it too.
+      event.preventDefault();
+      setPicking(false);
+    };
     document.addEventListener('pointerdown', onPointer);
     document.addEventListener('keydown', onKey);
     return () => {
@@ -94,10 +114,7 @@ export function ScopeSelector({ selectAll, selected, disabled, onChange }: Scope
     };
   }, [picking]);
 
-  const toggle = (document: DocumentInfo) => {
-    const exists = selected.some((item) => item.id === document.id);
-    onChange(false, exists ? selected.filter((item) => item.id !== document.id) : [...selected, { id: document.id, filename: document.filename }]);
-  };
+  const toggle = (document: DocumentInfo) => onChange(false, toggleScoped(selected, document));
 
   return (
     <div ref={root} className="relative flex flex-wrap items-center gap-2 text-sm">

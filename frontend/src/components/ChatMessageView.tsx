@@ -52,8 +52,11 @@ function SourceList({ sources, onOpen }: { sources: Source[]; onOpen: (source: S
                 {source.n}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium">
-                  {source.filename ?? 'Không rõ tài liệu'} <span className="font-normal text-slate-500 dark:text-slate-400">· {sourceLocation(source)}</span>
+                <span className="flex min-w-0 gap-1 font-medium">
+                  <span className="truncate" title={source.filename ?? undefined}>
+                    {source.filename ?? 'Không rõ tài liệu'}
+                  </span>
+                  <span className="shrink-0 font-normal text-slate-500 dark:text-slate-400">· {sourceLocation(source)}</span>
                 </span>
                 {source.excerpt && <span className="mt-0.5 line-clamp-2 block text-xs text-slate-600 dark:text-slate-400">{source.excerpt}</span>}
               </span>
@@ -93,7 +96,7 @@ export const ChatMessageView = memo(function ChatMessageView({ message, onOpenSo
           </div>
         )
       )}
-      {message.state === 'stopped' && <p className="mt-2 text-xs text-slate-500 italic dark:text-slate-400">Đã dừng, câu trả lời chưa đầy đủ và không được lưu.</p>}
+      {message.state === 'stopped' && <p className="mt-2 text-xs text-slate-500 italic dark:text-slate-400">Đã dừng. Câu hỏi vẫn có trong lịch sử, nhưng câu trả lời chưa đầy đủ này không được lưu.</p>}
       {message.state === 'error' && message.error && (
         <div className="mt-2">
           <ErrorBanner message={message.error} />

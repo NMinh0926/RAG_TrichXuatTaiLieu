@@ -11,6 +11,7 @@ import { iconButton } from './components/ui';
 import { UserMenu } from './components/UserMenu';
 import { ViewerPanel, type ViewerTarget } from './components/ViewerPanel';
 import { useChat } from './hooks/useChat';
+import { useFileDropGuard } from './hooks/useFileDropGuard';
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery';
 import { usePagedList } from './hooks/usePagedList';
 import { useTheme } from './hooks/useTheme';
@@ -24,9 +25,13 @@ export function App({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [viewer, setViewer] = useState<ViewerTarget | null>(null);
   const [scope, setScope] = useState<Scope>({ selectAll: true, selected: [] });
   const conversations = usePagedList(listConversations, CONVERSATION_PAGE_SIZE);
-  const chat = useChat(conversations.refresh);
+  const dropFromScope = useCallback((ids: string[]) => {
+    setScope((current) => ({ ...current, selected: current.selected.filter((document) => !ids.includes(document.id)) }));
+  }, []);
+  const chat = useChat(conversations.refresh, dropFromScope);
   const { conversationId, reset: resetChat, open: openConversation } = chat;
   const nonce = useRef(0);
+  useFileDropGuard();
 
   const closeDrawer = useCallback(() => {
     if (!desktop) setSidebarOpen(false);
@@ -60,10 +65,13 @@ export function App({ user, onLogout }: { user: User; onLogout: () => void }) {
     [openViewer],
   );
 
-  const onDocumentDeleted = useCallback((id: string) => {
-    setScope((current) => ({ ...current, selected: current.selected.filter((document) => document.id !== id) }));
-    setViewer((current) => (current?.documentId === id ? null : current));
-  }, []);
+  const onDocumentDeleted = useCallback(
+    (id: string) => {
+      dropFromScope([id]);
+      setViewer((current) => (current?.documentId === id ? null : current));
+    },
+    [dropFromScope],
+  );
 
   const onConversationDeleted = useCallback(
     (id: string) => {

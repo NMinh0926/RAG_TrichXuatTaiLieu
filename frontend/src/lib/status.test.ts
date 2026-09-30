@@ -3,8 +3,9 @@ import { describeCheck, orderedChecks } from './status';
 
 describe('system status', () => {
   it('orders known components first and keeps unknown ones', () => {
-    const names = orderedChecks({ llm: { ok: true }, extra: { ok: true }, database: { ok: false } }).map(([name]) => name);
-    expect(names).toEqual(['database', 'llm', 'extra']);
+    const names = orderedChecks({ llm_summary: { ok: true }, llm: { ok: true }, extra: { ok: true }, database: { ok: false } })
+      .map(([name]) => name);
+    expect(names).toEqual(['database', 'llm', 'llm_summary', 'extra']);
   });
 
   it('describes healthy and failing checks', () => {

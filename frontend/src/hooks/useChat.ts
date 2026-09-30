@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getConversation, isAbortError, streamChat } from '../api/client';
+import { ApiError, getConversation, getDocument, isAbortError, streamChat } from '../api/client';
 import type { ChatEvent, Source } from '../api/types';
 import { summaryProgressText } from '../lib/format';
+import { findMissingDocuments, missingScopeMessage, type ScopedDocument } from '../lib/scope';
 
 export type MessageState = 'streaming' | 'done' | 'stopped' | 'error';
 
@@ -22,7 +23,8 @@ export interface Chat {
   status: string | null;
   loadingConversation: boolean;
   loadError: string | null;
-  send: (question: string, documentIds: string[]) => void;
+  /** `scope`: the documents the question is restricted to; empty means all visible documents. */
+  send: (question: string, scope: ScopedDocument[]) => void;
   stop: () => void;
   open: (conversationId: string) => void;
   reset: () => void;
@@ -34,8 +36,31 @@ function newKey(): string {
   return `msg-${nextKey}`;
 }
 
-/** Chat state for one conversation: streams answers from POST /api/chat and loads stored conversations. */
-export function useChat(onSaved: () => void): Chat {
+/** Re-opening the conversation whose answer is streaming would abort that answer: keep it instead. */
+export function keepsStreamingTurn(target: string, current: string | null, streaming: boolean): boolean {
+  return streaming && target === current;
+}
+
+export async function turnFailureMessage(
+  caught: unknown,
+  scope: ScopedDocument[],
+  onScopeMissing: (ids: string[]) => void,
+): Promise<string> {
+  const message = caught instanceof Error ? caught.message : String(caught);
+  // The whole question is refused when one scoped document was deleted or unshared elsewhere: find and drop it.
+  if (!(caught instanceof ApiError && caught.code === 'document_not_found' && scope.length)) return message;
+  const missing = await findMissingDocuments(scope, getDocument);
+  if (!missing.length) return message;
+  onScopeMissing(missing.map((document) => document.id));
+  return missingScopeMessage(missing.map((document) => document.filename));
+}
+
+/**
+ * Chat state for one conversation: streams answers from POST /api/chat and loads stored conversations.
+ * `onSaved` runs after every turn (the question is stored even when the answer fails or is stopped);
+ * `onScopeMissing` receives scoped document ids that no longer exist for this user.
+ */
+export function useChat(onSaved: () => void, onScopeMissing: (ids: string[]) => void): Chat {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [streaming, setStreaming] = useState(false);
@@ -47,10 +72,12 @@ export function useChat(onSaved: () => void): Chat {
   // Incremented whenever the visible conversation changes, so late responses of an older one are dropped.
   const generation = useRef(0);
   const savedRef = useRef(onSaved);
+  const scopeMissingRef = useRef(onScopeMissing);
 
   useEffect(() => {
     savedRef.current = onSaved;
-  }, [onSaved]);
+    scopeMissingRef.current = onScopeMissing;
+  }, [onSaved, onScopeMissing]);
 
   const selectConversation = useCallback((id: string | null) => {
     conversationRef.current = id;
@@ -60,7 +87,7 @@ export function useChat(onSaved: () => void): Chat {
   const stop = useCallback(() => abortRef.current?.abort(), []);
 
   const send = useCallback(
-    (question: string, documentIds: string[]) => {
+    (question: string, scope: ScopedDocument[]) => {
       if (abortRef.current) return;
       const controller = new AbortController();
       abortRef.current = controller;
@@ -98,7 +125,6 @@ export function useChat(onSaved: () => void): Chat {
             break;
           case 'done':
             patch(() => ({ content: event.data.answer, sources: event.data.sources, state: 'done' }));
-            savedRef.current();
             break;
           case 'error':
             patch(() => ({ state: 'error', error: event.data.detail }));
@@ -109,7 +135,7 @@ export function useChat(onSaved: () => void): Chat {
       const body = {
         question,
         ...(conversationRef.current ? { conversation_id: conversationRef.current } : {}),
-        ...(documentIds.length ? { document_ids: documentIds } : {}),
+        ...(scope.length ? { document_ids: scope.map((document) => document.id) } : {}),
       };
       streamChat(body, handle, controller.signal)
         .then(() =>
@@ -119,11 +145,16 @@ export function useChat(onSaved: () => void): Chat {
               : {},
           ),
         )
-        .catch((caught: unknown) => {
+        .catch(async (caught: unknown) => {
           if (isAbortError(caught)) patch(() => ({ state: 'stopped' }));
-          else patch(() => ({ state: 'error', error: caught instanceof Error ? caught.message : String(caught) }));
+          else {
+            const error = await turnFailureMessage(caught, scope, scopeMissingRef.current);
+            patch(() => ({ state: 'error', error }));
+          }
         })
         .finally(() => {
+          // The server stores the question before answering, so the history changes whatever the outcome.
+          savedRef.current();
           if (abortRef.current === controller) abortRef.current = null;
           if (current === generation.current) {
             setStreaming(false);
@@ -156,6 +187,7 @@ export function useChat(onSaved: () => void): Chat {
 
   const open = useCallback(
     (id: string) => {
+      if (keepsStreamingTurn(id, conversationRef.current, abortRef.current !== null)) return;
       const current = switchTo(id);
       setLoadingConversation(true);
       getConversation(id)

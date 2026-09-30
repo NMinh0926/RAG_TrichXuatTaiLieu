@@ -33,6 +33,11 @@ function finished(job: Job): Pick<UploadItem, 'phase' | 'job' | 'error' | 'warni
   };
 }
 
+/** Whether some file is still being sent to the server (lost if the page is left now). */
+export function hasUnsentUploads(items: readonly UploadItem[]): boolean {
+  return items.some((item) => item.phase === 'uploading');
+}
+
 export interface Uploads {
   items: UploadItem[];
   addFiles: (files: readonly File[]) => void;
@@ -119,6 +124,18 @@ export function useUploads(onSettled: () => void): Uploads {
       );
     }
   }, [items, update]);
+
+  // Leaving the page aborts files still being sent (processing continues on the server): ask first.
+  const sending = hasUnsentUploads(items);
+  useEffect(() => {
+    if (!sending) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onBeforeUnload);
+    return () => window.removeEventListener('beforeunload', onBeforeUnload);
+  }, [sending]);
 
   useEffect(() => {
     const active = subscriptions.current;

@@ -72,41 +72,46 @@ export function UploadPanel({ uploads }: { uploads: Uploads }) {
 
   return (
     <section aria-label="Tải tài liệu lên" className="space-y-2">
-      <div
+      {/* The whole drop zone is the button that opens the file picker (click, Enter or Space). */}
+      <button
+        type="button"
+        onClick={() => input.current?.click()}
         onDragOver={(event) => {
           event.preventDefault();
           setDragging(true);
         }}
-        onDragLeave={() => setDragging(false)}
+        onDragLeave={(event) => {
+          // Moving over the zone's own icon/text also fires dragleave: only reset when really leaving it.
+          if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setDragging(false);
+        }}
         onDrop={onDrop}
-        className={`flex flex-col items-center gap-1.5 rounded-xl border-2 border-dashed px-3 py-4 text-center text-sm transition ${
+        aria-label="Chọn file để tải lên (hoặc kéo thả file vào đây)"
+        className={`flex w-full cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed px-3 py-4 text-center text-sm transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 ${
           dragging
             ? 'border-brand-500 bg-brand-50 dark:bg-brand-700/20'
-            : 'border-slate-300 dark:border-slate-700'
+            : 'border-slate-300 hover:border-brand-500 hover:bg-brand-50/60 dark:border-slate-700 dark:hover:bg-brand-700/10'
         }`}
       >
         <Icon name="upload" className="size-6 text-slate-400" />
-        <p className="text-slate-600 dark:text-slate-300">
-          Kéo thả file vào đây hoặc{' '}
-          <button type="button" onClick={() => input.current?.click()} className="font-medium text-brand-600 underline dark:text-brand-500">
-            chọn file
-          </button>
-        </p>
-        <p className="text-xs text-slate-500 dark:text-slate-400">PDF, DOCX, XLS/XLSX, PNG, JPG — chọn được nhiều file</p>
-        <input
-          ref={input}
-          type="file"
-          multiple
-          accept={ACCEPTED_EXTENSIONS.join(',')}
-          className="sr-only"
-          tabIndex={-1}
-          aria-label="Chọn file để tải lên"
-          onChange={(event) => {
-            if (event.target.files?.length) uploads.addFiles(Array.from(event.target.files));
-            event.target.value = '';
-          }}
-        />
-      </div>
+        <span className="text-slate-600 dark:text-slate-300">
+          Bấm để <span className="font-medium text-brand-600 underline dark:text-brand-500">chọn file</span> hoặc kéo thả vào đây
+        </span>
+        <span className="text-xs text-slate-500 dark:text-slate-400">PDF, DOCX, XLS/XLSX, PNG, JPG — chọn được nhiều file</span>
+      </button>
+      {/* Opened by the drop zone button; hidden from assistive technology to avoid a duplicate control. */}
+      <input
+        ref={input}
+        type="file"
+        multiple
+        accept={ACCEPTED_EXTENSIONS.join(',')}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden="true"
+        onChange={(event) => {
+          if (event.target.files?.length) uploads.addFiles(Array.from(event.target.files));
+          event.target.value = '';
+        }}
+      />
       {uploads.items.length > 0 && (
         <>
           <ul className="max-h-64 space-y-2 overflow-y-auto" aria-label="Tiến trình tải lên">

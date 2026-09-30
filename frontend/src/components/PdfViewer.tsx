@@ -1,5 +1,13 @@
-import { getDocument, GlobalWorkerOptions, RenderingCancelledException, type PDFDocumentProxy, type RenderTask } from 'pdfjs-dist';
-import workerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+// Legacy build: pdf.js 6 relies on very recent JavaScript (e.g. Map.prototype.getOrInsertComputed) that
+// current office browsers lack; the legacy build ships the polyfills, for both the page and the worker.
+import {
+  getDocument,
+  GlobalWorkerOptions,
+  RenderingCancelledException,
+  type PDFDocumentProxy,
+  type RenderTask,
+} from 'pdfjs-dist/legacy/build/pdf.mjs';
+import workerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 import { memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Bbox } from '../api/types';
 import { canvasPixelRatio, clampZoom, firstHighlightTop, fitWidthScale, pageAtOffset, pageTops, scaleBbox } from '../lib/bbox';
@@ -39,33 +47,39 @@ interface PdfPageProps {
 
 const PdfPage = memo(function PdfPage({ pdf, number, size, scale, top, visible, highlights }: PdfPageProps) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  // The previous render of this canvas. pdf.js refuses a second render() on a canvas until the first has
+  // finished or its cancellation has settled, so renders (e.g. after a zoom change) are chained.
+  const previous = useRef<Promise<void>>(Promise.resolve());
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     const element = canvas.current;
     if (!element) return;
-    if (!visible) {
-      // Free the bitmap of pages far from the viewport.
-      element.width = 0;
-      element.height = 0;
-      return;
-    }
     let task: RenderTask | null = null;
     let cancelled = false;
-    pdf
-      .getPage(number)
-      .then((page) => {
-        if (cancelled) return;
-        const viewport = page.getViewport({ scale });
-        const ratio = canvasPixelRatio(viewport.width, viewport.height, window.devicePixelRatio || 1);
-        element.width = Math.floor(viewport.width * ratio);
-        element.height = Math.floor(viewport.height * ratio);
-        task = page.render({ canvas: element, viewport, transform: ratio === 1 ? undefined : [ratio, 0, 0, ratio, 0, 0] });
-        return task.promise.then(() => setFailed(false));
-      })
-      .catch((error: unknown) => {
-        if (!(error instanceof RenderingCancelledException)) setFailed(true);
-      });
+    const run = previous.current.then(async () => {
+      if (cancelled) return;
+      if (!visible) {
+        // Free the bitmap of pages far from the viewport.
+        element.width = 0;
+        element.height = 0;
+        return;
+      }
+      const page = await pdf.getPage(number);
+      if (cancelled) return;
+      const viewport = page.getViewport({ scale });
+      const ratio = canvasPixelRatio(viewport.width, viewport.height, window.devicePixelRatio || 1);
+      element.width = Math.floor(viewport.width * ratio);
+      element.height = Math.floor(viewport.height * ratio);
+      task = page.render({ canvas: element, viewport, transform: ratio === 1 ? undefined : [ratio, 0, 0, ratio, 0, 0] });
+      await task.promise;
+      setFailed(false);
+    });
+    previous.current = run.catch((error: unknown) => {
+      if (error instanceof RenderingCancelledException) return;
+      console.error(`PDF page ${number} failed to render`, error);
+      setFailed(true);
+    });
     return () => {
       cancelled = true;
       task?.cancel();

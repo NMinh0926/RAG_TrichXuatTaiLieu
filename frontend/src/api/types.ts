@@ -35,6 +35,11 @@ export interface DocumentInfo {
   created_at: string;
   updated_at: string;
   latest_job?: Job | null;
+  /** null: uploaded before accounts existed (always shared). */
+  owner_id: string | null;
+  is_shared: boolean;
+  /** Whether the signed-in user may share, re-index or delete it. */
+  can_manage: boolean;
 }
 
 export interface Page<T> {
@@ -117,4 +122,35 @@ export interface LlmHealth {
   status: string;
   model: string;
   model_available: boolean;
+}
+
+export type Role = 'admin' | 'user';
+
+export interface User {
+  id: string;
+  username: string;
+  role: Role;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface Session {
+  user: User;
+  access_token: string;
+  expires_in: number;
+}
+
+export interface Check {
+  ok: boolean;
+  ms?: number;
+  error?: string;
+}
+
+export interface SystemStatus {
+  status: 'ok' | 'degraded';
+  checks: Record<string, Check>;
+  queue: { workers: number; queued_jobs: number; failed_jobs: number } | null;
+  documents_by_status: Partial<Record<DocumentStatus, number>> | null;
+  jobs_by_status: Partial<Record<JobStatus, number>> | null;
+  config: Record<string, string | number | null>;
 }

@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { listConversations } from './api/client';
-import type { DocumentInfo, Source } from './api/types';
+import type { DocumentInfo, Source, User } from './api/types';
 import { ChatPanel, type Scope } from './components/ChatPanel';
 import { ConversationHistory } from './components/ConversationHistory';
 import { DocumentLibrary } from './components/DocumentLibrary';
@@ -8,6 +8,7 @@ import { Icon } from './components/Icon';
 import { LlmStatus } from './components/LlmStatus';
 import { Sidebar } from './components/Sidebar';
 import { iconButton } from './components/ui';
+import { UserMenu } from './components/UserMenu';
 import { ViewerPanel, type ViewerTarget } from './components/ViewerPanel';
 import { useChat } from './hooks/useChat';
 import { DESKTOP_QUERY, useMediaQuery } from './hooks/useMediaQuery';
@@ -16,7 +17,7 @@ import { useTheme } from './hooks/useTheme';
 
 const CONVERSATION_PAGE_SIZE = 20;
 
-export function App() {
+export function App({ user, onLogout }: { user: User; onLogout: () => void }) {
   const { theme, toggle: toggleTheme } = useTheme();
   const desktop = useMediaQuery(DESKTOP_QUERY);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -112,6 +113,7 @@ export function App() {
         >
           <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
         </button>
+        <UserMenu user={user} onLogout={onLogout} />
       </header>
       <div className="flex min-h-0 flex-1">
         <Sidebar

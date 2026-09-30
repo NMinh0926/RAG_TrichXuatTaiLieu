@@ -9,7 +9,11 @@ import type {
   Job,
   LlmHealth,
   Page,
+  Role,
+  Session,
   Submission,
+  SystemStatus,
+  User,
 } from './types';
 
 export class ApiError extends Error {
@@ -25,11 +29,14 @@ export class ApiError extends Error {
 }
 
 const STATUS_MESSAGES: Record<number, string> = {
+  401: 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',
+  403: 'Bạn không có quyền thực hiện thao tác này.',
   404: 'Không tìm thấy dữ liệu yêu cầu.',
   409: 'Thao tác bị từ chối vì dữ liệu đang được xử lý.',
   413: 'File quá lớn.',
   415: 'Định dạng file không được hỗ trợ.',
   422: 'Dữ liệu gửi lên không hợp lệ.',
+  429: 'Quá nhiều yêu cầu; vui lòng thử lại sau ít phút.',
   503: 'Dịch vụ tạm thời không sẵn sàng.',
 };
 
@@ -54,7 +61,19 @@ export function isAbortError(error: unknown): boolean {
   return error instanceof DOMException && error.name === 'AbortError';
 }
 
-/** Single entry point for HTTP calls (a place to add auth headers later). Throws ApiError when not ok. */
+type UnauthorizedListener = () => void;
+const unauthorizedListeners = new Set<UnauthorizedListener>();
+
+/** Called when any request comes back 401 (session expired or revoked); returns an unsubscribe function. */
+export function onUnauthorized(listener: UnauthorizedListener): () => void {
+  unauthorizedListeners.add(listener);
+  return () => unauthorizedListeners.delete(listener);
+}
+
+/**
+ * Single entry point for HTTP calls. Authentication is the HttpOnly session cookie the browser sends on
+ * same-origin requests (also for pdf.js and EventSource). Throws ApiError when not ok.
+ */
 export async function request(path: string, init: RequestInit = {}): Promise<Response> {
   let response: Response;
   try {
@@ -63,8 +82,13 @@ export async function request(path: string, init: RequestInit = {}): Promise<Res
     if (isAbortError(error)) throw error;
     throw new ApiError(0, 'network_error', 'Không kết nối được máy chủ. Hãy kiểm tra backend đang chạy.');
   }
+  if (response.status === 401 && path !== '/api/auth/login') unauthorizedListeners.forEach((listener) => listener());
   if (!response.ok) throw await errorFromResponse(response);
   return response;
+}
+
+function jsonInit(method: string, body: unknown): RequestInit {
+  return { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) };
 }
 
 async function requestJson<T>(path: string, init: RequestInit = {}): Promise<T> {
@@ -102,6 +126,10 @@ export async function deleteDocument(id: string): Promise<void> {
 
 export function reindexDocument(id: string): Promise<Job> {
   return requestJson(`/api/documents/${id}/reindex`, { method: 'POST' });
+}
+
+export function setDocumentShared(id: string, isShared: boolean): Promise<DocumentInfo> {
+  return requestJson(`/api/documents/${id}`, jsonInit('PATCH', { is_shared: isShared }));
 }
 
 export function documentFileUrl(id: string): string {
@@ -168,8 +196,46 @@ export async function deleteConversation(id: string): Promise<void> {
   await request(`/api/conversations/${id}`, { method: 'DELETE' });
 }
 
-// Health
+// Session and accounts
+
+export function login(username: string, password: string): Promise<Session> {
+  return requestJson('/api/auth/login', jsonInit('POST', { username, password }));
+}
+
+export async function logout(): Promise<void> {
+  await request('/api/auth/logout', { method: 'POST' });
+}
+
+/** The signed-in user, or null without a valid session. */
+export async function currentUser(): Promise<User | null> {
+  const response = await fetch('/api/auth/me').catch(() => null);
+  if (response?.status === 401) return null;
+  if (!response?.ok) throw response ? await errorFromResponse(response) : new ApiError(0, 'network_error', 'Không kết nối được máy chủ.');
+  return (await response.json()) as User;
+}
+
+export function changePassword(currentPassword: string, newPassword: string): Promise<Session> {
+  return requestJson('/api/auth/password', jsonInit('POST', { current_password: currentPassword, new_password: newPassword }));
+}
+
+export function listUsers(): Promise<User[]> {
+  return requestJson('/api/users');
+}
+
+export function createUser(username: string, password: string, role: Role): Promise<User> {
+  return requestJson('/api/users', jsonInit('POST', { username, password, role }));
+}
+
+export function updateUser(id: string, changes: { password?: string; role?: Role; is_active?: boolean }): Promise<User> {
+  return requestJson(`/api/users/${id}`, jsonInit('PATCH', changes));
+}
+
+// Health and status
 
 export function getLlmHealth(): Promise<LlmHealth> {
   return requestJson('/health/llm');
+}
+
+export function getSystemStatus(): Promise<SystemStatus> {
+  return requestJson('/api/system/status');
 }

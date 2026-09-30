@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { deleteDocument, listDocuments, reindexDocument } from '../api/client';
+import { deleteDocument, listDocuments, reindexDocument, setDocumentShared } from '../api/client';
 import type { DocumentInfo } from '../api/types';
 import { useConfirmAction } from '../hooks/useConfirmAction';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
@@ -25,12 +25,14 @@ function DocumentRow({
   onOpen,
   onDelete,
   onReindex,
+  onToggleShare,
 }: {
   document: DocumentInfo;
   active: boolean;
   onOpen: () => void;
   onDelete: () => void;
   onReindex: () => void;
+  onToggleShare: () => void;
 }) {
   const busy = document.status === 'pending' || document.status === 'processing';
   const details = [formatBytes(document.size_bytes), document.page_count ? `${document.page_count} trang` : null, formatDate(document.created_at)]
@@ -49,6 +51,15 @@ function DocumentRow({
           <span className="min-w-0 flex-1 truncate text-sm font-medium" title={document.filename}>
             {document.filename}
           </span>
+          {document.is_shared && (
+            <span
+              className="inline-flex shrink-0 items-center gap-1 rounded-full bg-sky-100 px-2 py-0.5 text-xs font-medium text-sky-800 dark:bg-sky-950 dark:text-sky-300"
+              title="Mọi người dùng đều xem và hỏi đáp được tài liệu này"
+            >
+              <Icon name="share" className="size-3" />
+              Chung
+            </span>
+          )}
           <StatusBadge status={document.status} />
         </span>
         <span className="mt-0.5 block text-xs text-slate-500 dark:text-slate-400">{details}</span>
@@ -61,20 +72,33 @@ function DocumentRow({
           <span className="mt-0.5 block text-xs text-red-700 dark:text-red-400">{document.error_message}</span>
         )}
       </button>
-      {document.status === 'failed' && (
+      {document.can_manage && document.owner_id !== null && (
+        <button
+          type="button"
+          className={`${iconButton} size-8`}
+          onClick={onToggleShare}
+          aria-label={document.is_shared ? `Chuyển ${document.filename} về riêng tư` : `Chia sẻ ${document.filename} cho mọi người`}
+          title={document.is_shared ? 'Chuyển về riêng tư' : 'Chia sẻ cho mọi người'}
+        >
+          <Icon name={document.is_shared ? 'lock' : 'share'} className="size-4" />
+        </button>
+      )}
+      {document.can_manage && document.status === 'failed' && (
         <button type="button" className={`${iconButton} size-8`} onClick={onReindex} aria-label={`Xử lý lại ${document.filename}`} title="Xử lý lại">
           <Icon name="refresh" className="size-4" />
         </button>
       )}
-      <button
-        type="button"
-        className={`${iconButton} size-8 hover:text-red-600 dark:hover:text-red-400`}
-        onClick={onDelete}
-        aria-label={`Xóa ${document.filename}`}
-        title="Xóa"
-      >
-        <Icon name="trash" className="size-4" />
-      </button>
+      {document.can_manage && (
+        <button
+          type="button"
+          className={`${iconButton} size-8 hover:text-red-600 dark:hover:text-red-400`}
+          onClick={onDelete}
+          aria-label={`Xóa ${document.filename}`}
+          title="Xóa"
+        >
+          <Icon name="trash" className="size-4" />
+        </button>
+      )}
     </li>
   );
 }
@@ -117,6 +141,13 @@ export function DocumentLibrary({ activeDocumentId, onOpen, onDeleted }: Documen
       .catch((caught: unknown) => setActionError(caught instanceof Error ? caught.message : String(caught)));
   };
 
+  const toggleShare = (document: DocumentInfo) => {
+    setActionError(null);
+    setDocumentShared(document.id, !document.is_shared)
+      .then(refresh)
+      .catch((caught: unknown) => setActionError(caught instanceof Error ? caught.message : String(caught)));
+  };
+
   return (
     <div className="flex h-full flex-col gap-3">
       <UploadPanel uploads={uploads} />
@@ -156,6 +187,7 @@ export function DocumentLibrary({ activeDocumentId, onOpen, onDeleted }: Documen
                   onOpen={() => onOpen(document)}
                   onDelete={() => removal.ask(document)}
                   onReindex={() => reindex(document)}
+                  onToggleShare={() => toggleShare(document)}
                 />
               ))}
             </ul>

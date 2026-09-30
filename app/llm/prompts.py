@@ -46,8 +46,14 @@ Chỉ dùng thông tin trong các bản tóm tắt; không bịa. Không gộp m
 MERGE_SYSTEM = '''Gộp các bản tóm tắt từng phần (theo thứ tự) của tài liệu "{filename}" thành một bản tóm tắt gạch đầu dòng
 duy nhất, giữ tiêu đề chương/mục và mọi số liệu quan trọng, bỏ ý trùng lặp. Không thêm thông tin mới.'''
 
-MULTI_SUMMARY_SYSTEM = '''Bạn nhận bản tóm tắt của nhiều tài liệu. Viết một đoạn tổng hợp ngắn (markdown, tiếng Việt) nêu
-mỗi tài liệu nói về gì và điểm liên quan giữa chúng, rồi giữ nguyên từng bản tóm tắt bên dưới tiêu đề tên tài liệu.'''
+# Only the introduction is generated: the per-document summaries are appended by the service, not copied by the LLM.
+MULTI_SUMMARY_SYSTEM = '''Bạn nhận bản tóm tắt của nhiều tài liệu. Viết một đoạn mở đầu ngắn (tiếng Việt, tối đa khoảng
+150 từ, không dùng tiêu đề) nêu mỗi tài liệu nói về gì và điểm liên quan hoặc khác biệt giữa chúng, bám theo YÊU CẦU.
+Không chép lại các bản tóm tắt: chúng sẽ được hiển thị đầy đủ ngay bên dưới đoạn của bạn. Chỉ dùng thông tin được cung cấp.'''
+
+# The follow-up rewrite only needs the gist of the recent turns: long answers and summaries are clipped.
+REWRITE_HISTORY_MESSAGES = 4
+REWRITE_MESSAGE_CHARS = 300
 
 
 def location(hit: SearchHit) -> str:
@@ -67,8 +73,18 @@ def rag_messages(question: str, contexts: list[SearchHit]) -> list[dict[str, str
             {'role': 'user', 'content': f'NGỮ CẢNH:\n{blocks}\n\nCÂU HỎI: {question}'}]
 
 
+def clip_turn(text: str, limit: int = REWRITE_MESSAGE_CHARS) -> str:
+    """One line of at most `limit` characters: the beginning of a message, cut at a word boundary."""
+    flat = ' '.join(text.split())
+    if len(flat) <= limit:
+        return flat
+    cut = flat.rfind(' ', 0, limit)
+    return f'{flat[:cut if cut > limit // 2 else limit]} …'
+
+
 def rewrite_messages(history: list[tuple[str, str]], question: str) -> list[dict[str, str]]:
-    turns = '\n'.join(f"{'Người dùng' if role == 'user' else 'Trợ lý'}: {text}" for role, text in history)
+    turns = '\n'.join(f"{'Người dùng' if role == 'user' else 'Trợ lý'}: {clip_turn(text)}"
+                      for role, text in history[-REWRITE_HISTORY_MESSAGES:])
     return [{'role': 'system', 'content': REWRITE_SYSTEM},
             {'role': 'user', 'content': f'LỊCH SỬ:\n{turns}\n\nCÂU HỎI MỚI NHẤT: {question}'}]
 

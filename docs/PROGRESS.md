@@ -212,6 +212,38 @@ Rủi ro chấp nhận (ghi trong README "Bảo mật"): admin đặt lại mậ
 `X-Real-IP` được tin khi gọi thẳng cổng API (chỉ mở trên 127.0.0.1); trích dẫn cũ vẫn nằm trong lịch sử hội thoại
 sau khi tài liệu bị bỏ chia sẻ (ảnh chụp tại thời điểm trả lời); log trong lúc stream SSE không mang `request_id`.
 
+## Sau Giai đoạn 6 — sửa theo phản hồi và rà soát toàn bộ (30/09/2026)
+
+- Commit sau G6: PDF viewer dùng bản legacy của pdf.js 6 (bản thường cần `Map.getOrInsertComputed`, trình duyệt
+  hiện nay chưa có → mọi trang báo "Không hiển thị được"); nút xem mật khẩu + bỏ khoảng trắng dán thừa khi đăng nhập;
+  bấm bất kỳ đâu trong ô nạp để chọn file. (Mật khẩu admin báo cho người dùng lúc đầu bị ghi sai — đã báo lại đúng;
+  người dùng đã tự đổi mật khẩu.)
+- Rà soát toàn bộ bằng workflow 5 hướng + agent phản biện: 40 lỗi xác nhận, cộng 3 lỗi tìm từ log phiên chat thật
+  (A: "tom tat" không dấu không được hiểu là tóm tắt; B: bước viết lại câu hỏi nối tiếp gửi nguyên lịch sử dài,
+  timeout 180 s làm hỏng cả lượt; C: câu viết lại không được kiểm soát — 680 ký tự). Đã sửa cả 43 (kèm test):
+  - Hỏi đáp: luật intent không phân biệt dấu nhưng không bắt nhầm "chính sách/chính thức…", NFC cho câu hỏi và tên
+    file; lịch sử cắt ngắn khi viết lại, lỗi/viết lại bất thường → dùng câu gốc; "tóm tắt Điều 5/chương 2" → RAG có
+    trích dẫn; tóm tắt nhiều tài liệu ghép nguyên văn; cache tóm tắt upsert và bị xóa khi re-index; phiên DB ngắn,
+    không giữ kết nối trong lúc LLM sinh chữ; tên file quá ngắn không bị khớp nhầm.
+  - Nạp tài liệu: bbox đúng với trang có /Rotate; thứ tự đọc theo khối (không trộn cột); giới hạn tài nguyên (zip bomb
+    DOCX/XLSX, ảnh quá lớn, trang PDF khổng lồ); lỗi tiếng Việt; khoảng trắng lạ không làm mất bbox cả trang.
+  - Worker/job: khóa advisory PostgreSQL theo tài liệu (nhiều worker không chạy trùng), job làm worker chết 2 lần →
+    failed (không crash-loop), job kẹt/bỏ dở không còn chặn xóa/re-index, enqueue lỗi khi re-index được hoàn tác,
+    recovery chạy định kỳ; upload kiểu cũ `/api/documents/upload` chờ bất đồng bộ, dừng khi client ngắt.
+  - Vận hành: URL DB tạo từ `POSTGRES_*` (mật khẩu ký tự đặc biệt), container **bỏ qua `DATABASE_URL` trong .env**
+    (`.env` của người dùng còn một URL `localhost` từ thời chạy ngoài Docker — đã làm `init` lỗi khi thử cách cũ);
+    init báo lỗi rõ khi đổi `POSTGRES_PASSWORD` sau lần đầu; `restore.ps1` kiểm tra phiên bản schema và luôn bật
+    lại stack; `/health/llm` + trang trạng thái kiểm tra `LLM_SUMMARY_MODEL`; `package_submission.py` không đóng
+    gói dữ liệu đánh giá riêng.
+  - Giao diện: chọn phạm vi tìm trên server (mọi tài liệu, tối đa 50), bỏ tài liệu đã mất khỏi phạm vi; lịch sử cập
+    nhật cả khi dừng/lỗi; thả file ngoài ô không rời trang; Esc đóng menu không đóng viewer; thông báo lỗi 422/500
+    tiếng Việt cụ thể; danh sách không bị cắt về 100 mục; tên file đầy đủ khi rê chuột; link trong câu trả lời không
+    bấm được (chống prompt-injection/phishing).
+- Kiểm thử: backend **322** test (từ 177), frontend **72** (từ 35); chạy lại đúng kịch bản lỗi của người dùng qua API
+  thật (không dấu → tóm tắt 15 s; câu nối tiếp không lỗi 27 s; "chính sách" → hỏi đáp); trình duyệt thật: ô nạp,
+  upload, 0 lỗi console.
+- `tests/conftest.py`: `TEST_DB_SUFFIX` cho mỗi lần chạy test một DB riêng (chạy song song không xóa dữ liệu của nhau).
+
 ## Quyết định / ghi chú
 
 - **MinIO → SeaweedFS** (người dùng duyệt): MinIO không còn image Docker công khai (Docker Hub gỡ, quay/ghcr cần đăng nhập).

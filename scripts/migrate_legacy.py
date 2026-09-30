@@ -122,6 +122,8 @@ def migrate(uploads: Path, chroma: Path) -> dict:
                                     size_bytes=len(data), sha256=hashlib.sha256(data).hexdigest(),
                                     object_key=f'documents/{document_id}{extension_of(filename)}',
                                     status=DocumentStatus.processing, chunk_count=len(entry.ids),
+                                    # Pre-account documents have no owner and are shared with every user.
+                                    owner_id=None, is_shared=True,
                                     page_count=max((m.get('page') or 0 for m in entry.metadatas), default=0) or None)
                 repository.add(document)
                 # Commit before writing vectors: an interrupted run leaves a visible 'processing' row

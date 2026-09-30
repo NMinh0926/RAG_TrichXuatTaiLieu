@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from sqlalchemy.orm import Session
 
 from app.core.errors import PipelineError
-from app.db.models import Document, DocumentStatus, MessageRole
+from app.db.models import Document, DocumentStatus, MessageRole, User
 from app.db.repositories import ConversationRepository, DocumentRepository
 from app.llm.client import LLMClient
 from app.llm.prompts import NO_CONTEXT_ANSWER, multi_summary_messages, rewrite_messages
@@ -63,46 +63,52 @@ class ChatService:
         self.llm, self.settings, self.summary_llm = llm, settings, summary_llm
 
     def ask(self, question: str, conversation_id: uuid.UUID | None = None,
-            document_ids: list[uuid.UUID] | None = None) -> Iterator[ChatEvent]:
-        """Validation errors (unknown conversation/document) raise before the first event."""
+            document_ids: list[uuid.UUID] | None = None, user: User | None = None) -> Iterator[ChatEvent]:
+        """Validation errors (unknown conversation/document) raise before the first event.
+
+        With a `user`, only their conversations and the documents they may read (own + shared) are used;
+        None (scripts) means no restriction.
+        """
         session = self.session_factory()
+        owner_id = user.id if user is not None else None
         try:
             conversations = ConversationRepository(session)
             if conversation_id is None:
-                conversation = conversations.create(question[:80])
-            elif (conversation := conversations.get(conversation_id)) is None:
+                conversation = conversations.create(question[:80], owner_id)
+            elif (conversation := conversations.get(conversation_id, owner_id)) is None:
                 raise PipelineError('conversation_not_found', 'Không tìm thấy hội thoại.', 404)
-            scope = self._scope(session, document_ids)
+            scope = self._scope(session, document_ids, user)
             history = [(m.role.value, m.content) for m in conversations.history(conversation.id, HISTORY_MESSAGES)]
             user_message = conversations.add_message(conversation, MessageRole.user, question)
             session.commit()
         except Exception:
             session.close()
             raise
-        return self._turn(session, conversation.id, user_message.id, question, history, scope)
+        return self._turn(session, conversation.id, user_message.id, question, history, scope, user)
 
-    def _scope(self, session: Session, document_ids: list[uuid.UUID] | None) -> list[Document]:
+    def _scope(self, session: Session, document_ids: list[uuid.UUID] | None, user: User | None) -> list[Document]:
         if not document_ids:
             return []
         repository = DocumentRepository(session)
-        documents = [repository.get(document_id) for document_id in dict.fromkeys(document_ids)]
+        documents = [repository.get_visible(document_id, user) for document_id in dict.fromkeys(document_ids)]
         if any(document is None for document in documents):
             raise PipelineError('document_not_found', 'Không tìm thấy tài liệu trong phạm vi hỏi.', 404)
         return documents
 
     def _turn(self, session: Session, conversation_id: uuid.UUID, user_message_id: uuid.UUID, question: str,
-              history: list[tuple[str, str]], scope: list[Document]) -> Iterator[ChatEvent]:
+              history: list[tuple[str, str]], scope: list[Document], user: User | None) -> Iterator[ChatEvent]:
         try:
             yield ChatEvent('meta', {'conversation_id': str(conversation_id), 'user_message_id': str(user_message_id)})
             standalone = self._standalone(history, question)
             intent = classify(standalone, self.llm)
             yield ChatEvent('meta', {'intent': intent.intent, 'question': standalone})
             pieces: list[str] = []
+            allowed = self._allowed(session, scope, user)
             if intent.intent == 'summary':
-                sources = yield from self._summary(session, standalone, scope, pieces)
+                sources = yield from self._summary(session, standalone, scope, allowed, user, pieces)
                 answer = ''.join(pieces).strip()
             else:
-                answer, sources = yield from self._rag(session, standalone, scope, pieces)
+                answer, sources = yield from self._rag(session, standalone, allowed, pieces)
             conversations = ConversationRepository(session)
             conversation = conversations.get(conversation_id)
             message = conversations.add_message(conversation, MessageRole.assistant, answer, sources)
@@ -127,8 +133,18 @@ class ChatService:
         logger.info('follow-up rewritten chars=%d', len(rewritten))
         return rewritten or question
 
-    def _rag(self, session: Session, question: str, scope: list[Document], pieces: list[str]):
-        contexts = self.retrieval.search_candidates(question, document_ids=[str(d.id) for d in scope] or None)
+    @staticmethod
+    def _allowed(session: Session, scope: list[Document], user: User | None) -> list[str] | None:
+        """Document ids retrieval may search: the chosen scope, else every ready document the user may read.
+        None = unrestricted (no user). An empty list means nothing is searchable."""
+        if scope:
+            return [str(d.id) for d in scope]
+        if user is None:
+            return None
+        return [str(d.id) for d in DocumentRepository(session).visible_ready(user)]
+
+    def _rag(self, session: Session, question: str, allowed: list[str] | None, pieces: list[str]):
+        contexts = self.retrieval.search_candidates(question, document_ids=allowed) if allowed != [] else []
         if not contexts:
             pieces.append(NO_CONTEXT_ANSWER)
             yield ChatEvent('token', {'text': NO_CONTEXT_ANSWER})
@@ -146,8 +162,9 @@ class ChatService:
         sources = [chunk_source(i + 1, contexts[i], boxes.get(contexts[i].id)) for i in verdict.context_indexes]
         return verdict.answer, sources
 
-    def _summary(self, session: Session, question: str, scope: list[Document], pieces: list[str]):
-        documents = self._summary_documents(session, question, scope)
+    def _summary(self, session: Session, question: str, scope: list[Document], allowed: list[str] | None,
+                 user: User | None, pieces: list[str]):
+        documents = self._summary_documents(session, question, scope, allowed, user)
         if not documents:
             pieces.append(NO_CONTEXT_ANSWER)
             yield ChatEvent('token', {'text': NO_CONTEXT_ANSWER})
@@ -174,12 +191,14 @@ class ChatService:
                 yield ChatEvent('token', {'text': delta})
         return [document_source(n, document) for n, document in enumerate(documents, 1)]
 
-    def _summary_documents(self, session: Session, question: str, scope: list[Document]) -> list[Document]:
+    def _summary_documents(self, session: Session, question: str, scope: list[Document], allowed: list[str] | None,
+                           user: User | None) -> list[Document]:
         """Scope if given; else documents named in the question; else the document of the best-matching chunk."""
         if scope:
             return [d for d in scope if d.status == DocumentStatus.ready][:MAX_SUMMARY_DOCUMENTS]
-        repository = DocumentRepository(session)
-        ready = [d for d in repository.list(1, 100)[0] if d.status == DocumentStatus.ready]
+        ready = DocumentRepository(session).visible_ready(user)
+        if not ready:
+            return []
         folded = question.casefold()
         named = [d for d in ready if d.filename.casefold() in folded
                  or re.sub(r'\.[^.]+$', '', d.filename).casefold() in folded]
@@ -187,6 +206,6 @@ class ChatService:
             return named[:MAX_SUMMARY_DOCUMENTS]
         if len(ready) == 1:
             return ready
-        hits = self.retrieval.search_candidates(question)
+        hits = self.retrieval.search_candidates(question, document_ids=allowed)
         best = hits[0].metadata.get('document_id') if hits else None
         return [d for d in ready if str(d.id) == best]

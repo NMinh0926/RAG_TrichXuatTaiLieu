@@ -1,4 +1,5 @@
 import re
+import uuid
 from types import SimpleNamespace
 import pytest
 from scripts.create_samples import create_samples, OCR_TEXT
@@ -103,7 +104,7 @@ def db_session(db_engine):
     from sqlalchemy import text
     from sqlalchemy.orm import sessionmaker
     with db_engine.begin() as connection:
-        connection.execute(text('TRUNCATE documents, conversations CASCADE'))
+        connection.execute(text('TRUNCATE documents, conversations, users CASCADE'))
     with sessionmaker(bind=db_engine, expire_on_commit=False)() as session:
         yield session
 
@@ -112,3 +113,36 @@ def db_session(db_engine):
 def memory_storage():
     from tests.fakes import InMemoryStorage
     return InMemoryStorage()
+
+
+@pytest.fixture(autouse=True)
+def signed_in():
+    """API requests act as a signed-in admin (no database row) that may read every document, without Redis
+    rate limits. DB-backed tests use `db_user`; tests of authentication itself remove these overrides."""
+    from app.api.questions import get_readable_document_ids
+    from app.core.auth import get_current_user
+    from app.core.dependencies import get_rate_limiter
+    from app.core.ratelimit import RateLimiter
+    from app.db.models import UserRole
+    from app.main import app
+    user = SimpleNamespace(id=uuid.uuid4(), username='tester', role=UserRole.admin, is_active=True)
+    overrides = {get_current_user: lambda: user, get_rate_limiter: RateLimiter,
+                 get_readable_document_ids: lambda: None}
+    app.dependency_overrides.update(overrides)
+    yield user
+    for dependency in overrides:
+        app.dependency_overrides.pop(dependency, None)
+
+
+@pytest.fixture
+def db_user(db_session):
+    """A real admin row (documents and conversations reference their owner), used as the signed-in user."""
+    from app.core.auth import get_current_user
+    from app.core.security import hash_password
+    from app.db.models import User, UserRole
+    from app.main import app
+    user = User(username='tester', password_hash=hash_password('password-123'), role=UserRole.admin)
+    db_session.add(user)
+    db_session.commit()
+    app.dependency_overrides[get_current_user] = lambda: user
+    return user

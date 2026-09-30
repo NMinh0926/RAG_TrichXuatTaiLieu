@@ -39,14 +39,15 @@ class DocumentService:
         return self.session.scalar(select(IngestJob).where(IngestJob.document_id == document_id)
                                    .order_by(IngestJob.created_at.desc()).limit(1))
 
-    def submit(self, filename: str, data: bytes) -> Submission:
-        """Store the file and queue its processing. An identical file (same SHA-256) is never processed twice:
-        a ready or in-flight document is returned as a duplicate; a failed one is replaced."""
+    def submit(self, filename: str, data: bytes, owner_id: uuid.UUID | None = None) -> Submission:
+        """Store the file and queue its processing. An identical file (same SHA-256) of the same owner is never
+        processed twice: a ready or in-flight document is returned as a duplicate; a failed one is replaced.
+        Documents without an owner (maintenance scripts) are shared with every user."""
         content_type = content_type_for(filename)
         if not data:
             raise PipelineError('empty_document', 'File is missing or empty.')
         sha256 = hashlib.sha256(data).hexdigest()
-        existing = self.repository.get_by_sha256(sha256)
+        existing = self.repository.get_by_sha256(sha256, owner_id)
         if existing is not None and existing.status != DocumentStatus.failed:
             logger.info('duplicate upload document_id=%s status=%s', existing.id, existing.status.value)
             return Submission(existing, self.latest_job(existing.id), True)
@@ -55,7 +56,8 @@ class DocumentService:
         document_id = uuid.uuid4()
         object_key = f'documents/{document_id}{extension_of(filename)}'
         document = Document(id=document_id, filename=filename, content_type=content_type, size_bytes=len(data),
-                            sha256=sha256, object_key=object_key, status=DocumentStatus.pending)
+                            sha256=sha256, object_key=object_key, status=DocumentStatus.pending,
+                            owner_id=owner_id, is_shared=owner_id is None)
         job = IngestJob(document_id=document_id)
         try:
             # Claim the SHA-256 before storing anything: a concurrent identical upload loses here.
@@ -64,7 +66,7 @@ class DocumentService:
             self.session.commit()
         except IntegrityError:
             self.session.rollback()
-            winner = self.repository.get_by_sha256(sha256)
+            winner = self.repository.get_by_sha256(sha256, owner_id)
             if winner is None:
                 raise
             return Submission(winner, self.latest_job(winner.id), True)

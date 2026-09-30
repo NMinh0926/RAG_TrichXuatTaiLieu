@@ -8,6 +8,7 @@ Call `isolate()` BEFORE app settings are created, then `prepare()` once:
 - Ingest jobs run inline in this process (the shared worker reads the real database).
 """
 import os
+import uuid
 from pathlib import Path
 
 from sqlalchemy import create_engine, text
@@ -71,3 +72,20 @@ def prepare() -> None:
     from app.services.jobs import IngestRunner, InlineJobQueue
     runner = IngestRunner(get_sessionmaker(), get_storage(), dependencies.get_services()[0])
     dependencies.get_job_queue = lambda: InlineJobQueue(runner)
+    # Requests act as a scratch `benchmark` admin; no rate limits (load tests exceed them on purpose).
+    from fastapi import Depends
+    from app.core.auth import get_current_user
+    from app.core.ratelimit import RateLimiter
+    from app.db.models import UserRole
+    from app.db.repositories import UserRepository
+    from app.db.session import get_db
+    from app.main import app
+    from scripts.create_user import create_or_reset
+    with get_sessionmaker()() as session:
+        if UserRepository(session).by_username('benchmark') is None:
+            create_or_reset(session, 'benchmark', uuid.uuid4().hex, UserRole.admin)
+
+    def benchmark_user(session=Depends(get_db)):
+        return UserRepository(session).by_username('benchmark')
+    app.dependency_overrides[get_current_user] = benchmark_user
+    app.dependency_overrides[dependencies.get_rate_limiter] = RateLimiter

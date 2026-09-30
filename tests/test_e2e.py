@@ -31,7 +31,7 @@ pytestmark = pytest.mark.integration
     ('sample.jpg', 'How many days of annual leave do employees receive?', '12', {}),
     ('sample_scan.pdf', 'How many days of annual leave do employees receive?', '12', {'page': 1}),
 ])
-def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch, db_session, db_engine,
+def test_upload_then_ask(samples, tmp_path, real_embedding, real_ocr, monkeypatch, db_session, db_engine, db_user,
                          memory_storage, filename, question, keyword, source):
     settings = Settings(chroma_path=tmp_path / 'chroma', chroma_host='', _env_file=None)
     store = VectorStore(settings.chroma_path, settings.embedding_model, settings.chunk_size, settings.chunk_overlap)

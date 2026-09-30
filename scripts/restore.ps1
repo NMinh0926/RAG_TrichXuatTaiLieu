@@ -15,7 +15,7 @@ foreach ($required in 'postgres.dump', 'chroma.tar.gz', 'objects\manifest.json')
 }
 
 Invoke-Checked { docker compose up -d postgres seaweedfs chroma --wait } 'start storage services'
-Invoke-Checked { docker compose stop api } 'stop api'
+Invoke-Checked { docker compose stop api worker } 'stop api and worker'
 
 Invoke-Checked { docker compose cp (Join-Path $full 'postgres.dump') postgres:/tmp/rag.dump } 'copy dump'
 Invoke-Checked { docker compose exec -T postgres sh -c 'pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean --if-exists --no-owner /tmp/rag.dump; status=$?; rm -f /tmp/rag.dump; exit $status' } 'pg_restore'

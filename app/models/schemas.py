@@ -96,6 +96,15 @@ class DocumentOut(BaseModel):
     created_at: datetime
     updated_at: datetime
     latest_job: JobOut | None = None
+    # NULL owner: uploaded before accounts existed (shared).
+    owner_id: uuid.UUID | None = None
+    is_shared: bool = False
+    # Whether the requesting user may share, re-index or delete it.
+    can_manage: bool = False
+
+
+class DocumentUpdate(BaseModel):
+    is_shared: bool
 
 
 class SubmissionOut(BaseModel):
@@ -169,3 +178,45 @@ class Source(BaseModel):
 class AnswerResponse(BaseModel):
     answer: str
     sources: list[Source] = Field(default_factory=list)
+
+
+USERNAME_PATTERN = r'^[A-Za-z0-9._-]{3,64}$'
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=64)
+    password: str = Field(min_length=1, max_length=256)
+
+
+class UserOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: uuid.UUID
+    username: str
+    role: str
+    is_active: bool
+    created_at: datetime
+
+
+class SessionOut(BaseModel):
+    user: UserOut
+    # For API clients (Authorization: Bearer); browsers use the HttpOnly cookie set by the same response.
+    access_token: str
+    expires_in: int
+
+
+class UserCreate(BaseModel):
+    username: str = Field(pattern=USERNAME_PATTERN)
+    password: str = Field(min_length=8, max_length=256)
+    role: str = Field('user', pattern='^(admin|user)$')
+
+
+class UserUpdate(BaseModel):
+    password: str | None = Field(None, min_length=8, max_length=256)
+    role: str | None = Field(None, pattern='^(admin|user)$')
+    is_active: bool | None = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str = Field(min_length=1, max_length=256)
+    new_password: str = Field(min_length=8, max_length=256)

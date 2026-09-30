@@ -3,10 +3,18 @@ from __future__ import annotations
 
 import uuid
 
-from sqlalchemy import delete, func, select
+from sqlalchemy import ColumnElement, delete, func, or_, select, true
 from sqlalchemy.orm import Session
 
-from app.db.models import Chunk, Conversation, Document, Message, MessageRole
+from app.db.models import Chunk, Conversation, Document, DocumentStatus, Message, MessageRole, User
+
+
+def visible_to(user: User | None) -> ColumnElement[bool]:
+    """Documents a user may read: their own, shared ones and ownerless ones (always shared).
+    None = no user filter (maintenance scripts)."""
+    if user is None:
+        return true()
+    return or_(Document.owner_id == user.id, Document.is_shared.is_(True), Document.owner_id.is_(None))
 
 
 class DocumentRepository:
@@ -16,17 +24,30 @@ class DocumentRepository:
     def get(self, document_id: uuid.UUID) -> Document | None:
         return self.session.get(Document, document_id)
 
-    def get_by_sha256(self, sha256: str) -> Document | None:
-        return self.session.scalar(select(Document).where(Document.sha256 == sha256))
+    def get_visible(self, document_id: uuid.UUID, user: User | None) -> Document | None:
+        return self.session.scalar(select(Document).where(Document.id == document_id, visible_to(user)))
 
-    def list(self, page: int, page_size: int, query: str | None = None) -> tuple[list[Document], int]:
+    def get_by_sha256(self, sha256: str, owner_id: uuid.UUID | None = None) -> Document | None:
+        """Duplicates are per owner, so an upload never reveals another user's private file."""
+        owner = Document.owner_id.is_(None) if owner_id is None else Document.owner_id == owner_id
+        return self.session.scalar(select(Document).where(Document.sha256 == sha256, owner))
+
+    def list(self, page: int, page_size: int, query: str | None = None,
+             user: User | None = None) -> tuple[list[Document], int]:
         """Newest first; `query` matches the original filename case-insensitively."""
-        condition = Document.filename.ilike(f'%{_escape_like(query)}%', escape='\\') if query else True
+        condition = visible_to(user)
+        if query:
+            condition = condition & Document.filename.ilike(f'%{_escape_like(query)}%', escape='\\')
         total = self.session.scalar(select(func.count()).select_from(Document).where(condition)) or 0
         items = self.session.scalars(select(Document).where(condition)
                                      .order_by(Document.created_at.desc(), Document.id)
                                      .offset((page - 1) * page_size).limit(page_size)).all()
         return list(items), total
+
+    def visible_ready(self, user: User | None) -> list[Document]:
+        return list(self.session.scalars(select(Document).where(visible_to(user),
+                                                                Document.status == DocumentStatus.ready)
+                                         .order_by(Document.created_at.desc())))
 
     def add(self, document: Document) -> Document:
         self.session.add(document)
@@ -56,18 +77,24 @@ class ConversationRepository:
     def __init__(self, session: Session):
         self.session = session
 
-    def get(self, conversation_id: uuid.UUID) -> Conversation | None:
-        return self.session.get(Conversation, conversation_id)
+    def get(self, conversation_id: uuid.UUID, owner_id: uuid.UUID | None = None) -> Conversation | None:
+        """With `owner_id`, only that user's conversation (others' look nonexistent)."""
+        conversation = self.session.get(Conversation, conversation_id)
+        if conversation is None or (owner_id is not None and conversation.owner_id != owner_id):
+            return None
+        return conversation
 
-    def create(self, title: str) -> Conversation:
-        conversation = Conversation(title=title)
+    def create(self, title: str, owner_id: uuid.UUID | None = None) -> Conversation:
+        conversation = Conversation(title=title, owner_id=owner_id)
         self.session.add(conversation)
         self.session.flush()
         return conversation
 
-    def list(self, page: int, page_size: int) -> tuple[list[Conversation], int]:
-        total = self.session.scalar(select(func.count()).select_from(Conversation)) or 0
-        items = self.session.scalars(select(Conversation).order_by(Conversation.updated_at.desc(), Conversation.id)
+    def list(self, page: int, page_size: int, owner_id: uuid.UUID | None = None) -> tuple[list[Conversation], int]:
+        condition = Conversation.owner_id == owner_id if owner_id is not None else true()
+        total = self.session.scalar(select(func.count()).select_from(Conversation).where(condition)) or 0
+        items = self.session.scalars(select(Conversation).where(condition)
+                                     .order_by(Conversation.updated_at.desc(), Conversation.id)
                                      .offset((page - 1) * page_size).limit(page_size)).all()
         return list(items), total
 
@@ -92,3 +119,25 @@ class ConversationRepository:
 
 def _escape_like(text: str) -> str:
     return text.replace('\\', '\\\\').replace('%', '\\%').replace('_', '\\_')
+
+
+class UserRepository:
+    def __init__(self, session: Session):
+        self.session = session
+
+    def get(self, user_id: uuid.UUID) -> User | None:
+        return self.session.get(User, user_id)
+
+    def by_username(self, username: str) -> User | None:
+        return self.session.scalar(select(User).where(func.lower(User.username) == username.lower()))
+
+    def list(self) -> list[User]:
+        return list(self.session.scalars(select(User).order_by(User.username)))
+
+    def count(self) -> int:
+        return self.session.scalar(select(func.count()).select_from(User)) or 0
+
+    def add(self, user: User) -> User:
+        self.session.add(user)
+        self.session.flush()
+        return user

@@ -37,9 +37,10 @@ class RetrievalService:
                     hits[0].relevance if hits else None)
         return candidates
 
-    def retrieve(self, question: str, top_k: int | None = None) -> list[SearchHit]:
+    def retrieve(self, question: str, top_k: int | None = None,
+                 document_ids: list[str] | None = None) -> list[SearchHit]:
         """Threshold-filtered search, kept for /questions/search and older callers."""
-        hits = self.raw_search(question, top_k)
+        hits = self.raw_search(question, top_k, document_ids)
         filtered = [hit for hit in hits if hit.relevance >= self.settings.retrieval_threshold]
         logger.info('retrieval raw_candidates=%d filtered_candidates=%d threshold=%s top_relevance=%s top_distance=%s',
                     len(hits), len(filtered), self.settings.retrieval_threshold,

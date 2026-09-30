@@ -5,6 +5,7 @@ from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
+from app.core.ratelimit import RateLimiter
 from app.db.session import get_db, get_sessionmaker
 from app.llm.client import LLMClient
 from app.services.chat import ChatService
@@ -53,6 +54,13 @@ def get_job_queue() -> RQJobQueue:
 def get_document_service(session: Session = Depends(get_db)) -> DocumentService:
     _, retrieval = get_services()
     return DocumentService(session, get_storage(), retrieval.store, get_job_queue())
+
+
+@lru_cache
+def get_rate_limiter() -> RateLimiter:
+    from redis import Redis
+    # Short timeouts: the limiter fails open instead of stalling requests when Redis is slow.
+    return RateLimiter(Redis.from_url(get_settings().redis_url, socket_connect_timeout=0.5, socket_timeout=0.5))
 
 
 @lru_cache

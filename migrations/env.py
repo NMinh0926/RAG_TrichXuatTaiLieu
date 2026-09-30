@@ -7,7 +7,8 @@ from app.core.config import get_settings
 from app.db.models import Base
 
 config = context.config
-if config.config_file_name is not None:
+# The CLI configures logging from alembic.ini; callers that already set up logging (init service) opt out.
+if config.config_file_name is not None and config.attributes.get('configure_logger', True):
     fileConfig(config.config_file_name, disable_existing_loggers=False)
 target_metadata = Base.metadata
 

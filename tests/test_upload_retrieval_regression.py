@@ -22,7 +22,7 @@ from tests.test_generation import grounded_reply, service_with_reply, user_messa
      'Một năm nhân viên được nghỉ bao nhiêu ngày phép?', '12'),
     ('Project Orion có mã nội bộ ZXQ-91827.', 'Mã nội bộ của Project Orion là gì?', 'ZXQ-91827'),
 ])
-def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding, db_session, db_engine,
+def test_upload_is_stored_and_immediately_searchable(tmp_path, monkeypatch, real_embedding, db_session, db_engine, db_user,
                                                     memory_storage, fact, question, keyword):
     from sqlalchemy.orm import sessionmaker
     from app.services.jobs import IngestRunner, InlineJobQueue

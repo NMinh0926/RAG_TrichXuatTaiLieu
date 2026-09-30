@@ -3,8 +3,8 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import (JSON, BigInteger, DateTime, Enum, ForeignKey, Identity, Index, Integer, String, Text,
-                        UniqueConstraint, func)
+from sqlalchemy import (JSON, BigInteger, Boolean, CheckConstraint, DateTime, Enum, ForeignKey, Identity, Index,
+                        Integer, String, Text, UniqueConstraint, func, text)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -35,6 +35,11 @@ class MessageRole(str, enum.Enum):
     assistant = 'assistant'
 
 
+class UserRole(str, enum.Enum):
+    admin = 'admin'
+    user = 'user'
+
+
 def _enum(kind: type[enum.Enum], name: str) -> Enum:
     return Enum(kind, name=name, values_callable=lambda members: [member.value for member in members])
 
@@ -45,14 +50,37 @@ class TimestampMixin:
                                                  onupdate=func.now())
 
 
+class User(TimestampMixin, Base):
+    """Accounts are created by an admin (API or scripts/create_user.py); no self sign-up."""
+    __tablename__ = 'users'
+    # Usernames are stored lower-case; the index also rejects case variants written by other means.
+    __table_args__ = (Index('uq_users_username_lower', text('lower(username)'), unique=True),)
+
+    id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    username: Mapped[str] = mapped_column(String(64), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    role: Mapped[UserRole] = mapped_column(_enum(UserRole, 'user_role'), default=UserRole.user)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    # Bumped on password change / deactivation: invalidates every issued token.
+    token_version: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class Document(TimestampMixin, Base):
     __tablename__ = 'documents'
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    # NULL owner: uploaded before accounts existed or by maintenance scripts; always shared, managed by admins.
+    # RESTRICT: deleting a user must never turn their private documents into ownerless (shared) ones.
+    owner_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey('users.id', ondelete='RESTRICT'), index=True)
+    # Shared documents are visible to every user; others only to their owner. Defaults to shared exactly when
+    # there is no owner (the CHECK constraint below forbids ownerless private rows).
+    is_shared: Mapped[bool] = mapped_column(
+        Boolean, default=lambda context: context.get_current_parameters().get('owner_id') is None)
     filename: Mapped[str] = mapped_column(String(255))
     content_type: Mapped[str] = mapped_column(String(127))
     size_bytes: Mapped[int] = mapped_column(BigInteger)
-    sha256: Mapped[str] = mapped_column(String(64), unique=True)
+    # Unique per owner: identical files of different users must not reveal each other.
+    sha256: Mapped[str] = mapped_column(String(64))
     page_count: Mapped[int | None] = mapped_column(Integer)
     chunk_count: Mapped[int] = mapped_column(Integer, default=0)
     object_key: Mapped[str] = mapped_column(String(512))
@@ -65,7 +93,10 @@ class Document(TimestampMixin, Base):
     jobs: Mapped[list['IngestJob']] = relationship(back_populates='document', cascade='all, delete-orphan',
                                                    passive_deletes=True)
 
-    __table_args__ = (Index('ix_documents_filename', 'filename'), Index('ix_documents_created_at', 'created_at'))
+    __table_args__ = (Index('ix_documents_filename', 'filename'), Index('ix_documents_created_at', 'created_at'),
+                      UniqueConstraint('owner_id', 'sha256', name='uq_documents_owner_sha256',
+                                       postgresql_nulls_not_distinct=True),
+                      CheckConstraint('owner_id IS NOT NULL OR is_shared', name='ck_documents_ownerless_shared'))
 
 
 class Chunk(Base):
@@ -125,6 +156,7 @@ class Conversation(TimestampMixin, Base):
     __tablename__ = 'conversations'
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
+    owner_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'), index=True)
     title: Mapped[str] = mapped_column(String(255))
 
     messages: Mapped[list['Message']] = relationship(back_populates='conversation', cascade='all, delete-orphan',

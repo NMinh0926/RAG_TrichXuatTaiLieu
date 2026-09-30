@@ -41,7 +41,13 @@ def chunk_hit(text, document_id='doc-1', page=1, chunk_id='chunk-1'):
 
 
 @pytest.fixture
-def chat(db_engine, db_session):
+def chat(db_engine, db_session, db_user):
+    # Retrieval only searches documents the user may read: one shared ready document (the store double
+    # returns its fixed hits whatever the filter).
+    db_session.add(Document(filename='library.pdf', content_type='application/pdf', size_bytes=1, sha256='a' * 64,
+                            object_key='documents/library.pdf', status=DocumentStatus.ready, is_shared=True))
+    db_session.commit()
+
     def make(reply, hits=(), **overrides):
         settings = Settings(_env_file=None, llm_base_url=BASE_URL, llm_model=MODEL, top_k=4, **overrides)
         fake = FakeLLM(reply)
@@ -112,7 +118,7 @@ def test_follow_up_is_rewritten_with_history(chat):
 
 def test_scope_filters_retrieval_and_unknown_ids_are_404(chat, db_session):
     document = Document(filename='a.pdf', content_type='application/pdf', size_bytes=1, sha256='f' * 64,
-                        object_key='documents/a.pdf', status=DocumentStatus.ready)
+                        object_key='documents/a.pdf', status=DocumentStatus.ready, is_shared=True)
     db_session.add(document)
     db_session.commit()
     client, _, store = chat('Có [1].', [chunk_hit('x', document_id=str(document.id))])
@@ -147,7 +153,8 @@ def test_llm_failure_is_an_error_event_and_answer_is_not_stored(chat, db_session
 
 def _document_with_chunks(session, texts: list[str]) -> Document:
     document = Document(filename='quy_che.pdf', content_type='application/pdf', size_bytes=1, sha256='e' * 64,
-                        object_key='documents/q.pdf', status=DocumentStatus.ready, chunk_count=len(texts))
+                        object_key='documents/q.pdf', status=DocumentStatus.ready, chunk_count=len(texts),
+                        is_shared=True)
     session.add(document)
     session.flush()
     position = 0

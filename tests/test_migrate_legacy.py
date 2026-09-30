@@ -39,6 +39,7 @@ def test_links_known_files_reindexes_unknown_and_is_rerunnable(samples, tmp_path
     documents = {d.filename: d for d in db_session.query(Document)}
     linked = documents['sample.docx']
     assert linked.status == DocumentStatus.ready and linked.chunk_count == legacy_vectors
+    assert linked.owner_id is None and linked.is_shared  # pre-account documents are shared
     assert memory_storage.read(linked.object_key) == (samples / 'sample.docx').read_bytes()
     vectors = new_store.collection.get(where={'document_id': str(linked.id)}, include=['metadatas'])
     assert set(vectors['ids']) == {str(chunk.id) for chunk in linked.chunks}

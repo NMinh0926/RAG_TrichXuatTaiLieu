@@ -24,7 +24,7 @@ from tests.conftest import FakeEmbedding, FakeOCR
 
 
 @pytest.fixture
-def api(db_session, db_engine, memory_storage, tmp_path, monkeypatch):
+def api(db_session, db_engine, memory_storage, tmp_path, monkeypatch, db_user):
     def make(ocr=None):
         settings = Settings(chroma_path=tmp_path / 'chroma', chroma_host='', max_upload_mb=1, _env_file=None)
         store = VectorStore(settings.chroma_path, 'api-test', settings.chunk_size, settings.chunk_overlap)
@@ -155,13 +155,13 @@ def test_duplicate_is_not_reprocessed(documents_api, samples):
     assert len(storage.objects) == 1 and store.collection.count() == legacy['chunks_created']
 
 
-def test_in_flight_duplicate_returns_the_running_job(documents_api, samples):
+def test_in_flight_duplicate_returns_the_running_job(documents_api, samples, db_user):
     import hashlib
     client, _, _, session = documents_api
     data = (samples / 'sample.pdf').read_bytes()
     document = Document(filename='busy.pdf', content_type='application/pdf', size_bytes=len(data),
                         sha256=hashlib.sha256(data).hexdigest(), object_key='documents/busy.pdf',
-                        status=DocumentStatus.processing)
+                        status=DocumentStatus.processing, owner_id=db_user.id)
     session.add(document)
     session.flush()
     job = IngestJob(document_id=document.id, status=JobStatus.running, progress=40, step='extract')

@@ -89,10 +89,10 @@ class VectorStore:
             raise PipelineError('vector_store_failure', 'Cannot delete document vectors.', 503) from exc
 
     def search(self, embedding: list[float], top_k: int, document_ids: list[str] | None = None) -> list[SearchHit]:
-        """Top-K by cosine similarity, optionally restricted to some documents."""
+        """Top-K by cosine similarity, optionally restricted to some documents (an empty list matches nothing)."""
         try:
             count = self.collection.count()
-            if count == 0:
+            if count == 0 or document_ids == []:
                 return []
             where = None
             if document_ids:

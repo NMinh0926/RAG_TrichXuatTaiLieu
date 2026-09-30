@@ -1,6 +1,6 @@
 # Backup PostgreSQL (pg_dump), every stored object (S3 API) and the Chroma volume into backups\<timestamp>.
 # Run from the project root with the stack up:  powershell -ExecutionPolicy Bypass -File scripts\backup.ps1
-# The API is stopped for the duration (and Chroma while it is archived) so the database, objects and
+# The API and worker are stopped for the duration (and Chroma while it is archived) so the database, objects and
 # vectors are copied at the same point in time; everything is restarted afterwards, even on failure.
 param([string]$Destination = 'backups')
 $ErrorActionPreference = 'Stop'
@@ -15,7 +15,7 @@ $target = Join-Path $Destination $stamp
 New-Item -ItemType Directory -Force (Join-Path $target 'objects') | Out-Null
 $full = (Resolve-Path $target).Path
 
-Invoke-Checked { docker compose stop api } 'stop api'
+Invoke-Checked { docker compose stop api worker } 'stop api and worker'
 try {
     # pg_dump writes inside the container: redirecting binary output through PowerShell would corrupt it.
     Invoke-Checked { docker compose exec -T postgres sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc -f /tmp/rag.dump' } 'pg_dump'
@@ -31,6 +31,6 @@ try {
         docker compose start chroma | Out-Null
     }
 } finally {
-    docker compose start api | Out-Null
+    docker compose start api worker | Out-Null
 }
 Write-Host "Backup written to $full"

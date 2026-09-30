@@ -28,6 +28,15 @@ def _ocr_page(ocr: OCRService, filename: str, number: int, image: Image.Image) -
     return _unit(filename, number, 'ocr', words)
 
 
+def page_count(data: bytes) -> int | None:
+    """Pages of a PDF, or None when it cannot be opened (ingestion then reports the real error)."""
+    try:
+        with fitz.open(stream=data, filetype='pdf') as pdf:
+            return pdf.page_count
+    except Exception:
+        return None
+
+
 def load_pdf(data: bytes, filename: str, ocr: OCRService, min_text_chars: int = 20,
              progress: Callable[[float], None] | None = None, warn: Callable[[dict], None] | None = None,
              workers: int = 1) -> list[DocumentUnit]:
